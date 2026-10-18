@@ -1257,8 +1257,14 @@ var tt;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show
 
 /* keep the CTA above the on-screen keyboard */
 if(window.visualViewport){
-  var vv=window.visualViewport;var fix=function(){var off=Math.max(0,window.innerHeight-vv.height-vv.offsetTop);dock.style.transform=off>40?'translateY('+(-off)+'px)':'';};
+  /* keyboard offset lives in `translate` (not transitioned), so the button follows the keyboard without any lag;
+     when a field loses focus the button drops at once instead of waiting for Safari's late resize event */
+  var vv=window.visualViewport;
+  var isField=function(el){return el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.tagName==='SELECT');};
+  var fix=function(){var off=Math.max(0,window.innerHeight-vv.height-vv.offsetTop);dock.style.translate=(off>40&&isField(document.activeElement))?('0 '+(-off)+'px'):'';};
   vv.addEventListener('resize',fix);vv.addEventListener('scroll',fix);
+  document.addEventListener('focusout',function(){setTimeout(function(){if(!isField(document.activeElement))dock.style.translate='';},0);});
+  document.addEventListener('focusin',function(e){if(isField(e.target))fix();});
 }
 
 /* start */
