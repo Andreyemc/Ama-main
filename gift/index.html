@@ -173,6 +173,10 @@ a.btn{text-decoration:none}
 .ucar>button:focus-visible{outline:none}
 .ucar:focus-visible{outline:2px solid var(--rust);outline-offset:-2px}
 .dsg-row{--uw:min(52vw,210px)}
+.design-top{text-align:center;padding-top:8px}
+.design-top h2{font-size:30px;font-weight:500;line-height:1.2;letter-spacing:-.01em}
+.design-top p{font-size:15px;color:var(--mute);margin-top:8px}
+.flow[data-step="1"] .step{gap:0}
 .flow[data-step="1"] .stage{display:none}
 .moods h2,.pillars h2,.chat-section h2{font-size:clamp(40px,12.4vw,54px);line-height:.98;letter-spacing:-.025em}
 .mood-meta{width:100%;display:flex;flex-direction:column;gap:12px}
@@ -446,9 +450,8 @@ a.btn{text-decoration:none}
 
       <!-- 1 design -->
       <div class="step" data-step="1">
+        <div class="design-top" aria-live="polite"><h2 id="designName">Sand</h2><p id="designDesc">Warm stone in soft daylight</p><span id="designIdx" hidden>1 / 6</span></div>
         <div class="ucar dsg-row bleed" id="dsgRow" aria-label="Card designs"></div>
-        <div class="design-head"><b id="designName">Sand</b><span id="designIdx">1 / 6</span></div>
-        <p class="hint" id="designHint">Swipe the card to choose a design.</p>
         <div class="thumbs" id="thumbs" hidden></div>
       </div>
 
@@ -633,12 +636,12 @@ a.btn{text-decoration:none}
    "url('cards/sunrise.jpg')" (1712×1080). Logo and amount stay live layers.
    ========================================================= */
 var DESIGNS=[
-  {id:'sand',   name:'Sand',   c1:'#F3E6D2',c2:'#C9A57E',ink:'#1E1C1A',edge:'#AE8962'},
-  {id:'night',  name:'Night',  c1:'#4A3B33',c2:'#141210',ink:'#FFF3E4',edge:'#100E0C'},
-  {id:'forest', name:'Forest', c1:'#A3A47C',c2:'#3B402A',ink:'#FFF3E4',edge:'#30351F'},
-  {id:'bloom',  name:'Bloom',  c1:'#F6DCD0',c2:'#D99A86',ink:'#1E1C1A',edge:'#B97C69'},
-  {id:'ember',  name:'Ember',  c1:'#783206',c2:'#2A0F08',ink:'#FFF3E4',edge:'#2A0F08'},
-  {id:'sunrise',name:'Sunrise',c1:'#F4B98C',c2:'#B04F13',ink:'#FFF3E4',edge:'#8E3F10'}
+  {id:'sand',   name:'Sand',   desc:'Warm stone in soft daylight',   c1:'#F3E6D2',c2:'#C9A57E',ink:'#1E1C1A',edge:'#AE8962'},
+  {id:'night',  name:'Night',  desc:'Calm, deep and quiet',  c1:'#4A3B33',c2:'#141210',ink:'#FFF3E4',edge:'#100E0C'},
+  {id:'forest', name:'Forest', desc:'Moss, shade and fresh air', c1:'#A3A47C',c2:'#3B402A',ink:'#FFF3E4',edge:'#30351F'},
+  {id:'bloom',  name:'Bloom',  desc:'A gentle blush of petals',  c1:'#F6DCD0',c2:'#D99A86',ink:'#1E1C1A',edge:'#B97C69'},
+  {id:'ember',  name:'Ember',  desc:'The glow of a slow evening fire',  c1:'#783206',c2:'#2A0F08',ink:'#FFF3E4',edge:'#2A0F08'},
+  {id:'sunrise',name:'Sunrise',desc:'First light, warm and bright',c1:'#F4B98C',c2:'#B04F13',ink:'#FFF3E4',edge:'#8E3F10'}
 ];
 DESIGNS.forEach(function(d){d.art='linear-gradient(140deg,'+d.c1+' 0%,'+d.c2+' 100%)';});
 var PRESETS=[25,50,75,100,150,250];
@@ -884,12 +887,12 @@ function makeCarousel(row,key,onPick){
     b.addEventListener('click',function(){ if(drag&&drag.moved)return; var s=i-cur; if(s===1||s===-1)step(s); });
   });
   function place(){
-    var W=items[0].offsetWidth, X=Math.max(W*0.5+30,row.clientWidth/2-6); // neighbours rest at the screen edges, as slivers
+    var W=items[0].offsetWidth, X=Math.max(W+24,row.clientWidth/2-48+W/2); // neighbours rest flat, about 48 px showing at the screen edge
     items.forEach(function(m,i){
       var sl=i-cur-p, a=Math.abs(sl), sg=sl<0?-1:1;
       var x=a<=1?sl*X:sg*(X+(a-1)*W*0.6);
-      var ry=reduce?0:-sg*Math.min(1,a*1.6)*82;           // edge-on by the middle of the turn, neighbours rest at 82°
-      var z=-Math.min(a,1.4)*60;
+      var ry=reduce?0:-sg*Math.sin(Math.PI*Math.min(a,1))*84; // flat at rest, nearly edge-on halfway through a flip
+      var z=-Math.sin(Math.PI*Math.min(a,1))*70;
       m.style.transform='translate3d('+x.toFixed(1)+'px,0,'+z.toFixed(1)+'px) rotateY('+ry.toFixed(1)+'deg)';
       m.style.opacity=a>1.35?0:1; m.style.zIndex=String(10-Math.round(a*4)); m.style.visibility=a>1.6?'hidden':'visible';
       m.setAttribute('aria-selected',i===cur);
@@ -1012,7 +1015,7 @@ C.flow.onSwipe=function(dir){if(currentStep!==1)return;var i=DESIGNS.findIndex(f
 /* =========================================================
    RENDERERS
    ========================================================= */
-function renderDesignHead(i){$('#designName').textContent=DESIGNS[i].name;$('#designIdx').textContent=(i+1)+' / '+DESIGNS.length;}
+function renderDesignHead(i){$('#designName').textContent=DESIGNS[i].name;$('#designDesc').textContent=DESIGNS[i].desc;$('#designIdx').textContent=(i+1)+' / '+DESIGNS.length;}
 function renderDesign(){
   var i=DESIGNS.findIndex(function(d){return d.id===S.design;});
   renderDesignHead(i);
