@@ -141,7 +141,9 @@ a.btn{text-decoration:none}
 .scene{position:relative}
 .scene-pin{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdr));height:calc(100svh - var(--hdr) - env(safe-area-inset-top,0px));overflow:hidden;display:flex;flex-direction:column}
 /* scene: what it buys */
-.buys{height:calc(var(--n,6) * 26svh + 100svh)} /* short scroll per amount: switching feels quick */
+.buys .scene-pin{position:relative;top:auto;height:auto;overflow:visible} /* not pinned: the page scrolls normally */
+.buys .photo{flex:none;height:min(56svh,520px);touch-action:pan-y}
+.buys .photo img{pointer-events:none;-webkit-user-drag:none;user-select:none} /* no native image drag stealing the swipe */
 .buys .photo{position:relative;flex:1 1 auto;min-height:0;background:var(--sand)}
 .buys .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .buys .card-on-edge{position:absolute;left:50%;bottom:0;width:min(74%,320px);transform:translate(-50%,42%);z-index:2}
@@ -390,7 +392,7 @@ a.btn{text-decoration:none}
     <!-- A2 what it buys (pinned, scroll-driven) -->
     <section class="scene buys bleed" id="buys" aria-label="What each amount covers">
       <div class="scene-pin">
-        <div class="photo"><img id="buysImg" src="img/a-pilates.jpg" alt=""><div class="card-on-edge"><div data-card="buys" data-amp=".8"></div></div></div>
+        <div class="photo"><img id="buysImg" src="img/a-pilates.jpg" alt="" draggable="false"><div class="card-on-edge"><div data-card="buys" data-amp=".8"></div></div></div>
         <div class="meta">
           <div class="figure"><span class="big" id="buysBig">£25</span><p class="what" id="buysWhat"></p></div>
           <div class="scale" id="buysScale"></div>
@@ -747,6 +749,7 @@ function frame(now){
       c.idle=Math.min(1,c.idle+dt*0.6); // sway fades back in slowly after a touch
       var sx=reduce?0:Math.sin(t*0.6+c.phase)*4*c.idle, sy=reduce?0:Math.sin(t*0.45+c.phase*1.3)*6*c.idle;
       if(c.gyro&&gyro.on&&gyro.got){tx=gyro.x+sx*0.3;ty=gyro.y+sy*0.3;}else{tx=sx;ty=sy;}
+      if(c.still){tx=0;ty=0;} // carousel neighbours stay still; only the card in focus animates
     }
     if(c.upright&&!c.drag){var t0=tx;tx=ty;ty=-t0;} // local X runs down the screen, local Y runs left
     var ax=K*(tx*c.amp-c.rx)-DAMP*c.vx, ay=K*(ty*c.amp-c.ry)-DAMP*c.vy;
@@ -846,7 +849,6 @@ $('#buysScale').addEventListener('click',function(e){
   var pin=buys.querySelector('.scene-pin'), top=parseFloat(getComputedStyle(pin).top)||0;
   var span=Math.max(1,buys.offsetHeight-pin.offsetHeight), r=buys.getBoundingClientRect();
   setBuys(i);
-  window.scrollTo({top:window.scrollY+r.top-top+span*(i+0.5)/BUYS.length,behavior:'auto'});
 });
 function rollTo(v){
   var from=bigVal,start=performance.now(),dur=reduce?0:260;cancelAnimationFrame(bigAnim);
@@ -881,11 +883,11 @@ function makeCarousel(row,key,onPick,onTapCurrent){
     if(Math.abs(v)>0.3){target=clamp(v*1.1,-35,35);idleAt=now;} else if(now-idleAt>70){target=0;}
     flip+=(target-flip)*0.22; if(reduce)flip=0;
     var f=flip.toFixed(2)+'deg';items.forEach(function(m){m.style.setProperty('--flip',f);});
-    var c=centre(); if(c!==cur){cur=c;onPick(c);}
+    var c=centre(); if(c!==cur){cur=c;cards.forEach(function(k,n){k.still=n!==c;});onPick(c);}
     if(Math.abs(flip)>0.05||Math.abs(target)>0.05){raf=requestAnimationFrame(tick);}else{raf=0;items.forEach(function(m){m.style.setProperty('--flip','0deg');});}
   }
   row.addEventListener('scroll',function(){if(!raf){lastT=performance.now();raf=requestAnimationFrame(tick);}},{passive:true});
-  return {go:go,current:function(){return cur;},sync:function(){var c=centre();if(c!==cur){cur=c;onPick(c);}}};
+  return {go:go,current:function(){return cur;},sync:function(){var c=centre();if(c!==cur){cur=c;cards.forEach(function(k,n){k.still=n!==c;});onPick(c);}}};
 }
 var moodRow=$('#moodRow');
 var moods=makeCarousel(moodRow,'mood',function(i){$('#moodName').textContent=DESIGNS[i].name;$('#moodIdx').textContent=(i+1)+' / '+DESIGNS.length;},
@@ -907,10 +909,13 @@ $('#plist').innerHTML=PILLARS.map(function(p,i){
 
 /* scroll driver for the pinned amounts scene */
 function sceneProgress(el){var pin=el.querySelector('.scene-pin');var top=parseFloat(getComputedStyle(pin).top)||0;var r=el.getBoundingClientRect();var span=Math.max(1,el.offsetHeight-pin.offsetHeight);return clamp((top-r.top)/span,0,0.9999);}
-function onScroll(){
-  if(view!=='landing')return;
-  setBuys(Math.floor(sceneProgress(buys)*BUYS.length));
-}
+/* one swipe = one amount: a horizontal swipe on the photo steps once, whatever its speed */
+(function(){var ph=$('#buys .photo'),sx=null,sy=0;
+  ph.addEventListener('pointerdown',function(e){sx=e.clientX;sy=e.clientY;});
+  function end(e){if(sx===null)return;var dx=e.clientX-sx,dy=e.clientY-sy;sx=null;
+    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.2){var n=clamp(buysIdx+(dx<0?1:-1),0,BUYS.length-1);setBuys(n);}}
+  ph.addEventListener('pointerup',end);ph.addEventListener('pointercancel',function(){sx=null;});})();
+function onScroll(){}
 
 /* gift card terms: modal like the booking modal */
 var termsLayer=$('#termsLayer'), termsBack=null;
