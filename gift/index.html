@@ -121,9 +121,17 @@ a.btn{text-decoration:none}
 .hero-card .enter{animation:heroIn 1.3s cubic-bezier(.16,1,.3,1) both}
 @keyframes heroIn{from{opacity:0;transform:rotateY(-70deg) rotateX(14deg) translateZ(-140px) translateY(30px)}to{opacity:1;transform:none}}
 .hero .lead{max-width:32ch}
-.facts{display:grid;grid-template-columns:auto 1fr auto;gap:12px;border-top:1px solid var(--line);margin-top:20px;padding-top:12px;font-size:14px;color:var(--mute)}
-.facts span:first-child{color:var(--ink)}
-.facts span:nth-child(2){text-align:center}
+/* gift card terms, folded into an info toggle */
+.info-btn{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:14px;color:var(--mute);align-self:flex-start;padding:4px 0}
+.info-btn svg{width:16px;height:16px;flex:none}
+.info-btn[aria-expanded="true"]{color:var(--ink)}
+.info-pop{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.2,.8,.2,1)}
+.info-pop.open{grid-template-rows:1fr}
+.info-pop>div{overflow:hidden}
+.info-pop dl{margin:10px 0 0;border-top:1px solid var(--line)}
+.info-pop dl div{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.info-pop dt{color:var(--mute)}
+.info-pop dd{margin:0;text-align:right;color:var(--ink)}
 .hero .btn{margin-top:28px}
 .tilt-note{font-size:13px;color:var(--mute);text-align:center;margin-top:12px}
 .tilt-note button{text-decoration:underline;text-underline-offset:3px;font-size:13px;color:var(--ink)}
@@ -131,7 +139,7 @@ a.btn{text-decoration:none}
 .scene{position:relative}
 .scene-pin{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdr));height:calc(100svh - var(--hdr) - env(safe-area-inset-top,0px));overflow:hidden;display:flex;flex-direction:column}
 /* scene: what it buys */
-.buys{height:calc(var(--n,6) * 55svh + 100svh)}
+.buys{height:calc(var(--n,6) * 26svh + 100svh)} /* short scroll per amount: switching feels quick */
 .buys .photo{position:relative;flex:1 1 auto;min-height:0;background:var(--sand)}
 .buys .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .buys .card-on-edge{position:absolute;left:50%;bottom:0;width:min(74%,320px);transform:translate(-50%,42%);z-index:2}
@@ -144,31 +152,30 @@ a.btn{text-decoration:none}
 .buys .scale button[aria-current="true"]{color:var(--ink)}
 /* moods carousel */
 .moods{padding-top:96px}
-.moods h2,.pillars-scene h2,.chat-section h2{font-size:clamp(40px,12.4vw,54px);line-height:.98;letter-spacing:-.025em}
+.moods h2,.pillars h2,.chat-section h2{font-size:clamp(40px,12.4vw,54px);line-height:.98;letter-spacing:-.025em}
 .mood-row{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:56px 0 40px;scrollbar-width:none;
   padding-inline:calc(50% - min(31vw,130px))}
 .mood-row::-webkit-scrollbar{display:none}
 .mood{flex:0 0 min(62vw,260px);scroll-snap-align:center;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s}
 .mood[data-near="0"]{transform:scale(.84)}
-.mood-meta{width:min(62vw,260px);margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.mood-meta{width:100%;display:flex;flex-direction:column;gap:12px}
 .mood-meta .top{display:flex;justify-content:space-between;align-items:baseline}
 .mood-meta b{font-weight:400;font-size:20px}
 .mood-meta span{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums}
 .mood-meta p{font-size:15px;font-weight:300;line-height:1.4;color:var(--body);border-top:1px solid var(--line);padding-top:12px}
-/* pillars */
-.pillars-scene{height:calc(4 * 50svh + 100svh);margin-top:96px}
-.pillars-scene .scene-pin{padding-top:20px;padding-bottom:calc(var(--dock) + 4px)}
-.plist{margin-top:22px;display:flex;flex-direction:column}
-.prow{display:flex;flex-direction:column;border-top:1px solid var(--line);padding-block:10px;text-align:left;width:100%}
-.prow .line{display:flex;gap:16px;align-items:center}
-.prow .thumb-img{flex:none;width:58px;height:58px;object-fit:cover;display:block;transition:width .45s cubic-bezier(.2,.8,.2,1),height .45s,opacity .3s}
-.prow b{display:block;font-weight:400;font-size:21px}
-.prow small{display:block;font-size:14px;color:var(--mute);margin-top:2px}
-.prow .open{height:0;overflow:hidden;position:relative;transition:height .5s cubic-bezier(.2,.8,.2,1)}
-.prow .open img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.prow .open .mini{position:absolute;right:14px;bottom:14px;width:38%;transform:rotate(-6deg)}
-.prow[aria-expanded="true"] .open{height:clamp(150px,30svh,250px);margin-bottom:12px}
-.prow[aria-expanded="true"] .thumb-img{width:0;height:58px;opacity:0;margin-right:-16px}
+/* pillars: horizontal slides running off the right edge, one per screen plus a slice of the next */
+.pillars{padding-top:96px}
+.ptrack{--gut:calc(max(16px,env(safe-area-inset-left,0px)) + max(0px,(100% - 2 * max(16px,env(safe-area-inset-left,0px)) - var(--col)) / 2));
+  display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;
+  margin-top:28px;padding-left:var(--gut);scroll-padding-left:var(--gut)}
+.ptrack::-webkit-scrollbar{display:none}
+.ptrack::after{content:"";flex:0 0 6px} /* breathing room after the last slide */
+.pslide{flex:0 0 min(calc(100% - 56px),440px);scroll-snap-align:start;display:flex;flex-direction:column;margin:0}
+.pslide img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--sand)}
+.pslide .ptext{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding-top:14px}
+.pslide b{display:block;font-weight:400;font-size:22px}
+.pslide small{display:block;font-size:14px;color:var(--mute);margin-top:4px}
+.pslide .pnum{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums;flex:none}
 /* messenger */
 .chat-section{padding-top:96px;display:flex;flex-direction:column;gap:28px}
 .chat{background:var(--chat-bg);border-radius:24px;overflow:hidden;display:flex;flex-direction:column}
@@ -193,7 +200,7 @@ a.btn{text-decoration:none}
 .chat .msg{opacity:0;transform:translateY(10px);transition:opacity .45s,transform .45s cubic-bezier(.2,.8,.2,1)}
 .chat .msg.in-view{opacity:1;transform:none}
 .chat-foot{font-size:14px;color:var(--mute);text-align:center}
-.end-cta{padding-top:12px;padding-bottom:140px}
+.landing{padding-bottom:calc(var(--dock) + 48px)} /* room for the fixed CTA, which is the only buy button below the hero */
 /* ---------- flow ---------- */
 .flow{padding-top:calc(var(--stepbar) + 8px)}
 .flow .col{padding-bottom:calc(var(--dock) + 40px)}
@@ -349,7 +356,12 @@ a.btn{text-decoration:none}
         <h1>Give time<br>to feel well</h1>
         <div class="hero-card"><div class="tilted"><div class="enter"><div data-card="hero" data-design="night" data-amp="1.1"></div></div></div></div>
         <p class="lead">A gift card for any session on AMA: nutrition, activity, mindfulness, sleep.</p>
-        <div class="facts"><span>From £10</span><span>Valid 24 months</span><span>Sent in 2 minutes</span></div>
+        <button type="button" class="info-btn" id="infoBtn" aria-expanded="false" aria-controls="infoPop"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.1"/><path d="M8 7.2v4.3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="8" cy="4.9" r=".8" fill="currentColor"/></svg>Gift card terms</button>
+        <div class="info-pop" id="infoPop"><div><dl>
+          <div><dt>Amount</dt><dd>From £10 to £500</dd></div>
+          <div><dt>Valid</dt><dd>24 months</dd></div>
+          <div><dt>Delivery</dt><dd>In 2 minutes or on a date you choose</dd></div>
+        </dl></div></div>
         <button class="btn" data-start id="heroCta">Choose a gift card</button>
         <p class="tilt-note" id="tiltNote">Drag the card</p>
       </div>
@@ -375,12 +387,10 @@ a.btn{text-decoration:none}
       </section>
     </div>
 
-    <!-- A4 pillars (pinned list) -->
-    <section class="scene pillars-scene" id="pillars" aria-label="What they can book">
-      <div class="scene-pin"><div class="col" style="width:100%">
-        <h2>Spend it on<br>any session</h2>
-        <div class="plist" id="plist"></div>
-      </div></div>
+    <!-- A4 pillars (horizontal slides) -->
+    <section class="pillars" id="pillars" aria-label="What they can book">
+      <div class="col"><h2>Spend it on<br>any session</h2></div>
+      <div class="ptrack bleed" id="plist"></div>
     </section>
 
     <div class="col">
@@ -398,7 +408,6 @@ a.btn{text-decoration:none}
         </div>
         <p class="chat-foot">Or by email, on the day and time you choose.</p>
       </section>
-      <div class="end-cta"><button class="btn" data-start>Choose a gift card</button></div>
     </div>
   </section>
 
@@ -632,6 +641,7 @@ var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelect
    3D CARD
    ========================================================= */
 var cards=[];
+var GYRO_CARDS=['hero','flow','preview','done'];
 var LOGO_SVG='<svg viewBox="0 0 69 26" aria-hidden="true"><use href="#ama-logo"/></svg>';
 function buildCard(host){
   var amp=parseFloat(host.getAttribute('data-amp')||'1');
@@ -642,6 +652,7 @@ function buildCard(host){
   host.replaceWith(el);if(host.id)el.id=host.id;
   var c={el:el,amp:amp,rx:0,ry:0,vx:0,vy:0,tx:0,ty:0,phase:Math.random()*6.28,visible:true,drag:null,hover:false,idle:1,
     key:host.getAttribute('data-card'),fixedDesign:host.getAttribute('data-design'),nodrag:el.classList.contains('nodrag')};
+  c.gyro=GYRO_CARDS.indexOf(c.key)>=0; // phone tilt drives only the hero card and the purchase cards
   cards.push(c);
   attachPointer(c);
   return c;
@@ -703,13 +714,13 @@ function frame(now){
     else{
       c.idle=Math.min(1,c.idle+dt*0.6); // sway fades back in slowly after a touch
       var sx=reduce?0:Math.sin(t*0.6+c.phase)*4*c.idle, sy=reduce?0:Math.sin(t*0.45+c.phase*1.3)*6*c.idle;
-      if(gyro.on&&gyro.got){tx=gyro.x+sx*0.3;ty=gyro.y+sy*0.3;}else{tx=sx;ty=sy;}
+      if(c.gyro&&gyro.on&&gyro.got){tx=gyro.x+sx*0.3;ty=gyro.y+sy*0.3;}else{tx=sx;ty=sy;}
     }
     var ax=K*(tx*c.amp-c.rx)-DAMP*c.vx, ay=K*(ty*c.amp-c.ry)-DAMP*c.vy;
     c.vx+=ax*dt;c.vy+=ay*dt;c.rx+=c.vx*dt;c.ry+=c.vy*dt;
     /* with the gyroscope the light travels further than the card turns,
        so a small wrist movement already reads as a shimmer */
-    var lg=(gyro.on&&gyro.got&&!c.drag&&!c.hover)?1.6:1;
+    var lg=(c.gyro&&gyro.on&&gyro.got&&!c.drag&&!c.hover)?1.6:1;
     c.ly=(c.ly==null?c.ry:c.ly)+(c.ry*lg-(c.ly==null?c.ry:c.ly))*Math.min(1,dt*8);
     c.lx=(c.lx==null?c.rx:c.lx)+(c.rx*lg-(c.lx==null?c.rx:c.lx))*Math.min(1,dt*8);
     var s=c.el.style;
@@ -765,7 +776,8 @@ if(needsPerm){
 }
 function updateHint(){
   var n=$('#tiltNote');if(!n)return;
-  if(gyro.on&&gyro.got){n.textContent='Tilt your phone';return;}
+  n.hidden=false;
+  if(gyro.on&&gyro.got){n.hidden=true;return;} // tilt already works: no caption
   if(needsPerm&&permState==='unknown'){n.innerHTML='Drag the card or <button type="button" id="tiltAsk">turn on tilt</button>';return;}
   n.textContent=finePointer?'Move the cursor over the card':'Drag the card';
 }
@@ -794,9 +806,16 @@ BUYS.forEach(function(b){var i=new Image();i.src='img/'+b.img+'.jpg';}); // prel
 var buys=$('#buys'), buysIdx=-1, bigVal=25, bigAnim=null;
 buys.style.setProperty('--n',BUYS.length);
 $('#buysScale').innerHTML=BUYS.map(function(b,i){return '<button type="button" data-i="'+i+'">'+money(b.a)+'</button>';}).join('');
-$('#buysScale').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var i=+b.dataset.i;var r=buys.getBoundingClientRect();var span=buys.offsetHeight-innerHeight;window.scrollTo({top:window.scrollY+r.top+span*(i+0.5)/BUYS.length,behavior:reduce?'auto':'smooth'});});
+/* tap on an amount: switch at once, and park the scroll inside that amount's band so the pin stays put */
+$('#buysScale').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;var i=+b.dataset.i;
+  var pin=buys.querySelector('.scene-pin'), top=parseFloat(getComputedStyle(pin).top)||0;
+  var span=Math.max(1,buys.offsetHeight-pin.offsetHeight), r=buys.getBoundingClientRect();
+  setBuys(i);
+  window.scrollTo({top:window.scrollY+r.top-top+span*(i+0.5)/BUYS.length,behavior:'auto'});
+});
 function rollTo(v){
-  var from=bigVal,start=performance.now(),dur=reduce?0:420;cancelAnimationFrame(bigAnim);
+  var from=bigVal,start=performance.now(),dur=reduce?0:260;cancelAnimationFrame(bigAnim);
   function step(n){var p=dur?Math.min(1,(n-start)/dur):1;var e=1-Math.pow(1-p,3);var cur=Math.round(from+(v-from)*e);$('#buysBig').textContent=money(cur);if(p<1)bigAnim=requestAnimationFrame(step);else bigVal=v;}
   bigAnim=requestAnimationFrame(step);
 }
@@ -831,30 +850,29 @@ function moodScroll(){
 }
 moodRow.addEventListener('scroll',function(){requestAnimationFrame(moodScroll);},{passive:true});
 
-/* ---------- A4: pillars (pinned list, the row for the current scroll position opens) ---------- */
+/* ---------- A4: pillars (horizontal slides, images only) ---------- */
 var PILLARS=[
-  {n:'Nutrition',  s:'Diet plans, women’s health, gut health', img:'nutrition', d:'sand'},
-  {n:'Activity',   s:'Pilates, running, personal training',    img:'run',       d:'forest'},
-  {n:'Mindfulness',s:'Therapy, soundbath, hypnotherapy',        img:'calm',      d:'sand'},
-  {n:'Sleep',      s:'Sleep coaching and enhancement',          img:'sleep',     d:'night'}
+  {n:'Nutrition',  s:'Diet plans, women’s health, gut health', img:'nutrition'},
+  {n:'Activity',   s:'Pilates, running, personal training',    img:'run'},
+  {n:'Mindfulness',s:'Therapy, soundbath, hypnotherapy',        img:'calm'},
+  {n:'Sleep',      s:'Sleep coaching and enhancement',          img:'sleep'}
 ];
-var plist=$('#plist'), pillars=$('#pillars'), pIdx=-1, pManual=false;
-PILLARS.forEach(function(p,i){
-  var r=document.createElement('button');r.type='button';r.className='prow';r.setAttribute('aria-expanded','false');
-  r.innerHTML='<div class="open"><img src="img/'+p.img+'.jpg" alt=""><div class="mini"><div data-card="pillar" data-nodrag data-amp=".6"></div></div></div><div class="line"><img class="thumb-img" src="img/'+p.img+'.jpg" alt=""><div><b>'+p.n+'</b><small>'+p.s+'</small></div></div>';
-  plist.appendChild(r);var c=buildCard(r.querySelector('[data-card]'));observe(c);paintCard(c,designById(p.d),[25,50,75,150][i]);
-  r.addEventListener('click',function(){setPillar(i);});
-});
-function setPillar(i){if(i===pIdx)return;pIdx=i;$$('.prow',plist).forEach(function(r,k){r.setAttribute('aria-expanded',k===i);});}
-setPillar(1);
+$('#plist').innerHTML=PILLARS.map(function(p,i){
+  return '<figure class="pslide"><img src="img/'+p.img+'.jpg" alt="" loading="lazy"><figcaption class="ptext"><div><b>'+p.n+'</b><small>'+p.s+'</small></div><span class="pnum">'+(i+1)+' / '+PILLARS.length+'</span></figcaption></figure>';
+}).join('');
 
-/* scroll driver for both pinned scenes */
+/* scroll driver for the pinned amounts scene */
 function sceneProgress(el){var pin=el.querySelector('.scene-pin');var top=parseFloat(getComputedStyle(pin).top)||0;var r=el.getBoundingClientRect();var span=Math.max(1,el.offsetHeight-pin.offsetHeight);return clamp((top-r.top)/span,0,0.9999);}
 function onScroll(){
   if(view!=='landing')return;
   setBuys(Math.floor(sceneProgress(buys)*BUYS.length));
-  setPillar(Math.floor(sceneProgress(pillars)*PILLARS.length));
 }
+
+/* gift card terms toggle */
+$('#infoBtn').addEventListener('click',function(){
+  var open=this.getAttribute('aria-expanded')!=='true';
+  this.setAttribute('aria-expanded',open);$('#infoPop').classList.toggle('open',open);
+});
 window.addEventListener('scroll',function(){requestAnimationFrame(onScroll);},{passive:true});
 
 /* ---------- A5: messenger plays once when it comes into view ---------- */
