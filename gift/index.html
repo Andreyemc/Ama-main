@@ -382,6 +382,21 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
 /* landing blocks fade up once when they first enter the screen */
 .rv{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
 .rv.in{opacity:1;transform:none}
+.wave{display:none;position:fixed;left:0;right:0;top:0;height:calc(100vh + 200px);height:calc(100lvh + 200px);z-index:95;pointer-events:none;will-change:transform;
+  /* M5: the dark of the Done screen rolls up from the bottom; its leading edge is soft, blurs what it passes and carries a faint warm light */
+  background:linear-gradient(to bottom,rgba(43,42,40,0) 0,rgba(43,42,40,.5) 80px,#2B2A28 190px);
+  -webkit-backdrop-filter:blur(16px) saturate(.9);backdrop-filter:blur(16px) saturate(.9);
+  -webkit-mask:linear-gradient(to bottom,transparent 0,#000 120px);mask:linear-gradient(to bottom,transparent 0,#000 120px)}
+.wave::before{content:"";position:absolute;left:-12%;right:-12%;top:46px;height:130px;filter:blur(26px);opacity:.85;
+  background:linear-gradient(90deg,rgba(255,168,110,0),rgba(255,168,110,.55) 22%,rgba(255,216,176,.65) 50%,rgba(236,150,140,.5) 78%,rgba(255,168,110,0))}
+.wave.go{display:block;animation:waveUp .78s cubic-bezier(.33,0,.15,1) forwards}
+.wave.out{display:block;transform:translateY(-200px);opacity:0;transition:opacity .38s ease}
+@keyframes waveUp{from{transform:translateY(100vh);transform:translateY(100lvh)}to{transform:translateY(-200px)}}
+/* Done after paying: card turns in, then title and text fade up one after another */
+.done.arrive .col>*:not(.gc){animation:arriveUp .55s cubic-bezier(.2,.8,.2,1) both}
+.done.arrive .col>:nth-child(2){animation-delay:.12s}.done.arrive .col>:nth-child(3){animation-delay:.2s}.done.arrive .col>:nth-child(4){animation-delay:.28s}
+.done.arrive .col>:nth-child(5){animation-delay:.36s}.done.arrive .col>:nth-child(6){animation-delay:.44s}.done.arrive .col>:nth-child(n+7){animation-delay:.5s}
+@keyframes arriveUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 @media (min-width:760px){
@@ -586,6 +601,7 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
 </main>
 
 <!-- fixed CTA dock -->
+<div class="wave" id="wave" aria-hidden="true"></div>
 <div class="dock off" id="dock">
   <div class="col">
     <p class="pay-error" id="payError" role="alert"></p>
@@ -1380,13 +1396,22 @@ function pay(){
   setTimeout(function(){
     cta.removeAttribute('aria-busy');
     giftCode=code();
-    renderDone();show('done');
+    renderDone();
+    var vd=$('#vDone'),w=$('#wave');
+    if(reduce){show('done');haptic('success');return;}
+    w.className='wave go'; // M5: the dark layer rolls up over the review screen
+    setTimeout(function(){
+      show('done');vd.classList.add('arrive');haptic('success');
+      requestAnimationFrame(function(){w.className='wave out';});
+      setTimeout(function(){w.className='wave';},420);
+      setTimeout(function(){vd.classList.remove('arrive');},1300);
+    },800);
   },1500);
 }
 function renderDone(){
   var d=design(), to=S.to||'them';
   paintCard(C.done,d,S.amount);
-  var el=C.done.el;el.classList.remove('enter','glint');void el.offsetWidth;el.classList.add('enter','glint');haptic('success');
+  var el=C.done.el;el.classList.remove('enter','glint');void el.offsetWidth;el.classList.add('enter','glint');
   var link='amaforyou.com/gift/'+giftCode;$('#giftLink').textContent=link;
   var text=to+', I got you an AMA gift card: '+money(S.amount)+' for any session.'+(S.msg?' “'+S.msg+'”':'')+' Open it here: https://'+link;
   $('#waBtn').href='https://wa.me/?text='+encodeURIComponent(text);
