@@ -161,12 +161,13 @@ a.btn{text-decoration:none}
 .up>.gc{position:absolute;top:0;left:100%;width:calc(100% * 85.6 / 53.98);max-width:none;transform-origin:0 0;transform:rotate(90deg)}
 .up>.gc .gc-shadow{display:none}
 .up::before{content:"";position:absolute;inset:8% 10% 3%;border-radius:14px;box-shadow:0 24px 30px -12px rgba(70,26,15,.34);pointer-events:none}
-/* carousel: same-size neighbours, wide gap; cards turn like pages while moving and settle flat */
-.ucar{--uw:min(56vw,233px);display:flex;gap:30px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;perspective:1100px;overscroll-behavior-x:contain;
-  padding:28px calc(50% - var(--uw) / 2) 36px}
-.ucar::-webkit-scrollbar{display:none}
-.ucar>button{flex:0 0 var(--uw);scroll-snap-align:center;scroll-snap-stop:always;transform:rotateY(var(--flip,0deg));will-change:transform}
-.dsg-row{--uw:min(52vw,210px);padding-top:8px;padding-bottom:28px}
+/* stepwise flip carousel (as in the reference): centre card flat, neighbours almost edge-on;
+   one swipe turns exactly one card, the focused one turns away while the next turns in */
+.ucar{--uw:min(56vw,233px);position:relative;height:calc(var(--uw) * 85.6 / 53.98 + 64px);perspective:1100px;touch-action:pan-y;user-select:none;-webkit-user-select:none;overflow:hidden}
+.ucar>button{position:absolute;top:28px;left:50%;width:var(--uw);margin-left:calc(var(--uw) / -2);transform-style:preserve-3d;will-change:transform;-webkit-tap-highlight-color:transparent}
+.ucar>button:focus-visible{outline:none}
+.ucar:focus-visible{outline:2px solid var(--rust);outline-offset:-2px}
+.dsg-row{--uw:min(52vw,210px)}
 .flow[data-step="1"] .stage{display:none}
 .moods h2,.pillars h2,.chat-section h2{font-size:clamp(40px,12.4vw,54px);line-height:.98;letter-spacing:-.025em}
 .mood-meta{width:100%;display:flex;flex-direction:column;gap:12px}
@@ -405,7 +406,7 @@ a.btn{text-decoration:none}
       <section class="moods">
         <h2>Six moods.<br>One gift.</h2>
         <div class="ucar bleed" id="moodRow" aria-label="Card designs"></div>
-        <div class="mood-meta"><div class="top"><b id="moodName">Sand</b><span id="moodIdx">1 / 6</span></div><p>Swipe the card. Tap it to start with this design.</p></div>
+        <div class="mood-meta"><div class="top"><b id="moodName">Sand</b><span id="moodIdx">1 / 6</span></div><p>Swipe to see the designs.</p></div>
       </section>
     </div>
 
@@ -865,34 +866,59 @@ function setBuys(i){
 }
 setBuys(0);
 
-/* ---------- upright card carousel: snaps one card to the centre; while it moves every card turns
-   on its vertical axis like a page (angle from scroll speed) and settles flat when it stops ---------- */
-function makeCarousel(row,key,onPick,onTapCurrent){
-  var items=[], cards=[], cur=-1, last=row.scrollLeft, lastT=performance.now(), flip=0, target=0, idleAt=0, raf=0;
+/* ---------- upright card carousel, stepwise flip ----------
+   slot s = position relative to the focus (0 centre, ±1 neighbours). Halfway (|s|≈.5) cards are nearly edge-on. */
+function makeCarousel(row,key,onPick){
+  var items=[], cards=[], cur=0, p=0, anim=null, drag=null;
+  row.tabIndex=0;row.setAttribute('role','listbox');
   DESIGNS.forEach(function(d,i){
-    var b=document.createElement('button');b.type='button';b.setAttribute('aria-label',d.name+' design');
+    var b=document.createElement('button');b.type='button';b.tabIndex=-1;b.setAttribute('role','option');b.setAttribute('aria-label',d.name+' design');
     b.innerHTML='<div class="up"><div data-card="'+key+'" data-nodrag data-amp=".7"></div></div>';row.appendChild(b);
     var c=buildCard(b.querySelector('[data-card]'));c.upright=true;observe(c);paintCard(c,d,75);c.el.classList.add('no-amt');
     items.push(b);cards.push(c);
-    b.addEventListener('click',function(){ if(i!==cur){go(i,true);return;} if(onTapCurrent)onTapCurrent(i); });
+    b.addEventListener('click',function(){ if(drag&&drag.moved)return; var s=i-cur; if(s===1||s===-1)step(s); });
   });
-  function centre(){var mid=row.scrollLeft+row.clientWidth/2,best=0,bd=1e9;items.forEach(function(m,i){var c=m.offsetLeft+m.offsetWidth/2,d=Math.abs(c-mid);if(d<bd){bd=d;best=i;}});return best;}
-  function go(i,smooth){var m=items[i];row.scrollTo({left:m.offsetLeft+m.offsetWidth/2-row.clientWidth/2,behavior:smooth&&!reduce?'smooth':'auto'});}
-  function tick(now){
-    var dt=Math.max(1,now-lastT);lastT=now;var v=(row.scrollLeft-last)/dt*16;last=row.scrollLeft; // px per frame
-    if(Math.abs(v)>0.3){target=clamp(v*1.1,-35,35);idleAt=now;} else if(now-idleAt>70){target=0;}
-    flip+=(target-flip)*0.22; if(reduce)flip=0;
-    var f=flip.toFixed(2)+'deg';items.forEach(function(m){m.style.setProperty('--flip',f);});
-    var c=centre(); if(c!==cur){cur=c;cards.forEach(function(k,n){k.still=n!==c;});onPick(c);}
-    if(Math.abs(flip)>0.05||Math.abs(target)>0.05){raf=requestAnimationFrame(tick);}else{raf=0;items.forEach(function(m){m.style.setProperty('--flip','0deg');});}
+  function place(){
+    var W=items[0].offsetWidth, X=Math.max(W*0.5+30,row.clientWidth/2-6); // neighbours rest at the screen edges, as slivers
+    items.forEach(function(m,i){
+      var sl=i-cur-p, a=Math.abs(sl), sg=sl<0?-1:1;
+      var x=a<=1?sl*X:sg*(X+(a-1)*W*0.6);
+      var ry=reduce?0:-sg*Math.min(1,a*1.6)*82;           // edge-on by the middle of the turn, neighbours rest at 82°
+      var z=-Math.min(a,1.4)*60;
+      m.style.transform='translate3d('+x.toFixed(1)+'px,0,'+z.toFixed(1)+'px) rotateY('+ry.toFixed(1)+'deg)';
+      m.style.opacity=a>1.35?0:1; m.style.zIndex=String(10-Math.round(a*4)); m.style.visibility=a>1.6?'hidden':'visible';
+      m.setAttribute('aria-selected',i===cur);
+    });
   }
-  row.addEventListener('scroll',function(){if(!raf){lastT=performance.now();raf=requestAnimationFrame(tick);}},{passive:true});
-  return {go:go,current:function(){return cur;},sync:function(){var c=centre();if(c!==cur){cur=c;cards.forEach(function(k,n){k.still=n!==c;});onPick(c);}}};
+  function settle(){ cards.forEach(function(k,n){k.still=n!==cur;}); onPick(cur); }
+  function ease(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+  function animateTo(target,dur,done){ cancelAnimationFrame(anim); var from=p,t0=performance.now(); dur=reduce?120:dur;
+    cards.forEach(function(k){k.still=true;});
+    (function f(now){var t=Math.min(1,(now-t0)/dur);p=from+(target-from)*ease(t);place();if(t<1)anim=requestAnimationFrame(f);else{done&&done();}})(t0); }
+  function step(dir){ var n=cur+dir; if(n<0||n>=items.length){animateTo(0,260);return;}
+    animateTo(dir,650,function(){cur=n;p=0;place();settle();}); }
+  function go(i){ if(i===cur)return; cancelAnimationFrame(anim); cur=clamp(i,0,items.length-1); p=0; place(); settle(); }
+  // one swipe = one card: the drag follows the finger up to one card, release decides
+  row.addEventListener('pointerdown',function(e){ if(e.button>0)return; drag={x:e.clientX,y:e.clientY,moved:false,h:null}; cancelAnimationFrame(anim); });
+  row.addEventListener('pointermove',function(e){ if(!drag)return; var dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+    if(drag.h===null&&(Math.abs(dx)>8||Math.abs(dy)>8)) drag.h=Math.abs(dx)>Math.abs(dy);
+    if(!drag.h)return; drag.moved=true; var W=items[0].offsetWidth; p=clamp(-dx/(W*1.2),-1,1);
+    if((cur===0&&p<0)||(cur===items.length-1&&p>0)) p*=0.25; place(); });
+  function release(e){ if(!drag)return; var d=drag; drag=d.moved?{moved:true}:null; setTimeout(function(){drag=null;},0);
+    if(!d.h){ if(p!==0)animateTo(0,260); return; }
+    var dx=e.clientX-d.x; if(Math.abs(dx)>40){ step(dx<0?1:-1); } else animateTo(0,260); }
+  row.addEventListener('pointerup',release); row.addEventListener('pointercancel',release);
+  row.addEventListener('keydown',function(e){ if(e.key==='ArrowRight'){step(1);e.preventDefault();} if(e.key==='ArrowLeft'){step(-1);e.preventDefault();} });
+  window.addEventListener('resize',place);
+  place(); settle();
+  return {go:go,current:function(){return cur;},sync:function(){place();}};
 }
 var moodRow=$('#moodRow');
-var moods=makeCarousel(moodRow,'mood',function(i){$('#moodName').textContent=DESIGNS[i].name;$('#moodIdx').textContent=(i+1)+' / '+DESIGNS.length;},
-  function(i){S.design=DESIGNS[i].id;persist();startFlow(1);});
-moods.sync();
+var moods=makeCarousel(moodRow,'mood',function(i){$('#moodName').textContent=DESIGNS[i].name;$('#moodIdx').textContent=(i+1)+' / '+DESIGNS.length;if(cta&&view==='landing')updateDock();});
+window.addEventListener('load',function(){moods.sync();});
+var moodsSeen=false; // once the carousel has been on screen, the buy button starts with the design in focus
+var moodsInView=false; // while the carousel is on screen the buy button names the design in focus
+new IntersectionObserver(function(es){moodsInView=es[0].isIntersecting;if(moodsInView)moodsSeen=true;if(cta&&view==='landing')updateDock();},{threshold:0.5}).observe(moodRow);
 /* purchase step 1 uses the same carousel */
 var dsg=makeCarousel($('#dsgRow'),'dsg',function(i){ if(view==='flow'&&currentStep===1) setDesign(DESIGNS[i].id); else renderDesignHead(i); });
 
@@ -985,7 +1011,8 @@ function renderDesignHead(i){$('#designName').textContent=DESIGNS[i].name;$('#de
 function renderDesign(){
   var i=DESIGNS.findIndex(function(d){return d.id===S.design;});
   renderDesignHead(i);
-  if(currentStep===1&&dsg.current()!==i)requestAnimationFrame(function(){dsg.go(i,false);});
+  if(dsg.current()!==i)dsg.go(i);
+  dsg.sync(); // the row may just have become visible
   $$('.thumb').forEach(function(t){var on=t.dataset.id===S.design;t.setAttribute('aria-pressed',on);if(on&&currentStep===1)t.scrollIntoView({block:'nearest',inline:'center',behavior:reduce?'auto':'smooth'});});
 }
 function renderAmount(){
@@ -1056,7 +1083,7 @@ function updateDock(){
     cta.textContent=currentStep===5?('Pay '+money(S.amount)):'Continue';
     if(currentStep===5)note.textContent='Prototype: no payment is taken';
   }else if(view==='landing'){
-    cta.textContent='Choose a gift card';dock.classList.toggle('off',heroVisible);
+    cta.textContent=moodsInView?('Choose '+DESIGNS[moods.current()].name):'Choose a gift card';dock.classList.toggle('off',heroVisible);
   }else{dock.classList.add('off');}
 }
 var heroVisible=true;
@@ -1064,7 +1091,7 @@ new IntersectionObserver(function(es){heroVisible=es[0].isIntersecting;if(view==
 
 $$('[data-start]').forEach(function(b){b.addEventListener('click',function(){startFlow(1);});});
 cta.addEventListener('click',function(){
-  if(view==='landing'){startFlow(1);return;}
+  if(view==='landing'){if(moodsSeen){S.design=DESIGNS[moods.current()].id;persist();}startFlow(1);return;}
   if(view!=='flow')return;
   if(!validate(currentStep))return;
   if(currentStep<5){goStep(currentStep+1,1);return;}
