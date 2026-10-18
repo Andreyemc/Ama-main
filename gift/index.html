@@ -127,8 +127,12 @@ a.btn{text-decoration:none}
 .logo svg{fill:var(--ink)}
 .gc-kind{position:absolute;right:5.6cqw;top:6.4cqw;font-size:3.1cqw;color:var(--ink-c);opacity:.86}
 .gc-amt{position:absolute;left:5.4cqw;bottom:4.6cqw;font-size:10cqw;line-height:1;letter-spacing:-.01em;color:var(--ink-c);font-variant-numeric:tabular-nums}
-.gc-shadow{position:absolute;left:8%;right:8%;bottom:-6%;height:24%;border-radius:50%;background:radial-gradient(closest-side,rgba(70,26,15,.42),rgba(70,26,15,0));filter:blur(6px);
-  transform:translate(calc(var(--ry) * -1.1px),calc(var(--rx) * 0.6px));z-index:-1;pointer-events:none}
+.gc-shadow{position:absolute;z-index:-1;left:3%;right:3%;top:10%;bottom:1%;border-radius:6cqw;pointer-events:none;
+  /* the whole card casts it: a tight contact shadow along the full width, a softer one below, and a wide faint ambient one */
+  box-shadow:0 1.4cqw 2.2cqw -.4cqw rgba(48,26,16,.30),0 5cqw 8cqw -2cqw rgba(48,26,16,.24),0 12cqw 20cqw -6cqw rgba(48,26,16,.16)}
+.gc-shadow::after{content:"";position:absolute;left:-6%;right:-6%;top:60%;height:75%;pointer-events:none;opacity:.35;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .2 0 0 0 0 .1 0 0 0 0 .06 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); /* a little grain so the shadow reads as light on paper, not a flat gradient */
+  -webkit-mask:radial-gradient(60% 55% at 50% 30%,#000,transparent);mask:radial-gradient(60% 55% at 50% 30%,#000,transparent)}
 .gc.no-amt .gc-amt{visibility:hidden}
 .gc.swap .gc-tilt{animation:swap .42s cubic-bezier(.2,.8,.2,1)}
 @keyframes swap{0%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(.97)}100%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(1)}} /* no opacity: fading a 3D card makes Safari flatten and redraw it, which flickers */
@@ -175,7 +179,8 @@ a.btn{text-decoration:none}
 .up{position:relative;width:100%;aspect-ratio:53.98/85.6}
 .up>.gc{position:absolute;top:0;left:100%;width:calc(100% * 85.6 / 53.98);max-width:none;transform-origin:0 0;transform:rotate(90deg)}
 .up>.gc .gc-shadow{display:none}
-.up::before{content:"";position:absolute;inset:8% 10% 3%;border-radius:14px;box-shadow:0 24px 30px -12px rgba(70,26,15,.34);pointer-events:none}
+.up::before{content:"";position:absolute;inset:6% 3% 1%;border-radius:6cqw;pointer-events:none;container-type:normal;
+  box-shadow:0 5px 8px -2px rgba(48,26,16,.28),0 18px 28px -10px rgba(48,26,16,.24),0 40px 60px -24px rgba(48,26,16,.16)}
 /* stepwise flip carousel (as in the reference): centre card flat, neighbours almost edge-on;
    one swipe turns exactly one card, the focused one turns away while the next turns in */
 .ucar{--uw:min(56vw,233px);position:relative;height:calc(var(--uw) * 85.6 / 53.98 + 64px);perspective:1100px;touch-action:pan-y;user-select:none;-webkit-user-select:none;overflow:hidden}
@@ -239,7 +244,7 @@ a.btn{text-decoration:none}
 .stage .gc{transition:max-width .45s cubic-bezier(.2,.8,.2,1)}
 .flow[data-step="4"] .stage .gc{max-width:240px}
 .flow[data-step="5"] .stage .gc{max-width:200px}
-.flow.typing .stage{display:none} /* keyboard open on a custom amount: chips and field sit right under the step bar */
+.flow.kb-amount .stage{display:none} /* keyboard open on a custom amount: chips and field sit right under the step bar */
 .step{display:flex;flex-direction:column;gap:22px;animation:stepIn .32s cubic-bezier(.2,.8,.2,1)}
 .step.back{animation-name:stepBack}
 @keyframes stepIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
@@ -305,6 +310,14 @@ a.btn{text-decoration:none}
 .total span{font-size:16px}
 .total b{font-weight:400;font-size:30px;font-variant-numeric:tabular-nums}
 .pay-methods .radio b{display:flex;align-items:center;gap:8px}
+/* wallet button in the dock: Apple draws it (apple-pay-button); elsewhere a plain black capsule stands in */
+.wallet-btn{display:flex}
+.wallet-btn[hidden]{display:none}
+.radio[hidden],.field[hidden],.card-fields[hidden],.two[hidden]{display:none}
+.wallet-btn apple-pay-button{--apple-pay-button-width:100%;--apple-pay-button-height:46px;--apple-pay-button-border-radius:23px;--apple-pay-button-padding:0;--apple-pay-button-box-sizing:border-box;width:100%;display:block}
+.wallet-btn .wb{width:100%;min-height:46px;border-radius:23px;background:#000;color:#fff;font-size:17px;font-weight:500;letter-spacing:-.01em;display:flex;align-items:center;justify-content:center;gap:10px}
+.wallet-btn.busy{opacity:.6;pointer-events:none}
+select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
 .card-fields{display:flex;flex-direction:column;gap:10px}
 .fine{font-size:12px;color:var(--mute);line-height:1.45}
 .pay-error{display:none;font-size:13px;color:var(--err);text-align:center}
@@ -531,15 +544,20 @@ a.btn{text-decoration:none}
         <div class="field" id="fBuyer"><label for="buyerInput">Your email for the receipt</label><div class="input"><input id="buyerInput" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></div><span class="err">Enter an email like name@example.com</span></div>
         <div class="radios pay-methods" role="radiogroup" aria-label="Payment method">
           <span class="label">Pay with</span>
-          <button class="radio" role="radio" data-pay="wallet" aria-checked="true"><div><b>Apple Pay or Google Pay</b><span>Confirm on your phone</span></div><i></i></button>
+          <button class="radio" role="radio" data-pay="wallet" aria-checked="true" id="walletOpt"><div><b id="walletName">Apple Pay</b><span id="walletSub">Face ID on this iPhone</span></div><i></i></button>
           <button class="radio" role="radio" data-pay="card" aria-checked="false"><div><b>Card</b><span>Visa, Mastercard, Amex</span></div><i></i></button>
         </div>
         <div class="card-fields" id="cardFields" hidden>
           <div class="field" id="fCardNo"><label for="cardNo">Card number</label><div class="input"><input id="cardNo" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="19"></div><span class="err">Check the card number</span></div>
           <div class="two">
             <div class="field" id="fExp"><label for="cardExp">Expiry</label><div class="input"><input id="cardExp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="7"></div><span class="err">Use MM / YY</span></div>
-            <div class="field" id="fCvc"><label for="cardCvc">Security code</label><div class="input"><input id="cardCvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4"></div><span class="err">3 or 4 digits</span></div>
+            <div class="field" id="fCvc"><label for="cardCvc">CVC</label><div class="input"><input id="cardCvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4"></div><span class="err">3 or 4 digits</span></div>
           </div>
+          <div class="two">
+            <div class="field"><label for="cardCountry">Country</label><div class="input"><select id="cardCountry" autocomplete="country"><option>United Kingdom</option><option>Ireland</option><option>United States</option><option>Other</option></select></div></div>
+            <div class="field" id="fPost"><label for="cardPost">Postcode</label><div class="input"><input id="cardPost" autocomplete="postal-code" placeholder="SW1A 1AA" maxlength="10"></div></div>
+          </div>
+          <p class="fine">Card details go straight to Stripe. AMA never sees them.</p>
         </div>
         <p class="fine">Valid for 24 months. Spend on any session, plan or bundle at AMA. Not exchangeable for cash. By paying you agree to the gift card terms.</p>
       </div>
@@ -572,6 +590,7 @@ a.btn{text-decoration:none}
   <div class="col">
     <p class="pay-error" id="payError" role="alert"></p>
     <button class="btn" id="cta">Continue</button>
+    <div class="wallet-btn" id="walletBtn" hidden></div>
     <p class="dock-note" id="dockNote"></p>
   </div>
 </div>
@@ -1174,7 +1193,7 @@ function renderSummary(){
   var rows=[['Design',design().name,1],['Amount',money(S.amount),2],['To',S.to,3],['From',S.from,3],['Message',S.msg||'No message',3],['Delivery',deliveryText(),4]];
   $('#summary').innerHTML=rows.map(function(r){return '<div class="sum-row"><dt>'+r[0]+'</dt><dd>'+esc(r[1]).replace(/\n/g,'<br>')+'</dd><button type="button" data-edit="'+r[2]+'" aria-label="Edit '+r[0].toLowerCase()+'">Edit</button></div>';}).join('');
   $$('[data-pay]').forEach(function(b){b.setAttribute('aria-checked',b.dataset.pay===S.pay);});
-  $('#cardFields').hidden=S.pay!=='card';
+  $('#cardFields').hidden=S.pay!=='card';$('#fBuyer').hidden=S.pay!=='card';
 }
 function esc(s){return String(s).replace(/[&<>"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch];});}
 
@@ -1211,13 +1230,41 @@ function goStep(n,dir){
   updateDock();noMicroScroll();
   if(dir!==0)window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
 }
+/* ---------- wallet: Apple Pay on Apple devices, Google Pay on Android, card elsewhere (payments by Stripe; branding only in the prototype) ---------- */
+var WALLET=(function(){var ua=navigator.userAgent;
+  if(window.ApplePaySession){var ph=/iPhone/.test(ua),pad=/iPad/.test(ua)||(/Macintosh/.test(ua)&&'ontouchend' in document);
+    return {kind:'apple',name:'Apple Pay',sub:ph?'Face ID on this iPhone':pad?'Face ID or Touch ID on this iPad':'Touch ID or your iPhone'};}
+  if(/Android/.test(ua))return {kind:'google',name:'Google Pay',sub:'Confirm on this phone'};
+  return null;})();
+if(WALLET){$('#walletName').textContent=WALLET.name;$('#walletSub').textContent=WALLET.sub;}
+else{$('#walletOpt').hidden=true;if(S.pay==='wallet')S.pay='card';}
+function receiptLine(){return (S.pay==='wallet'&&WALLET)?('A receipt is on its way to your '+WALLET.name+' email.'):('A receipt is on its way to '+S.buyer+'.');}
+var walletBuilt=false;
+function buildWalletBtn(){
+  if(walletBuilt)return;walletBuilt=true;var host=$('#walletBtn');
+  function fallback(){host.innerHTML='<button type="button" class="wb">Buy with '+WALLET.name+'</button>';}
+  if(WALLET.kind==='apple'){
+    /* the official button, drawn by Apple (with the default card image when the system offers it) */
+    host.innerHTML='<apple-pay-button buttonstyle="black" type="buy" locale="en-GB"></apple-pay-button>';
+    if(!window.customElements||!customElements.get('apple-pay-button')){
+      var sc=document.createElement('script');sc.src='https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js';sc.crossOrigin='anonymous';sc.async=true;
+      sc.onerror=fallback;document.head.appendChild(sc);
+      setTimeout(function(){if(!customElements.get('apple-pay-button'))fallback();},3000);
+    }
+  }else fallback();
+  host.addEventListener('click',function(){if(view!=='flow'||currentStep!==5)return;haptic('medium');if(!validate(5))return;pay();});
+}
 function updateDock(){
   var note=$('#dockNote');note.textContent='';
   if(view==='flow'){
     dock.classList.remove('off');
     setCta(currentStep===5?('Pay '+money(S.amount)):'Continue');
     if(currentStep===5)note.textContent='Prototype: no payment is taken';
+    var useWallet=currentStep===5&&S.pay==='wallet'&&!!WALLET; // Apple Pay / Google Pay takes the button's place when it is the chosen method
+    if(useWallet)buildWalletBtn();
+    cta.hidden=useWallet;$('#walletBtn').hidden=!useWallet;
   }else if(view==='landing'){
+    cta.hidden=false;$('#walletBtn').hidden=true;
     setCta(moodsInView?('Choose '+DESIGNS[moods.near()].name):'Choose a gift card');dock.classList.toggle('off',heroVisible);
   }else{dock.classList.add('off');}
 }
@@ -1251,8 +1298,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){$('#menuLay
 /* =========================================================
    INPUTS
    ========================================================= */
-$('#amountInput').addEventListener('focus',function(){$('#vFlow').classList.add('typing');});
-$('#amountInput').addEventListener('blur',function(){$('#vFlow').classList.remove('typing');});
+$('#amountInput').addEventListener('focus',function(){$('#vFlow').classList.add('kb-amount');});
+$('#amountInput').addEventListener('blur',function(){$('#vFlow').classList.remove('kb-amount');});
 $('#amountInput').addEventListener('input',function(e){
   var v=e.target.value.replace(/\D/g,'').slice(0,3);e.target.value=v;
   var n=+v;$('#fAmount').classList.remove('invalid');
@@ -1262,13 +1309,16 @@ $('#toInput').addEventListener('input',function(e){S.to=e.target.value.trim();pe
 $('#fromInput').addEventListener('input',function(e){S.from=e.target.value.trim();persist();$('#fFrom').classList.remove('invalid');});
 $('#msgInput').addEventListener('input',function(e){S.msg=e.target.value;persist();renderMsgCount();});
 $$('.seg button').forEach(function(b){b.addEventListener('click',function(){S.mode=b.dataset.mode;persist();renderDelivery();});});
-$$('[data-when]').forEach(function(b){b.addEventListener('click',function(){S.when=b.dataset.when;if(S.when==='later'&&!S.date){var d=new Date();d.setDate(d.getDate()+1);S.date=d.toISOString().slice(0,10);$('#dateInput').value=S.date;}persist();renderDelivery();});});
+$$('[data-when]').forEach(function(b){b.addEventListener('click',function(){var wasLater=S.when==='later';S.when=b.dataset.when;if(S.when==='later'&&!S.date){var d=new Date();d.setDate(d.getDate()+1);S.date=d.toISOString().slice(0,10);$('#dateInput').value=S.date;}persist();renderDelivery();
+  if(S.when==='later'&&!wasLater){var row=$('#whenFields');requestAnimationFrame(function(){var r=row.getBoundingClientRect(),lim=$('.dock .col').getBoundingClientRect().top-16;if(r.bottom>lim)window.scrollBy({top:r.bottom-lim,behavior:reduce?'auto':'smooth'});});}});});
 $('#emailInput').addEventListener('input',function(e){S.email=e.target.value.trim();persist();$('#fEmail').classList.remove('invalid');});
 $('#dateInput').addEventListener('input',function(e){S.date=e.target.value;persist();$('#fDate').classList.remove('invalid');renderDelivery();});
 $('#timeInput').addEventListener('input',function(e){S.time=e.target.value||'09:00';persist();renderDelivery();});
 (function(){var d=new Date();$('#dateInput').min=d.toISOString().slice(0,10);})();
+/* date and time: open the system picker without iOS scrolling the page to the field */
+['#dateInput','#timeInput'].forEach(function(id){var inp=$(id);inp.addEventListener('touchend',function(e){if(document.activeElement===inp)return;e.preventDefault();try{inp.focus({preventScroll:true});}catch(_){inp.focus();}try{if(inp.showPicker)inp.showPicker();}catch(_){}},{passive:false});});
 $('#buyerInput').addEventListener('input',function(e){S.buyer=e.target.value.trim();persist();$('#fBuyer').classList.remove('invalid');});
-$$('[data-pay]').forEach(function(b){b.addEventListener('click',function(){S.pay=b.dataset.pay;persist();renderSummary();});});
+$$('[data-pay]').forEach(function(b){b.addEventListener('click',function(){S.pay=b.dataset.pay;persist();renderSummary();updateDock();noMicroScroll();});});
 $('#cardNo').addEventListener('input',function(e){var v=e.target.value.replace(/\D/g,'').slice(0,16);e.target.value=v.replace(/(.{4})/g,'$1 ').trim();$('#fCardNo').classList.remove('invalid');});
 $('#cardExp').addEventListener('input',function(e){var v=e.target.value.replace(/\D/g,'').slice(0,4);e.target.value=v.length>2?v.slice(0,2)+' / '+v.slice(2):v;$('#fExp').classList.remove('invalid');});
 $('#cardCvc').addEventListener('input',function(e){e.target.value=e.target.value.replace(/\D/g,'').slice(0,4);$('#fCvc').classList.remove('invalid');});
@@ -1288,7 +1338,7 @@ function validate(step){
     if(b2.length)return fail(b2);
   }
   if(step===5){
-    var b3=[];if(!EMAIL.test(S.buyer))b3.push('#fBuyer');
+    var b3=[];if(S.pay==='card'&&!EMAIL.test(S.buyer))b3.push('#fBuyer'); // with Apple Pay / Google Pay the receipt email comes from the wallet
     if(S.pay==='card'){
       if($('#cardNo').value.replace(/\D/g,'').length<15)b3.push('#fCardNo');
       var ex=$('#cardExp').value.replace(/\D/g,'');if(ex.length!==4||+ex.slice(0,2)<1||+ex.slice(0,2)>12)b3.push('#fExp');
@@ -1325,6 +1375,7 @@ $('#pvClose').addEventListener('click',closePreview);$('#pvBack').addEventListen
 function code(){var a='ABCDEFGHJKMNPQRSTUVWXYZ23456789',s='';for(var i=0;i<8;i++){s+=a[Math.floor(Math.random()*a.length)];if(i===3)s+='-';}return s;}
 var giftCode='';
 function pay(){
+  var wb=$('#walletBtn');if(!wb.hidden){wb.classList.add('busy');setTimeout(function(){wb.classList.remove('busy');},1600);}
   cta.setAttribute('aria-busy','true');cta.dataset.label='';cta.innerHTML='<span class="spin" aria-hidden="true"></span>Processing payment';
   setTimeout(function(){
     cta.removeAttribute('aria-busy');
@@ -1342,11 +1393,11 @@ function renderDone(){
   shareText=text;
   if(S.mode==='self'){
     $('#doneTitle').textContent='Your gift is ready';
-    $('#doneLead').textContent='Send it to '+to+' in a message. The link opens the card with your note. A receipt is on its way to '+S.buyer+'.';
+    $('#doneLead').textContent='Send it to '+to+' in a message. The link opens the card with your note. '+receiptLine();
     $('#shareBlock').hidden=false;$('#alsoShare').hidden=true;
   }else{
     $('#doneTitle').textContent=S.when==='now'?'Your gift is on its way':'Your gift is scheduled';
-    $('#doneLead').textContent=(S.when==='now'?'We’ve emailed it to '+S.email+'.':'We’ll email it to '+S.email+' on '+fmtDate(S.date)+' at '+S.time+'.')+' A receipt is in '+S.buyer+'.';
+    $('#doneLead').textContent=(S.when==='now'?'We’ve emailed it to '+S.email+'.':'We’ll email it to '+S.email+' on '+fmtDate(S.date)+' at '+S.time+'.')+' '+receiptLine();
     $('#shareBlock').hidden=true;$('#alsoShare').hidden=false;
   }
 }
@@ -1395,9 +1446,13 @@ if(window.visualViewport){
      when a field loses focus the button drops at once instead of waiting for Safari's late resize event */
   var vv=window.visualViewport;
   var isField=function(el){return el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.tagName==='SELECT');};
-  var fix=function(){var off=Math.max(0,window.innerHeight-vv.height-vv.offsetTop);dock.style.translate=(off>40&&isField(document.activeElement))?('0 '+(-off)+'px'):'';};
+  var hdr=document.querySelector('.site-header'), sbar=$('#stepbar');
+  /* while a field is focused, iOS may slide the visible area down inside the page: the header and step bar follow it, so nothing jumps off the top */
+  var fix=function(){var f=isField(document.activeElement);var off=Math.max(0,window.innerHeight-vv.height-vv.offsetTop);
+    dock.style.translate=(off>40&&f)?('0 '+(-off)+'px'):'';
+    var top=f?Math.max(0,vv.offsetTop):0;hdr.style.translate=top?('0 '+top+'px'):'';sbar.style.translate=top?('0 '+top+'px'):'';};
   vv.addEventListener('resize',fix);vv.addEventListener('scroll',fix);
-  document.addEventListener('focusout',function(){setTimeout(function(){if(!isField(document.activeElement))dock.style.translate='';},0);});
+  document.addEventListener('focusout',function(){setTimeout(function(){if(!isField(document.activeElement)){dock.style.translate='';hdr.style.translate='';sbar.style.translate='';}},0);});
   document.addEventListener('focusin',function(e){if(isField(e.target))fix();});
 }
 
