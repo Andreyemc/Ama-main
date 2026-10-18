@@ -707,43 +707,66 @@ function frame(now){
     }
     var ax=K*(tx*c.amp-c.rx)-DAMP*c.vx, ay=K*(ty*c.amp-c.ry)-DAMP*c.vy;
     c.vx+=ax*dt;c.vy+=ay*dt;c.rx+=c.vx*dt;c.ry+=c.vy*dt;
+    /* with the gyroscope the light travels further than the card turns,
+       so a small wrist movement already reads as a shimmer */
+    var lg=(gyro.on&&gyro.got&&!c.drag&&!c.hover)?1.6:1;
+    c.ly=(c.ly==null?c.ry:c.ly)+(c.ry*lg-(c.ly==null?c.ry:c.ly))*Math.min(1,dt*8);
+    c.lx=(c.lx==null?c.rx:c.lx)+(c.rx*lg-(c.lx==null?c.rx:c.lx))*Math.min(1,dt*8);
     var s=c.el.style;
     s.setProperty('--rx',c.rx.toFixed(2)+'deg');s.setProperty('--ry',c.ry.toFixed(2)+'deg');
-    s.setProperty('--gx',(50+c.ry*2.4).toFixed(1)+'%');s.setProperty('--gy',(40-c.rx*2.6).toFixed(1)+'%');
-    s.setProperty('--fx',(50+c.ry*2.2).toFixed(1)+'%');s.setProperty('--fy',(50-c.rx*2.2).toFixed(1)+'%');
+    s.setProperty('--gx',clamp(50+c.ly*2.4,-20,120).toFixed(1)+'%');s.setProperty('--gy',clamp(40-c.lx*2.6,-20,120).toFixed(1)+'%');
+    s.setProperty('--fx',clamp(50+c.ly*2.2,0,100).toFixed(1)+'%');s.setProperty('--fy',clamp(50-c.lx*2.2,0,100).toFixed(1)+'%');
   }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 
-/* gyroscope: smoothed, baseline = how you hold the phone, drifting slowly back */
+/* gyroscope: baseline = how you hold the phone, drifting back slowly (~10 s),
+   axes corrected for screen rotation */
+function screenAngle(){
+  var a=(screen.orientation&&typeof screen.orientation.angle==='number')?screen.orientation.angle:(window.orientation||0);
+  return ((a%360)+360)%360;
+}
 function onOrient(e){
   if(e.beta==null||e.gamma==null)return;
-  gyro.got=true;
-  var b=e.beta,g=e.gamma;
-  if(gyro.b0===null){gyro.b0=b;gyro.g0=g;}
-  gyro.b0+=(b-gyro.b0)*0.004;gyro.g0+=(g-gyro.g0)*0.004;
-  gyro.x=soft(-(b-gyro.b0)*0.9,MAXX);
-  gyro.y=soft((g-gyro.g0)*0.9,MAXY);
+  var b=e.beta,g=e.gamma,a=screenAngle(),fb=b,fg=g;
+  if(a===90){fb=-g;fg=b;}else if(a===270){fb=g;fg=-b;}else if(a===180){fb=-b;fg=-g;}
+  if(!gyro.got){gyro.got=true;gyro.b0=fb;gyro.g0=fg;updateHint();}
+  if(Math.abs(fb-gyro.b0)>60||Math.abs(fg-gyro.g0)>60){gyro.b0=fb;gyro.g0=fg;} // phone flipped: re-centre
+  gyro.b0+=(fb-gyro.b0)*0.0016;gyro.g0+=(fg-gyro.g0)*0.0016;
+  gyro.x=soft(-(fb-gyro.b0)*1.1,MAXX);
+  gyro.y=soft((fg-gyro.g0)*1.1,MAXY);
 }
 var needsPerm=typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function';
-var touchDevice=matchMedia('(pointer:coarse)').matches;
-var asked=false;
+var touchDevice=matchMedia('(pointer:coarse)').matches||('ontouchstart' in window);
+var permState='unknown'; // unknown | granted | denied
 function startGyro(){
-  if(gyro.on)return;gyro.on=true;gyro.got=false;gyro.b0=null;
+  if(gyro.on)return;gyro.on=true;gyro.got=false;
   window.addEventListener('deviceorientation',onOrient);
-  setTimeout(function(){if(!gyro.got){gyro.on=false;window.removeEventListener('deviceorientation',onOrient);}updateHint();},1600);
-  setTimeout(updateHint,400);
 }
-function maybeAskGyro(){
-  if(asked||!touchDevice)return;asked=true;
-  if(needsPerm){DeviceOrientationEvent.requestPermission().then(function(r){if(r==='granted')startGyro();updateHint();}).catch(function(){updateHint();});}
+/* iOS only allows the permission prompt inside a real user gesture (touchend / click),
+   not pointerdown, so it is asked on the first tap anywhere and retried if it failed */
+function askGyro(){
+  if(!needsPerm||permState!=='unknown')return;
+  try{
+    DeviceOrientationEvent.requestPermission().then(function(r){
+      permState=r==='granted'?'granted':'denied';
+      if(r==='granted')startGyro();
+      updateHint();
+    }).catch(function(){updateHint();}); // not a valid gesture yet: try again on the next tap
+  }catch(_){}
 }
-if(touchDevice&&'DeviceOrientationEvent' in window&&!needsPerm)startGyro();
+function maybeAskGyro(){} // kept for the card pointerdown hook; the real ask happens on tap end
+if(needsPerm){
+  document.addEventListener('touchend',askGyro,{passive:true});
+  document.addEventListener('click',askGyro);
+}else if('DeviceOrientationEvent' in window){
+  startGyro();
+}
 function updateHint(){
   var n=$('#tiltNote');if(!n)return;
   if(gyro.on&&gyro.got){n.textContent='Tilt your phone';return;}
-  if(needsPerm&&!asked){n.innerHTML='Drag the card or <button type="button" id="tiltAsk">turn on tilt</button>';var b=$('#tiltAsk');if(b)b.addEventListener('click',maybeAskGyro);return;}
+  if(needsPerm&&permState==='unknown'){n.innerHTML='Drag the card or <button type="button" id="tiltAsk">turn on tilt</button>';return;}
   n.textContent=finePointer?'Move the cursor over the card':'Drag the card';
 }
 updateHint();
