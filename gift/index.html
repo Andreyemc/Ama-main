@@ -306,6 +306,7 @@ a.btn{text-decoration:none}
 /* iOS haptics: a transparent system switch sits over each control, so the finger itself toggles it and iOS plays its tick */
 .hx{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:.011;-webkit-appearance:none;appearance:none;background:transparent;border:0;border-radius:inherit;cursor:pointer;z-index:2;-webkit-tap-highlight-color:transparent}
 .btn,.chip,.seg button,.radio,.phrase,.stepbar .icon-btn{position:relative}
+.hx-row{z-index:20;border-radius:0;touch-action:pan-y}
 .wallet-btn[hidden]{display:none}
 .radio[hidden],.field[hidden],.card-fields[hidden],.two[hidden]{display:none}
 .wallet-btn apple-pay-button{--apple-pay-button-width:100%;--apple-pay-button-height:46px;--apple-pay-button-border-radius:23px;--apple-pay-button-padding:0;--apple-pay-button-box-sizing:border-box;width:100%;display:block}
@@ -1037,6 +1038,18 @@ function makeCarousel(row,key,onPick,onNear){
   function go(i){ if(i===cur)return; cancelAnimationFrame(anim); cur=clamp(i,0,items.length-1); p=0; place(); settle(); }
   // one swipe = one card: the drag follows the finger up to one card, release decides and keeps the finger's speed
   row.addEventListener('pointerdown',function(e){ if(e.button>0)return; cancelAnimationFrame(anim); drag={x:e.clientX,y:e.clientY,moved:false,h:null,p0:p,t:performance.now(),lp:p,v:0}; });
+  /* iOS haptic on a swipe: a transparent system switch lies over the row. Dragging a switch's thumb across the middle toggles it,
+     and iOS plays its tick for a real finger. Before each touch the switch is set so the expected swipe direction is the one that toggles. */
+  var lastDir=1, sw=null;
+  if(isIOS){
+    sw=document.createElement('input');sw.type='checkbox';sw.setAttribute('switch','');sw.className='hx hx-row';sw.tabIndex=-1;sw.setAttribute('aria-hidden','true');
+    sw.addEventListener('focus',function(){sw.blur();});row.appendChild(sw);
+    row.addEventListener('pointerdown',function(){var expect=cur===0?1:cur===items.length-1?-1:lastDir;sw.checked=expect>0;sw._moved=false;},true);
+    row.addEventListener('pointermove',function(){if(drag&&drag.h)sw._moved=true;},true);
+    sw.addEventListener('click',function(e){ if(sw._moved)return; // a plain tap: hand it to the card underneath
+      sw.style.pointerEvents='none';var t=document.elementFromPoint(e.clientX,e.clientY);sw.style.pointerEvents='';
+      var bt=t&&t.closest&&t.closest('button');if(bt&&bt.parentNode===row)bt.click(); });
+  }
   row.addEventListener('pointermove',function(e){ if(!drag||drag.moved===true&&drag.done)return; var dx=e.clientX-drag.x, dy=e.clientY-drag.y;
     if(drag.h===null&&(Math.abs(dx)>8||Math.abs(dy)>8)) drag.h=Math.abs(dx)>Math.abs(dy);
     if(!drag.h)return; drag.moved=true; var W=items[0].offsetWidth; var np=clamp(drag.p0-dx/(W*1.2),-1,1);
@@ -1047,7 +1060,7 @@ function makeCarousel(row,key,onPick,onNear){
     if(!d.h){ if(Math.abs(p)>=0.5)step(p>0?1:-1,0); else if(p!==0)springTo(0,0); return; } // grabbed mid-flip, then scrolled: finish to the nearer card
     var v=(performance.now()-d.t>90)?0:d.v; var proj=p+v*0.15;
     var dir=proj>0.13?1:proj<-0.13?-1:0;
-    if(dir!==0&&(cur+dir>=0)&&(cur+dir<items.length)){if(e.pointerType==='touch')row._hap=true;else haptic('light');step(dir,v);} else springTo(0,v); }
+    if(dir!==0&&(cur+dir>=0)&&(cur+dir<items.length)){lastDir=dir;if(e.pointerType==='touch')row._hap=true;else haptic('light');step(dir,v);} else springTo(0,v); }
   row.addEventListener('touchend',function(){if(row._hap){row._hap=false;haptic('light');}},{passive:true}); // iOS gives haptics only inside touchend / click
   row.addEventListener('pointerup',release); row.addEventListener('pointercancel',release);
   row.addEventListener('keydown',function(e){ if(e.key==='ArrowRight'){step(1,4.5);e.preventDefault();} if(e.key==='ArrowLeft'){step(-1,4.5);e.preventDefault();} });
@@ -1248,7 +1261,8 @@ function goStep(n,dir){
 }
 /* ---------- wallet: Apple Pay on Apple devices, Google Pay on Android, card elsewhere (payments by Stripe; branding only in the prototype) ---------- */
 var WALLET=(function(){var ua=navigator.userAgent;
-  if(window.ApplePaySession){var ph=/iPhone/.test(ua),pad=/iPad/.test(ua)||(/Macintosh/.test(ua)&&'ontouchend' in document);
+  var apOK=false;try{apOK=!!(window.ApplePaySession&&(!ApplePaySession.canMakePayments||ApplePaySession.canMakePayments()));}catch(e){apOK=false;}
+  if(apOK){var ph=/iPhone/.test(ua),pad=/iPad/.test(ua)||(/Macintosh/.test(ua)&&'ontouchend' in document);
     return {kind:'apple',name:'Apple Pay',sub:ph?'Face ID on this iPhone':pad?'Face ID or Touch ID on this iPad':'Touch ID or your iPhone'};}
   if(/Android/.test(ua))return {kind:'google',name:'Google Pay',sub:'Confirm on this phone'};
   return null;})();
