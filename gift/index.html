@@ -281,9 +281,12 @@ a.btn{text-decoration:none}
 .phrases{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px))}
 .phrases::-webkit-scrollbar{display:none}
 .phrase{flex:none;border-radius:20px;box-shadow:inset 0 0 0 1px var(--line);padding:9px 14px;font-size:14px;background:var(--paper)}
-.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--sand);border-radius:30px;padding:4px;gap:4px}
-.seg button{height:42px;border-radius:26px;font-size:15px;transition:background .2s,box-shadow .2s}
-.seg button[aria-pressed="true"]{background:var(--paper);box-shadow:0 1px 2px rgba(30,28,26,.12)}
+.seg{--i:0;position:relative;display:grid;grid-template-columns:1fr 1fr;background:var(--sand);border-radius:30px;padding:4px;gap:4px;isolation:isolate}
+/* the selected tab is a pill that slides between the two options */
+.seg::before{content:"";position:absolute;z-index:-1;top:4px;bottom:4px;left:4px;width:calc(50% - 6px);border-radius:26px;background:var(--paper);box-shadow:0 1px 2px rgba(30,28,26,.12),0 2px 8px rgba(30,28,26,.06);
+  transform:translateX(calc(var(--i) * (100% + 4px)));transition:transform .38s cubic-bezier(.3,1.25,.5,1)}
+.seg button{height:42px;border-radius:26px;font-size:15px;color:var(--mute);transition:color .2s}
+.seg button[aria-pressed="true"]{color:var(--ink)}
 .radios{display:flex;flex-direction:column;gap:8px}
 .radio{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;border-radius:14px;padding:14px 16px;box-shadow:inset 0 0 0 1px var(--line);background:var(--paper);transition:box-shadow .18s}
 .radio b{display:block;font-weight:400;font-size:16px}
@@ -755,8 +758,8 @@ function setCta(t){
 var PRESS='.btn,.chip,.seg button,.radio,.phrase,.thumb,.icon-btn,.round-x,.sum-row button,.link';
 function pressAnim(el,down){
   if(reduce||!el.animate)return; if(el._pa)el._pa.cancel();
-  el._pa=down?el.animate([{scale:'1'},{scale:'.97'}],{duration:70,easing:'ease-out',fill:'forwards'})
-             :el.animate([{scale:'.97'},{scale:'1.012',offset:.55},{scale:'1'}],{duration:260,easing:'cubic-bezier(.2,.8,.2,1)'});
+  el._pa=down?el.animate([{transform:'scale(1)'},{transform:'scale(.96)'}],{duration:90,easing:'ease-out',fill:'forwards'})
+             :el.animate([{transform:'scale(.96)'},{transform:'scale(1.015)',offset:.5},{transform:'scale(1)'}],{duration:320,easing:'cubic-bezier(.2,.8,.2,1)'});
 }
 document.addEventListener('pointerdown',function(e){var el=e.target.closest&&e.target.closest(PRESS);if(!el||el.disabled)return;el._pressed=true;pressAnim(el,true);
   function up(){if(!el._pressed)return;el._pressed=false;pressAnim(el,false);document.removeEventListener('pointerup',up,true);document.removeEventListener('pointercancel',up,true);}
@@ -770,15 +773,14 @@ function rollAmt(c,from,to){
   (function f(now){var t=Math.min(1,(now-t0)/D),e=1-Math.pow(1-t,3);el.textContent=money(Math.round(from+(to-from)*e));if(t<1)c._roll=requestAnimationFrame(f);})(t0);
 }
 /* haptics: Android vibrates; iPhone (iOS 18+) gets a light tick from a hidden system switch; elsewhere nothing happens */
-var hapEl=null, isIOS=/iP(hone|ad|od)/.test(navigator.platform)||(navigator.userAgent.indexOf('Mac')>-1&&'ontouchend' in document);
+var isIOS=/iP(hone|ad|od)/.test(navigator.platform)||(navigator.userAgent.indexOf('Mac')>-1&&'ontouchend' in document);
 function haptic(kind){
   try{
     if(navigator.vibrate&&!isIOS){navigator.vibrate(kind==='success'?[14,70,22]:kind==='medium'?20:9);return;}
     if(!isIOS)return;
-    if(!hapEl){hapEl=document.createElement('label');hapEl.setAttribute('aria-hidden','true');
-      hapEl.style.cssText='position:fixed;left:-40px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none';
-      var i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');i.tabIndex=-1;hapEl.appendChild(i);document.body.appendChild(hapEl);}
-    hapEl.click(); if(kind==='success')setTimeout(function(){hapEl.click();},110);
+    tick(); if(kind==='success')setTimeout(tick,110);
+    function tick(){var l=document.createElement('label');l.setAttribute('aria-hidden','true');l.style.display='none';
+      var i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');l.appendChild(i);document.head.appendChild(l);l.click();document.head.removeChild(l);}
   }catch(e){}
 }
 
@@ -823,6 +825,8 @@ var last=performance.now();
 var K=reduce?220:110, DAMP=reduce?30:15; // stiffness / damping: soft, slightly underdamped
 function frame(now){
   var dt=Math.min((now-last)/1000,1/30);last=now;var t=now/1000;
+  /* raw sensor readings are jittery: follow them through a ~150 ms low-pass, once per frame */
+  if(gyro.rx!=null){var lp=Math.min(1,dt*6.5);gyro.x+=(gyro.rx-gyro.x)*lp;gyro.y+=(gyro.ry-gyro.y)*lp;}
   for(var i=0;i<cards.length;i++){
     var c=cards[i];if(!c.visible||c.hidden||!c.el.isConnected||c.el.offsetParent===null)continue;
     if(c.still&&!c.drag&&!c.hover&&c.rested)continue; // a still neighbour at rest costs nothing per frame
@@ -835,11 +839,12 @@ function frame(now){
       if(c.still){tx=0;ty=0;} // carousel neighbours stay still; only the card in focus animates
     }
     if(c.upright&&!c.drag){var t0=tx;tx=ty;ty=-t0;} // local X runs down the screen, local Y runs left
-    var ax=K*(tx*c.amp-c.rx)-DAMP*c.vx, ay=K*(ty*c.amp-c.ry)-DAMP*c.vy;
+    var dmp=(!c.drag&&!c.hover&&c.gyro&&gyro.on&&gyro.got)?2*Math.sqrt(K):DAMP; // phone tilt: critically damped, it settles without wobbling
+    var ax=K*(tx*c.amp-c.rx)-dmp*c.vx, ay=K*(ty*c.amp-c.ry)-dmp*c.vy;
     c.vx+=ax*dt;c.vy+=ay*dt;c.rx+=c.vx*dt;c.ry+=c.vy*dt;
     /* with the gyroscope the light travels further than the card turns,
        so a small wrist movement already reads as a shimmer */
-    var lg=(c.gyro&&gyro.on&&gyro.got&&!c.drag&&!c.hover)?1.6:1;
+    var lg=(c.gyro&&gyro.on&&gyro.got&&!c.drag&&!c.hover)?1.3:1;
     c.ly=(c.ly==null?c.ry:c.ly)+(c.ry*lg-(c.ly==null?c.ry:c.ly))*Math.min(1,dt*8);
     c.lx=(c.lx==null?c.rx:c.lx)+(c.rx*lg-(c.lx==null?c.rx:c.lx))*Math.min(1,dt*8);
     c.rested=c.still&&Math.abs(c.rx)<0.02&&Math.abs(c.ry)<0.02&&Math.abs(c.vx)<0.05&&Math.abs(c.vy)<0.05;
@@ -867,8 +872,9 @@ function onOrient(e){
   if(!gyro.got){gyro.got=true;gyro.b0=fb;gyro.g0=fg;updateHint();}
   if(Math.abs(fb-gyro.b0)>60||Math.abs(fg-gyro.g0)>60){gyro.b0=fb;gyro.g0=fg;} // phone flipped: re-centre
   gyro.b0+=(fb-gyro.b0)*0.0016;gyro.g0+=(fg-gyro.g0)*0.0016;
-  gyro.x=soft(-(fb-gyro.b0)*1.1,MAXX);
-  gyro.y=soft((fg-gyro.g0)*1.1,MAXY);
+  /* small, natural turn: about half the phone's tilt, softly capped at ±8° / ±10°, so shaking never throws the card around */
+  gyro.rx=soft(-(fb-gyro.b0)*0.5,8);
+  gyro.ry=soft((fg-gyro.g0)*0.5,10);
 }
 var needsPerm=typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function';
 var touchDevice=matchMedia('(pointer:coarse)').matches||('ontouchstart' in window);
@@ -1006,7 +1012,8 @@ function makeCarousel(row,key,onPick,onNear){
     if(!d.h){ if(Math.abs(p)>=0.5)step(p>0?1:-1,0); else if(p!==0)springTo(0,0); return; } // grabbed mid-flip, then scrolled: finish to the nearer card
     var v=(performance.now()-d.t>90)?0:d.v; var proj=p+v*0.15;
     var dir=proj>0.13?1:proj<-0.13?-1:0;
-    if(dir!==0&&(cur+dir>=0)&&(cur+dir<items.length)){haptic('light');step(dir,v);} else springTo(0,v); }
+    if(dir!==0&&(cur+dir>=0)&&(cur+dir<items.length)){if(e.pointerType==='touch')row._hap=true;else haptic('light');step(dir,v);} else springTo(0,v); }
+  row.addEventListener('touchend',function(){if(row._hap){row._hap=false;haptic('light');}},{passive:true}); // iOS gives haptics only inside touchend / click
   row.addEventListener('pointerup',release); row.addEventListener('pointercancel',release);
   row.addEventListener('keydown',function(e){ if(e.key==='ArrowRight'){step(1,4.5);e.preventDefault();} if(e.key==='ArrowLeft'){step(-1,4.5);e.preventDefault();} });
   window.addEventListener('resize',place);
@@ -1064,7 +1071,8 @@ function sceneProgress(el){var pin=el.querySelector('.scene-pin');var top=parseF
 (function(){var ph=$('#buys .photo'),sx=null,sy=0;
   ph.addEventListener('pointerdown',function(e){sx=e.clientX;sy=e.clientY;});
   function end(e){if(sx===null)return;var dx=e.clientX-sx,dy=e.clientY-sy;sx=null;
-    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.2){var n=clamp(buysIdx+(dx<0?1:-1),0,BUYS.length-1);if(n!==buysIdx)haptic('light');setBuys(n);}}
+    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.2){var n=clamp(buysIdx+(dx<0?1:-1),0,BUYS.length-1);if(n!==buysIdx){if(e.pointerType==='touch')ph._hap=true;else haptic('light');}setBuys(n);}}
+  ph.addEventListener('touchend',function(){if(ph._hap){ph._hap=false;haptic('light');}},{passive:true});
   ph.addEventListener('pointerup',end);ph.addEventListener('pointercancel',function(){sx=null;});})();
 function onScroll(){}
 
@@ -1150,7 +1158,7 @@ function renderAmount(){
 }
 function renderMsgCount(){$('#msgCount').textContent=$('#msgInput').value.length+' / 300';}
 function renderDelivery(){
-  $$('.seg button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.mode===S.mode);});
+  $$('.seg button').forEach(function(b,k){var on=b.dataset.mode===S.mode;b.setAttribute('aria-pressed',on);if(on)b.parentNode.style.setProperty('--i',k);});
   $('#modeEmail').style.display=S.mode==='email'?'flex':'none';$('#modeSelf').hidden=S.mode!=='self';
   $$('[data-when]').forEach(function(b){b.setAttribute('aria-checked',b.dataset.when===S.when);});
   $('#whenFields').hidden=S.when!=='later';
