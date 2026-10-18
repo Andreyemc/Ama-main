@@ -54,8 +54,9 @@ p{margin:0}
 .stepbar .icon-btn{margin:0}
 .stepbar .icon-btn:last-child{justify-self:end}
 .progress{position:absolute;left:0;right:0;bottom:4px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
-.progress i{height:2px;border-radius:1px;background:var(--line);transition:background .3s}
-.progress i.on{background:var(--ink)}
+.progress i{height:2px;border-radius:1px;background:var(--line);position:relative;overflow:hidden}
+.progress i::after{content:"";position:absolute;inset:0;background:var(--ink);transform:scaleX(0);transform-origin:left center;transition:transform .3s cubic-bezier(.2,.8,.2,1)} /* the segment fills from the left */
+.progress i.on::after{transform:none}
 
 /* ---------- views ---------- */
 main{padding-top:var(--hdr)}
@@ -67,7 +68,10 @@ main{padding-top:var(--hdr)}
 .btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:46px;border-radius:30px;padding:0 24px;
   font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;background:var(--rust);color:var(--light);transition:background .2s,transform .15s,opacity .2s}
 a.btn{text-decoration:none}
-.btn:active{transform:scale(.985)}
+.cta-l{display:inline-block} /* label slides on change */
+/* text that changes in place: fade with a light blur */
+.tx{transition:opacity .17s ease,filter .17s ease,transform .17s cubic-bezier(.2,.8,.2,1)}
+.tx.tx-out{opacity:0;filter:blur(4px);transform:translateY(-3px);transition-duration:.1s}
 .btn.static{pointer-events:none}
 .btn:hover{background:var(--rust-press)}
 .btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
@@ -236,10 +240,10 @@ a.btn{text-decoration:none}
 .flow[data-step="4"] .stage .gc{max-width:240px}
 .flow[data-step="5"] .stage .gc{max-width:200px}
 .flow.typing .stage{display:none} /* keyboard open on a custom amount: chips and field sit right under the step bar */
-.step{display:flex;flex-direction:column;gap:22px;animation:stepIn .38s cubic-bezier(.2,.8,.2,1)}
+.step{display:flex;flex-direction:column;gap:22px;animation:stepIn .32s cubic-bezier(.2,.8,.2,1)}
 .step.back{animation-name:stepBack}
-@keyframes stepIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
-@keyframes stepBack{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@keyframes stepIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+@keyframes stepBack{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
 .step[hidden]{display:none}
 .design-head{display:flex;align-items:baseline;justify-content:space-between}
 .design-head b{font-weight:400;font-size:20px}
@@ -251,7 +255,7 @@ a.btn{text-decoration:none}
 .thumb[aria-pressed="true"]{box-shadow:0 0 0 2px var(--cream),0 0 0 3.5px var(--ink)}
 .hint{font-size:13px;color:var(--mute);line-height:1.4}
 .chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.chip{height:48px;border-radius:30px;box-shadow:inset 0 0 0 1px var(--line);background:var(--paper);font-size:16px;font-variant-numeric:tabular-nums;transition:background .2s,color .2s,box-shadow .2s}
+.chip{height:48px;border-radius:30px;box-shadow:inset 0 0 0 1px var(--line);background:var(--paper);font-size:16px;font-variant-numeric:tabular-nums;transition:background .18s,color .18s,box-shadow .18s}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--light);box-shadow:none}
 .chip.wide{grid-column:1/-1}
 .covers{display:flex;gap:14px;align-items:center;background:var(--sand);border-radius:16px;padding:16px}
@@ -260,8 +264,12 @@ a.btn{text-decoration:none}
 .covers span{display:block;font-size:13px;color:var(--mute);margin-top:4px}
 .field{display:flex;flex-direction:column;gap:6px;min-width:0}
 .field label,.label{font-size:12px;color:var(--mute)}
-.input{display:flex;align-items:center;gap:8px;min-height:48px;border-radius:12px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);padding:0 14px;transition:box-shadow .2s}
-.input:focus-within{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.input{position:relative;display:flex;align-items:center;gap:8px;min-height:48px;border-radius:12px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);padding:0 14px;transition:box-shadow .2s}
+.input:focus-within{box-shadow:inset 0 0 0 1px rgba(30,28,26,.38)}
+/* focus: a line grows from the left along the bottom of the field */
+.input::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:1.5px;border-radius:1px;background:var(--ink);transform:scaleX(0);transform-origin:left center;transition:transform .2s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.input:focus-within::after{transform:none}
+.field.invalid .input::after{background:var(--err)}
 .input input,.input textarea,.input select{flex:1;min-width:0;border:0;background:transparent;outline:none;font-size:16px;padding:12px 0}
 .input textarea{resize:none;line-height:1.4;min-height:112px}
 .input .pre{font-size:16px;color:var(--mute)}
@@ -277,10 +285,10 @@ a.btn{text-decoration:none}
 .seg button{height:42px;border-radius:26px;font-size:15px;transition:background .2s,box-shadow .2s}
 .seg button[aria-pressed="true"]{background:var(--paper);box-shadow:0 1px 2px rgba(30,28,26,.12)}
 .radios{display:flex;flex-direction:column;gap:8px}
-.radio{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;border-radius:14px;padding:14px 16px;box-shadow:inset 0 0 0 1px var(--line);background:var(--paper)}
+.radio{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;border-radius:14px;padding:14px 16px;box-shadow:inset 0 0 0 1px var(--line);background:var(--paper);transition:box-shadow .18s}
 .radio b{display:block;font-weight:400;font-size:16px}
 .radio span{display:block;font-size:13px;color:var(--mute);margin-top:2px}
-.radio i{flex:none;width:20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--line)}
+.radio i{flex:none;width:20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--line);transition:box-shadow .18s cubic-bezier(.2,.8,.2,1)}
 .radio[aria-checked="true"]{box-shadow:inset 0 0 0 1.5px var(--ink)}
 .radio[aria-checked="true"] i{box-shadow:inset 0 0 0 6px var(--ink)}
 .self-list{display:flex;flex-direction:column;gap:14px}
@@ -325,9 +333,9 @@ a.btn{text-decoration:none}
 .sheet .dock{z-index:71}
 
 /* ---------- gift card terms: modal like the booking modal ---------- */
-.m-scrim{position:fixed;inset:0;z-index:82;background:rgba(0,0,0,.8);animation:fade .25s}
+.m-scrim{position:fixed;inset:0;z-index:82;background:rgba(0,0,0,.8);animation:fade .2s}
 .modal{position:fixed;left:0;right:0;bottom:0;top:env(safe-area-inset-top,0px);z-index:83;background:#FFFFFF;color:#000;overflow-y:auto;
-  padding:0 max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 32px) max(16px,env(safe-area-inset-left,0px));animation:modalUp .38s cubic-bezier(.2,.8,.2,1)}
+  padding:0 max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 32px) max(16px,env(safe-area-inset-left,0px));animation:modalUp .5s cubic-bezier(.16,1,.3,1)} /* rises with a soft spring, no bounce past the top */
 .modal.closing{animation:modalDown .26s ease-in forwards}
 @keyframes modalUp{from{transform:translateY(100%)}}
 @keyframes modalDown{to{transform:translateY(100%)}}
@@ -355,6 +363,9 @@ a.btn{text-decoration:none}
 .dialog p{color:var(--body);font-weight:300;margin-bottom:10px}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 112px);transform:translate(-50%,20px);z-index:90;background:var(--ink);color:var(--light);font-size:14px;padding:10px 16px;border-radius:24px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:calc(100% - 32px);text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+/* landing blocks fade up once when they first enter the screen */
+.rv{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 @media (min-width:760px){
@@ -722,6 +733,55 @@ function paintCard(c,d,amount){
 }
 function bump(c){c.el.classList.remove('swap');void c.el.offsetWidth;c.el.classList.add('swap');}
 
+/* ---------- micro-interactions ---------- */
+/* text swap: the old text fades out with a light blur, the new one fades in */
+function swapText(el,t){
+  if(!el)return; if(el._to===undefined&&el.textContent===t)return; if(el._to===t)return;
+  if(reduce){el.textContent=t;return;}
+  el._to=t;el.classList.add('tx','tx-out');clearTimeout(el._tt);
+  el._tt=setTimeout(function(){el.textContent=el._to;el._to=undefined;el.classList.remove('tx-out');},110);
+}
+/* button label: old text slides up and fades, new one comes from below */
+function setCta(t){
+  if(cta.dataset.label===t)return; var first=!cta.dataset.label; cta.dataset.label=t; clearTimeout(cta._t);
+  var sp=cta.querySelector('.cta-l');
+  function put(anim){var n=document.createElement('span');n.className='cta-l';n.textContent=cta.dataset.label;cta.replaceChildren(n);
+    if(anim&&n.animate)n.animate([{transform:'translateY(7px)',opacity:0},{transform:'none',opacity:1}],{duration:170,easing:'cubic-bezier(.2,.8,.2,1)'});}
+  if(first||reduce||!sp||!sp.animate||cta.offsetParent===null||dock.classList.contains('off')){put(false);return;}
+  sp.animate([{transform:'none',opacity:1},{transform:'translateY(-7px)',opacity:0}],{duration:100,easing:'ease-in',fill:'forwards'});
+  cta._t=setTimeout(function(){put(true);},100);
+}
+/* press: shrinks to 97 % at once, springs back on release */
+var PRESS='.btn,.chip,.seg button,.radio,.phrase,.thumb,.icon-btn,.round-x,.sum-row button,.link';
+function pressAnim(el,down){
+  if(reduce||!el.animate)return; if(el._pa)el._pa.cancel();
+  el._pa=down?el.animate([{scale:'1'},{scale:'.97'}],{duration:70,easing:'ease-out',fill:'forwards'})
+             :el.animate([{scale:'.97'},{scale:'1.012',offset:.55},{scale:'1'}],{duration:260,easing:'cubic-bezier(.2,.8,.2,1)'});
+}
+document.addEventListener('pointerdown',function(e){var el=e.target.closest&&e.target.closest(PRESS);if(!el||el.disabled)return;el._pressed=true;pressAnim(el,true);
+  function up(){if(!el._pressed)return;el._pressed=false;pressAnim(el,false);document.removeEventListener('pointerup',up,true);document.removeEventListener('pointercancel',up,true);}
+  document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);},true);
+document.addEventListener('touchstart',function(){},{passive:true}); // lets :active work on iOS
+/* the amount on the card rolls to the new value */
+function rollAmt(c,from,to){
+  var el=c.el.querySelector('.gc-amt');cancelAnimationFrame(c._roll);
+  if(reduce||from===to||from==null){el.textContent=money(to);return;}
+  var t0=performance.now(),D=380;
+  (function f(now){var t=Math.min(1,(now-t0)/D),e=1-Math.pow(1-t,3);el.textContent=money(Math.round(from+(to-from)*e));if(t<1)c._roll=requestAnimationFrame(f);})(t0);
+}
+/* haptics: Android vibrates; iPhone (iOS 18+) gets a light tick from a hidden system switch; elsewhere nothing happens */
+var hapEl=null, isIOS=/iP(hone|ad|od)/.test(navigator.platform)||(navigator.userAgent.indexOf('Mac')>-1&&'ontouchend' in document);
+function haptic(kind){
+  try{
+    if(navigator.vibrate&&!isIOS){navigator.vibrate(kind==='success'?[14,70,22]:kind==='medium'?20:9);return;}
+    if(!isIOS)return;
+    if(!hapEl){hapEl=document.createElement('label');hapEl.setAttribute('aria-hidden','true');
+      hapEl.style.cssText='position:fixed;left:-40px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none';
+      var i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');i.tabIndex=-1;hapEl.appendChild(i);document.body.appendChild(hapEl);}
+    hapEl.click(); if(kind==='success')setTimeout(function(){hapEl.click();},110);
+  }catch(e){}
+}
+
 /* ---------- tilt physics ----------
    Every card is a damped spring towards a target angle.
    Target = finger offset from where the touch started (no jump on touch),
@@ -764,7 +824,8 @@ var K=reduce?220:110, DAMP=reduce?30:15; // stiffness / damping: soft, slightly 
 function frame(now){
   var dt=Math.min((now-last)/1000,1/30);last=now;var t=now/1000;
   for(var i=0;i<cards.length;i++){
-    var c=cards[i];if(!c.visible||!c.el.isConnected||c.el.offsetParent===null)continue;
+    var c=cards[i];if(!c.visible||c.hidden||!c.el.isConnected||c.el.offsetParent===null)continue;
+    if(c.still&&!c.drag&&!c.hover&&c.rested)continue; // a still neighbour at rest costs nothing per frame
     var tx,ty;
     if(c.drag||c.hover){tx=c.tx;ty=c.ty;}
     else{
@@ -781,6 +842,7 @@ function frame(now){
     var lg=(c.gyro&&gyro.on&&gyro.got&&!c.drag&&!c.hover)?1.6:1;
     c.ly=(c.ly==null?c.ry:c.ly)+(c.ry*lg-(c.ly==null?c.ry:c.ly))*Math.min(1,dt*8);
     c.lx=(c.lx==null?c.rx:c.lx)+(c.rx*lg-(c.lx==null?c.rx:c.lx))*Math.min(1,dt*8);
+    c.rested=c.still&&Math.abs(c.rx)<0.02&&Math.abs(c.ry)<0.02&&Math.abs(c.vx)<0.05&&Math.abs(c.vy)<0.05;
     var s=c.el.style;
     s.setProperty('--rx',c.rx.toFixed(2)+'deg');s.setProperty('--ry',c.ry.toFixed(2)+'deg');
     s.setProperty('--gx',clamp(50+c.ly*2.4,-20,120).toFixed(1)+'%');s.setProperty('--gy',clamp(40-c.lx*2.6,-20,120).toFixed(1)+'%');
@@ -868,7 +930,7 @@ buys.style.setProperty('--n',BUYS.length);
 $('#buysScale').innerHTML=BUYS.map(function(b,i){return '<button type="button" data-i="'+i+'">'+money(b.a)+'</button>';}).join('');
 /* tap on an amount: switch at once, and park the scroll inside that amount's band so the pin stays put */
 $('#buysScale').addEventListener('click',function(e){
-  var b=e.target.closest('button');if(!b)return;var i=+b.dataset.i;
+  var b=e.target.closest('button');if(!b)return;var i=+b.dataset.i;if(i!==buysIdx)haptic('light');
   var pin=buys.querySelector('.scene-pin'), top=parseFloat(getComputedStyle(pin).top)||0;
   var span=Math.max(1,buys.offsetHeight-pin.offsetHeight), r=buys.getBoundingClientRect();
   setBuys(i);
@@ -890,15 +952,15 @@ setBuys(0);
 
 /* ---------- upright card carousel, stepwise flip ----------
    slot s = position relative to the focus (0 centre, ±1 neighbours). Halfway (|s|≈.5) cards are nearly edge-on. */
-function makeCarousel(row,key,onPick){
-  var items=[], cards=[], cur=0, p=0, anim=null, drag=null;
+function makeCarousel(row,key,onPick,onNear){
+  var items=[], cards=[], cur=0, p=0, near=0, anim=null, drag=null;
   row.tabIndex=0;row.setAttribute('role','listbox');
   DESIGNS.forEach(function(d,i){
     var b=document.createElement('button');b.type='button';b.tabIndex=-1;b.setAttribute('role','option');b.setAttribute('aria-label',d.name+' design');
     b.innerHTML='<div class="up"><div data-card="'+key+'" data-nodrag data-amp=".7"></div></div>';row.appendChild(b);
     var c=buildCard(b.querySelector('[data-card]'));c.upright=true;observe(c);paintCard(c,d,75);c.el.classList.add('no-amt');
     items.push(b);cards.push(c);
-    b.addEventListener('click',function(){ if(drag&&drag.moved)return; var s=i-cur; if(s===1||s===-1)step(s); });
+    b.addEventListener('click',function(){ if(drag&&drag.moved)return; var s=i-cur-Math.round(p); if(s===1||s===-1){haptic('light');step(s,4.5);} });
   });
   function place(){
     var W=items[0].offsetWidth, X=Math.max(W+24,row.clientWidth/2-48+W/2); // neighbours rest flat, about 48 px showing at the screen edge
@@ -909,40 +971,56 @@ function makeCarousel(row,key,onPick){
       var z=-Math.sin(Math.PI*Math.min(a,1))*70;
       m.style.transform='translate3d('+x.toFixed(1)+'px,0,'+z.toFixed(1)+'px) rotateY('+ry.toFixed(1)+'deg)';
       m.style.opacity=a>1.35?0:1; m.style.zIndex=String(10-Math.round(a*4)); m.style.visibility=a>1.6?'hidden':'visible';
+      cards[i].hidden=a>1.6; // hidden cards skip the tilt loop
       m.setAttribute('aria-selected',i===cur);
     });
+    /* the name changes as the new card passes the middle, not after it stops */
+    var n=clamp(cur+Math.round(p),0,items.length-1); if(n!==near){near=n;if(onNear)onNear(n);}
   }
-  function settle(){ cards.forEach(function(k,n){k.still=n!==cur;}); onPick(cur); }
-  function ease(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
-  function animateTo(target,dur,done){ cancelAnimationFrame(anim); var from=p,t0=performance.now(); dur=reduce?120:dur;
-    cards.forEach(function(k){k.still=true;});
-    (function f(now){var t=Math.min(1,(now-t0)/dur);p=from+(target-from)*ease(t);place();if(t<1)anim=requestAnimationFrame(f);else{done&&done();}})(t0); }
-  function step(dir){ var n=cur+dir; if(n<0||n>=items.length){animateTo(0,260);return;}
-    animateTo(dir,650,function(){cur=n;p=0;place();settle();}); }
+  function settle(){ cards.forEach(function(k,n){var was=k.still;k.still=n!==cur;if(was&&!k.still)k.idle=0;}); onPick(cur); } // the card in focus picks up its sway gently
+  /* critically damped spring: carries the finger's speed, quick start, long soft finish, no overshoot */
+  var OM=13;
+  function springTo(target,v0,done){
+    cancelAnimationFrame(anim); cards.forEach(function(k){k.still=true;});
+    var dist=target-p; v0=v0||0;
+    if(dist!==0&&v0*dist>0){var vmax=Math.abs(dist)*OM*0.95;v0=Math.max(-vmax,Math.min(vmax,v0));} // faster than this would overshoot the next card
+    if(reduce){p=target;place();if(done)done();return;}
+    var v=v0,last=performance.now();
+    (function f(now){var dt=Math.min(.034,Math.max(0,(now-last)/1000));last=now;
+      for(var k=0;k<4;k++){var h=dt/4;var acc=OM*OM*(target-p)-2*OM*v;v+=acc*h;p+=v*h;}
+      if(Math.abs(target-p)<0.0012&&Math.abs(v)<0.03){p=target;place();if(done)done();return;}
+      place();anim=requestAnimationFrame(f);})(last);
+  }
+  function step(dir,v0){ var n=cur+dir; if(n<0||n>=items.length){springTo(0,v0);return;}
+    springTo(dir,v0,function(){cur=n;p=0;place();settle();}); }
   function go(i){ if(i===cur)return; cancelAnimationFrame(anim); cur=clamp(i,0,items.length-1); p=0; place(); settle(); }
-  // one swipe = one card: the drag follows the finger up to one card, release decides
-  row.addEventListener('pointerdown',function(e){ if(e.button>0)return; drag={x:e.clientX,y:e.clientY,moved:false,h:null}; cancelAnimationFrame(anim); });
-  row.addEventListener('pointermove',function(e){ if(!drag)return; var dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+  // one swipe = one card: the drag follows the finger up to one card, release decides and keeps the finger's speed
+  row.addEventListener('pointerdown',function(e){ if(e.button>0)return; cancelAnimationFrame(anim); drag={x:e.clientX,y:e.clientY,moved:false,h:null,p0:p,t:performance.now(),lp:p,v:0}; });
+  row.addEventListener('pointermove',function(e){ if(!drag||drag.moved===true&&drag.done)return; var dx=e.clientX-drag.x, dy=e.clientY-drag.y;
     if(drag.h===null&&(Math.abs(dx)>8||Math.abs(dy)>8)) drag.h=Math.abs(dx)>Math.abs(dy);
-    if(!drag.h)return; drag.moved=true; var W=items[0].offsetWidth; p=clamp(-dx/(W*1.2),-1,1);
-    if((cur===0&&p<0)||(cur===items.length-1&&p>0)) p*=0.25; place(); });
-  function release(e){ if(!drag)return; var d=drag; drag=d.moved?{moved:true}:null; setTimeout(function(){drag=null;},0);
-    if(!d.h){ if(p!==0)animateTo(0,260); return; }
-    var dx=e.clientX-d.x; if(Math.abs(dx)>40){ step(dx<0?1:-1); } else animateTo(0,260); }
+    if(!drag.h)return; drag.moved=true; var W=items[0].offsetWidth; var np=clamp(drag.p0-dx/(W*1.2),-1,1);
+    if((cur===0&&np<0)||(cur===items.length-1&&np>0)) np*=0.25;
+    var now=performance.now(),dt=(now-drag.t)/1000; if(dt>0){var iv=(np-drag.lp)/dt;drag.v=dt>0.08?iv:drag.v*0.6+iv*0.4;} drag.t=now;drag.lp=np; // smoothed speed in cards per second
+    p=np; place(); });
+  function release(e){ if(!drag)return; var d=drag; drag=d.moved?{moved:true,done:true}:null; setTimeout(function(){drag=null;},0);
+    if(!d.h){ if(Math.abs(p)>=0.5)step(p>0?1:-1,0); else if(p!==0)springTo(0,0); return; } // grabbed mid-flip, then scrolled: finish to the nearer card
+    var v=(performance.now()-d.t>90)?0:d.v; var proj=p+v*0.15;
+    var dir=proj>0.13?1:proj<-0.13?-1:0;
+    if(dir!==0&&(cur+dir>=0)&&(cur+dir<items.length)){haptic('light');step(dir,v);} else springTo(0,v); }
   row.addEventListener('pointerup',release); row.addEventListener('pointercancel',release);
-  row.addEventListener('keydown',function(e){ if(e.key==='ArrowRight'){step(1);e.preventDefault();} if(e.key==='ArrowLeft'){step(-1);e.preventDefault();} });
+  row.addEventListener('keydown',function(e){ if(e.key==='ArrowRight'){step(1,4.5);e.preventDefault();} if(e.key==='ArrowLeft'){step(-1,4.5);e.preventDefault();} });
   window.addEventListener('resize',place);
   place(); settle();
-  return {go:go,current:function(){return cur;},sync:function(){place();}};
+  return {go:go,current:function(){return cur;},near:function(){return near;},sync:function(){place();}};
 }
 var moodRow=$('#moodRow');
-var moods=makeCarousel(moodRow,'mood',function(i){$('#moodName').textContent=DESIGNS[i].name;$('#moodIdx').textContent=(i+1)+' / '+DESIGNS.length;if(cta&&view==='landing')updateDock();});
+var moods=makeCarousel(moodRow,'mood',function(i){},function(i){swapText($('#moodName'),DESIGNS[i].name);swapText($('#moodIdx'),(i+1)+' / '+DESIGNS.length);if(cta&&view==='landing')updateDock();});
 window.addEventListener('load',function(){moods.sync();});
 var moodsSeen=false; // once the carousel has been on screen, the buy button starts with the design in focus
 var moodsInView=false; // while the carousel is on screen the buy button names the design in focus
 new IntersectionObserver(function(es){moodsInView=es[0].isIntersecting;if(moodsInView)moodsSeen=true;if(cta&&view==='landing')updateDock();},{threshold:0.5}).observe(moodRow);
 /* purchase step 1 uses the same carousel */
-var dsg=makeCarousel($('#dsgRow'),'dsg',function(i){ if(view==='flow'&&currentStep===1) setDesign(DESIGNS[i].id); else renderDesignHead(i); });
+var dsg=makeCarousel($('#dsgRow'),'dsg',function(i){ if(view==='flow'&&currentStep===1) setDesign(DESIGNS[i].id); else renderDesignHead(i); },function(i){renderDesignHead(i);});
 /* step 1: the card sits halfway between the description and the button, whatever the browser bars leave of the screen */
 function fitDesignRow(){
   var row=$('#dsgRow');if(view!=='flow'||currentStep!==1||!row.offsetParent)return;
@@ -986,7 +1064,7 @@ function sceneProgress(el){var pin=el.querySelector('.scene-pin');var top=parseF
 (function(){var ph=$('#buys .photo'),sx=null,sy=0;
   ph.addEventListener('pointerdown',function(e){sx=e.clientX;sy=e.clientY;});
   function end(e){if(sx===null)return;var dx=e.clientX-sx,dy=e.clientY-sy;sx=null;
-    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.2){var n=clamp(buysIdx+(dx<0?1:-1),0,BUYS.length-1);setBuys(n);}}
+    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.2){var n=clamp(buysIdx+(dx<0?1:-1),0,BUYS.length-1);if(n!==buysIdx)haptic('light');setBuys(n);}}
   ph.addEventListener('pointerup',end);ph.addEventListener('pointercancel',function(){sx=null;});})();
 function onScroll(){}
 
@@ -1000,8 +1078,10 @@ termsLayer.addEventListener('click',function(e){if(e.target.closest('[data-close
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!termsLayer.hidden)closeTerms();});
 (function(){var y0=null,m=termsLayer.querySelector('.modal');
   m.addEventListener('touchstart',function(e){y0=m.scrollTop<=0?e.touches[0].clientY:null;},{passive:true});
-  m.addEventListener('touchmove',function(e){if(y0===null)return;var dy=e.touches[0].clientY-y0;if(dy>0)m.style.transform='translateY('+dy+'px)';},{passive:true});
-  m.addEventListener('touchend',function(e){if(y0===null)return;var dy=(e.changedTouches[0].clientY-y0);m.style.transform='';y0=null;if(dy>90)closeTerms();});})();
+  m.addEventListener('touchmove',function(e){if(y0===null)return;var dy=e.touches[0].clientY-y0;m.style.transition='none';if(dy>0)m.style.transform='translateY('+dy+'px)';},{passive:true});
+  m.addEventListener('touchend',function(e){if(y0===null)return;var dy=(e.changedTouches[0].clientY-y0);y0=null;
+    if(dy>90){m.style.transition='';m.style.transform='';closeTerms();return;}
+    m.style.transition='transform .3s cubic-bezier(.2,.8,.2,1)';m.style.transform='';setTimeout(function(){m.style.transition='';},320);});})(); // short pull: springs back
 window.addEventListener('scroll',function(){requestAnimationFrame(onScroll);},{passive:true});
 
 /* ---------- A5: messenger plays once when it comes into view ---------- */
@@ -1045,8 +1125,8 @@ function setDesign(id,dir){
   renderDesign();
 }
 function setAmount(v){
-  S.amount=v;persist();
-  paintCard(C.flow,design(),v);bump(C.flow);
+  var old=S.amount;S.amount=v;persist();
+  paintCard(C.flow,design(),v);bump(C.flow);rollAmt(C.flow,old,v);
   var cv=coversFor(v);$('#coversText').textContent='Enough for '+cv.text;$('#coversIcon').innerHTML='<use href="#p-'+cv.pil+'"/>';
 }
 C.flow.onSwipe=function(dir){if(currentStep!==1)return;var i=DESIGNS.findIndex(function(d){return d.id===S.design;});var n=(i+dir+DESIGNS.length)%DESIGNS.length;setDesign(DESIGNS[n].id);};
@@ -1054,7 +1134,7 @@ C.flow.onSwipe=function(dir){if(currentStep!==1)return;var i=DESIGNS.findIndex(f
 /* =========================================================
    RENDERERS
    ========================================================= */
-function renderDesignHead(i){$('#designName').textContent=DESIGNS[i].name;$('#designDesc').textContent=DESIGNS[i].desc;$('#designIdx').textContent=(i+1)+' / '+DESIGNS.length;}
+function renderDesignHead(i){swapText($('#designName'),DESIGNS[i].name);swapText($('#designDesc'),DESIGNS[i].desc);$('#designIdx').textContent=(i+1)+' / '+DESIGNS.length;}
 function renderDesign(){
   var i=DESIGNS.findIndex(function(d){return d.id===S.design;});
   renderDesignHead(i);
@@ -1127,17 +1207,21 @@ function updateDock(){
   var note=$('#dockNote');note.textContent='';
   if(view==='flow'){
     dock.classList.remove('off');
-    cta.textContent=currentStep===5?('Pay '+money(S.amount)):'Continue';
+    setCta(currentStep===5?('Pay '+money(S.amount)):'Continue');
     if(currentStep===5)note.textContent='Prototype: no payment is taken';
   }else if(view==='landing'){
-    cta.textContent=moodsInView?('Choose '+DESIGNS[moods.current()].name):'Choose a gift card';dock.classList.toggle('off',heroVisible);
+    setCta(moodsInView?('Choose '+DESIGNS[moods.near()].name):'Choose a gift card');dock.classList.toggle('off',heroVisible);
   }else{dock.classList.add('off');}
 }
 var heroVisible=true;
 new IntersectionObserver(function(es){heroVisible=es[0].isIntersecting;if(view==='landing')updateDock();}).observe($('#heroCta'));
 
+/* light tick when an option is chosen: amounts, delivery, timing, payment, quick phrases */
+document.addEventListener('click',function(e){var o=e.target.closest&&e.target.closest('.chip,.seg button,.radio,.phrase');if(o&&o.getAttribute('aria-pressed')!=='true'&&o.getAttribute('aria-checked')!=='true')haptic('light');},true);
 $$('[data-start]').forEach(function(b){b.addEventListener('click',function(){startFlow(1);});});
+$$('[data-start]').forEach(function(b){b.addEventListener('click',function(){haptic('medium');});});
 cta.addEventListener('click',function(){
+  haptic('medium');
   if(view==='landing'){if(moodsSeen){S.design=DESIGNS[moods.current()].id;persist();}startFlow(1);return;}
   if(view!=='flow')return;
   if(!validate(currentStep))return;
@@ -1233,7 +1317,7 @@ $('#pvClose').addEventListener('click',closePreview);$('#pvBack').addEventListen
 function code(){var a='ABCDEFGHJKMNPQRSTUVWXYZ23456789',s='';for(var i=0;i<8;i++){s+=a[Math.floor(Math.random()*a.length)];if(i===3)s+='-';}return s;}
 var giftCode='';
 function pay(){
-  cta.setAttribute('aria-busy','true');cta.innerHTML='<span class="spin" aria-hidden="true"></span>Processing payment';
+  cta.setAttribute('aria-busy','true');cta.dataset.label='';cta.innerHTML='<span class="spin" aria-hidden="true"></span>Processing payment';
   setTimeout(function(){
     cta.removeAttribute('aria-busy');
     giftCode=code();
@@ -1243,7 +1327,7 @@ function pay(){
 function renderDone(){
   var d=design(), to=S.to||'them';
   paintCard(C.done,d,S.amount);
-  var el=C.done.el;el.classList.remove('enter','glint');void el.offsetWidth;el.classList.add('enter','glint');
+  var el=C.done.el;el.classList.remove('enter','glint');void el.offsetWidth;el.classList.add('enter','glint');haptic('success');
   var link='amaforyou.com/gift/'+giftCode;$('#giftLink').textContent=link;
   var text=to+', I got you an AMA gift card: '+money(S.amount)+' for any session.'+(S.msg?' “'+S.msg+'”':'')+' Open it here: https://'+link;
   $('#waBtn').href='https://wa.me/?text='+encodeURIComponent(text);
@@ -1309,6 +1393,12 @@ if(window.visualViewport){
   document.addEventListener('focusin',function(e){if(isField(e.target))fix();});
 }
 
+/* landing: blocks fade up once when they first enter the screen (the hero and the pinned amounts scene stay as they are) */
+if('IntersectionObserver' in window&&!reduce){
+  var rvIO=new IntersectionObserver(function(es){es.forEach(function(en){if(!en.isIntersecting)return;var el=en.target;rvIO.unobserve(el);el.classList.add('in');
+    setTimeout(function(){el.classList.remove('rv','in');},800);});},{threshold:0.12,rootMargin:'0px 0px -6% 0px'});
+  $$('#vLanding .moods > *, #vLanding .pillars h2, #vLanding #plist, #vLanding .chat-section > h2, #vLanding .chat-section > p').forEach(function(el){el.classList.add('rv');rvIO.observe(el);});
+}
 /* start */
 paintAll();renderAmount();renderDesign();show('landing');
 })();
