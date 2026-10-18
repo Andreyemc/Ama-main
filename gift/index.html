@@ -178,7 +178,7 @@ a.btn{text-decoration:none}
 .ucar>button{position:absolute;top:28px;left:50%;width:var(--uw);margin-left:calc(var(--uw) / -2);transform-style:preserve-3d;will-change:transform;-webkit-tap-highlight-color:transparent}
 .ucar>button:focus-visible{outline:none}
 .ucar:focus-visible{outline:2px solid var(--rust);outline-offset:-2px}
-.dsg-row{--uw:min(62vw,250px);margin-top:36px} /* P1b: bigger card, lower, more air under the name */
+.dsg-row{--uw:min(62vw,250px);margin-top:36px} /* JS refits size and offset to the screen: equal space above and below the card */ /* P1b: bigger card, lower, more air under the name */
 .design-top{text-align:center;padding-top:36px}
 .design-top h2{font-size:30px;font-weight:500;line-height:1.2;letter-spacing:-.01em}
 .design-top p{font-size:15px;color:var(--mute);margin-top:12px}
@@ -943,6 +943,19 @@ var moodsInView=false; // while the carousel is on screen the buy button names t
 new IntersectionObserver(function(es){moodsInView=es[0].isIntersecting;if(moodsInView)moodsSeen=true;if(cta&&view==='landing')updateDock();},{threshold:0.5}).observe(moodRow);
 /* purchase step 1 uses the same carousel */
 var dsg=makeCarousel($('#dsgRow'),'dsg',function(i){ if(view==='flow'&&currentStep===1) setDesign(DESIGNS[i].id); else renderDesignHead(i); });
+/* step 1: the card sits halfway between the description and the button, whatever the browser bars leave of the screen */
+function fitDesignRow(){
+  var row=$('#dsgRow');if(view!=='flow'||currentStep!==1||!row.offsetParent)return;
+  row.style.marginTop='0px';
+  var top=$('.design-top').getBoundingClientRect().bottom+window.scrollY, col=$('.dock .col'), btn=window.innerHeight-parseFloat(getComputedStyle(dock).paddingBottom)-col.offsetHeight+window.scrollY; // where the button rests, even while the dock is still sliding in
+  var rowTop=row.getBoundingClientRect().top+window.scrollY, avail=btn-top, R=85.6/53.98;
+  var w=Math.min(window.innerWidth*0.62,250,(avail-2*36)/R); w=Math.max(w,150);
+  var gap=(avail-w*R)/2;
+  row.style.setProperty('--uw',w.toFixed(1)+'px');
+  row.style.marginTop=(top+gap-28-rowTop).toFixed(1)+'px'; // 28 px: the card's offset inside the row
+  dsg.sync();
+}
+window.addEventListener('resize',function(){if(!document.activeElement||!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))fitDesignRow();});
 
 /* ---------- A4: pillars (horizontal slides, images only) ---------- */
 var PILLARS=[
@@ -1093,7 +1106,7 @@ function goStep(n,dir){
   $$('.step',flow).forEach(function(s){var on=+s.dataset.step===n;s.hidden=!on;if(on){s.classList.toggle('back',dir<0);s.style.animation='none';void s.offsetWidth;s.style.animation='';}});
   $('#stepTitle').textContent=STEP_TITLES[n-1];
   $$('.progress i').forEach(function(p,i){p.classList.toggle('on',i<n);});
-  if(n===1)renderDesign();if(n===2)renderAmount();if(n===4)renderDelivery();if(n===5)renderSummary();
+  if(n===1){renderDesign();fitDesignRow();}if(n===2)renderAmount();if(n===4)renderDelivery();if(n===5)renderSummary();
   $('#payError').style.display='none';
   updateDock();
   if(dir!==0)window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
