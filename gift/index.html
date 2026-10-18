@@ -131,7 +131,7 @@ a.btn{text-decoration:none}
   transform:translate(calc(var(--ry) * -1.1px),calc(var(--rx) * 0.6px));z-index:-1;pointer-events:none}
 .gc.no-amt .gc-amt{visibility:hidden}
 .gc.swap .gc-tilt{animation:swap .42s cubic-bezier(.2,.8,.2,1)}
-@keyframes swap{0%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(.96)}40%{opacity:.6}100%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(1)}}
+@keyframes swap{0%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(.97)}100%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(1)}} /* no opacity: fading a 3D card makes Safari flatten and redraw it, which flickers */
 .gc.glint .gc-face::after{content:"";position:absolute;inset:-20%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-80%);animation:glint 1.3s .55s ease-out forwards;mix-blend-mode:soft-light}
 @keyframes glint{to{transform:translateX(80%)}}
 
@@ -1134,7 +1134,7 @@ function setDesign(id,dir){
 }
 function setAmount(v){
   var old=S.amount;S.amount=v;persist();
-  paintCard(C.flow,design(),v);bump(C.flow);rollAmt(C.flow,old,v);
+  paintCard(C.flow,design(),v);rollAmt(C.flow,old,v); // only the number rolls; the card itself stays put, no flicker
   var cv=coversFor(v);$('#coversText').textContent='Enough for '+cv.text;$('#coversIcon').innerHTML='<use href="#p-'+cv.pil+'"/>';
 }
 C.flow.onSwipe=function(dir){if(currentStep!==1)return;var i=DESIGNS.findIndex(function(d){return d.id===S.design;});var n=(i+dir+DESIGNS.length)%DESIGNS.length;setDesign(DESIGNS[n].id);};
