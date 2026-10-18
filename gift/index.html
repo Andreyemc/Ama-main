@@ -1,0 +1,1131 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>AMA Gift Card</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#F7EEE0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Layout: AMA site header fixed on top; flow = one persistent 3D card on a stage + one step below + fixed CTA dock. Mobile first, single brand (light) theme by choice. */
+:root{
+  --cream:#F7EEE0; --paper:#FFFAF3; --sand:#EFE3D1; --sand-2:#E5D5BF;
+  --ink:#1E1C1A; --body:#4F473F; --mute:#7A6F64; --line:rgba(30,28,26,.14);
+  --rust:#B04F13; --rust-press:#A2460D; --light:#FFF3E4; --brown:#461A0F; --brown-2:#783206; --err:#B3261E;
+  --sans:"Google Sans Flex","Google Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --hdr:58px; --chat-bg:#ECE4D7; --bubble-in:#FFFFFF; --bubble-out:#DDEFCF; --stepbar:56px; --dock:94px;
+  --col:520px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--cream);-webkit-text-size-adjust:100%}
+body{background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--cream)}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--rust);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-weight:400;margin:0;text-wrap:balance}
+p{margin:0}
+.small{font-size:13px;letter-spacing:0}
+.rule{height:1px;background:var(--line);border:0;margin:0}
+
+/* ---------- site header (shared with amaforyou.com) ---------- */
+.site-header{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:50;height:var(--hdr);background:var(--cream);
+  display:flex;align-items:center;justify-content:space-between;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.site-header .left{display:flex;align-items:center;gap:14px}
+.icon-btn{width:40px;height:40px;display:grid;place-items:center;margin:-8px;border-radius:20px}
+.icon-btn svg{display:block}
+.logo{display:block;width:69px;height:26px}
+.logo svg{display:block;width:100%;height:100%}
+
+/* ---------- flow step bar ---------- */
+.stepbar{position:fixed;top:calc(env(safe-area-inset-top,0px) + var(--hdr));left:0;right:0;z-index:49;background:var(--cream);height:var(--stepbar);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.stepbar-in{max-width:var(--col);margin:0 auto;height:100%;display:grid;grid-template-columns:40px 1fr 40px;align-items:center;position:relative}
+.stepbar-title{text-align:center;font-size:16px}
+.stepbar .icon-btn{margin:0}
+.stepbar .icon-btn:last-child{justify-self:end}
+.progress{position:absolute;left:0;right:0;bottom:4px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.progress i{height:2px;border-radius:1px;background:var(--line);transition:background .3s}
+.progress i.on{background:var(--ink)}
+
+/* ---------- views ---------- */
+main{padding-top:var(--hdr)}
+.view{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.col{max-width:var(--col);margin:0 auto}
+.view[hidden]{display:none!important}
+
+/* ---------- buttons ---------- */
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:46px;border-radius:30px;padding:0 24px;
+  font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;background:var(--rust);color:var(--light);transition:background .2s,transform .15s,opacity .2s}
+a.btn{text-decoration:none}
+.btn:active{transform:scale(.985)}
+.btn.static{pointer-events:none;background:var(--ink);color:var(--light)}
+.btn:hover{background:var(--rust-press)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.btn.ghost:hover{background:rgba(30,28,26,.05)}
+.btn.dark{background:var(--ink);color:var(--light)}
+.btn[aria-busy="true"]{pointer-events:none;opacity:.85}
+.spin{width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.link{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;font-size:15px}
+
+/* ---------- dock (fixed bottom CTA) ---------- */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:48;padding-top:22px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:linear-gradient(to bottom,rgba(247,238,224,0),var(--cream) 22px);transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s}
+.dock .col{display:flex;flex-direction:column;gap:8px}
+.dock.off{transform:translateY(110%);opacity:0;pointer-events:none}
+.dock-note{font-size:12px;color:var(--mute);text-align:center}
+.dock-note:empty{display:none}
+
+/* ---------- 3D gift card ---------- */
+.gc{--rx:0deg;--ry:0deg;--gx:30%;--gy:20%;--fx:50%;--fy:50%;position:relative;width:100%;aspect-ratio:85.6/53.98;max-width:100%;container-type:inline-size;perspective:1100px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.gc.nodrag{touch-action:auto}
+.gc-tilt{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(var(--rx)) rotateY(var(--ry));will-change:transform}
+.gc-edge{position:absolute;inset:0;border-radius:3.8cqw;background:var(--edge,#8E3F10)}
+.gc-face{position:absolute;inset:0;border-radius:3.8cqw;overflow:hidden;transform:translateZ(.5px);background:var(--c2);isolation:isolate}
+.gc-art{position:absolute;inset:0;background:var(--art);background-size:cover;background-position:center}
+.gc-art::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 22% 18%,rgba(255,255,255,.30),rgba(255,255,255,0) 55%)}
+.gc-foil{position:absolute;inset:-2px;mix-blend-mode:soft-light;opacity:.55;pointer-events:none;
+  background:
+    repeating-linear-gradient(118deg,rgba(255,255,255,0) 0 6px,rgba(255,255,255,.07) 6px 7px),
+    linear-gradient(115deg,transparent 22%,rgba(255,214,180,.9) 36%,rgba(214,246,226,.9) 46%,rgba(206,216,255,.9) 56%,rgba(250,214,255,.9) 66%,transparent 80%);
+  background-size:100% 100%,300% 300%;background-position:0 0,var(--fx) var(--fy)}
+.gc-glare{position:absolute;inset:0;mix-blend-mode:overlay;pointer-events:none;background:radial-gradient(circle at var(--gx) var(--gy),rgba(255,255,255,.42),rgba(255,255,255,0) 50%)}
+.gc-rim{position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),inset 0 1px 0 rgba(255,255,255,.35);pointer-events:none}
+.gc-logo{position:absolute;left:5.6cqw;top:5.4cqw;width:18cqw;height:6.8cqw;color:var(--ink-c)}
+.gc-logo svg{width:100%;height:100%;display:block;fill:currentColor}
+.logo svg{fill:var(--ink)}
+.gc-kind{position:absolute;right:5.6cqw;top:6.4cqw;font-size:3.1cqw;color:var(--ink-c);opacity:.72}
+.gc-amt{position:absolute;left:5.4cqw;bottom:4.6cqw;font-size:10cqw;line-height:1;letter-spacing:-.01em;color:var(--ink-c);font-variant-numeric:tabular-nums}
+.gc-shadow{position:absolute;left:8%;right:8%;bottom:-6%;height:24%;border-radius:50%;background:radial-gradient(closest-side,rgba(70,26,15,.42),rgba(70,26,15,0));filter:blur(6px);
+  transform:translate(calc(var(--ry) * -1.1px),calc(var(--rx) * 0.6px));z-index:-1;pointer-events:none}
+.gc.swap .gc-tilt{animation:swap .42s cubic-bezier(.2,.8,.2,1)}
+@keyframes swap{0%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(.96)}40%{opacity:.6}100%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(1)}}
+.gc.glint .gc-face::after{content:"";position:absolute;inset:-20%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-80%);animation:glint 1.3s .55s ease-out forwards;mix-blend-mode:soft-light}
+@keyframes glint{to{transform:translateX(80%)}}
+
+/* ---------- landing (direction A, iteration 1) ---------- */
+.landing{padding-bottom:40px}
+.landing .col{display:flex;flex-direction:column}
+.bleed{margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+/* hero */
+.hero{display:flex;flex-direction:column;padding-top:20px;min-height:calc(100svh - var(--hdr) - 20px)}
+.hero h1{font-size:clamp(48px,14.6vw,68px);line-height:.96;letter-spacing:-.03em}
+.hero-card{perspective:1100px;padding:44px 26px 40px;display:flex;justify-content:center}
+.hero-card .tilted{width:100%;max-width:330px;transform:rotate(-7deg)}
+.hero-card .enter{animation:heroIn 1.3s cubic-bezier(.16,1,.3,1) both}
+@keyframes heroIn{from{opacity:0;transform:rotateY(-70deg) rotateX(14deg) translateZ(-140px) translateY(30px)}to{opacity:1;transform:none}}
+.hero .lead{max-width:32ch}
+.facts{display:grid;grid-template-columns:auto 1fr auto;gap:12px;border-top:1px solid var(--line);margin-top:20px;padding-top:12px;font-size:14px;color:var(--mute)}
+.facts span:first-child{color:var(--ink)}
+.facts span:nth-child(2){text-align:center}
+.hero .btn{margin-top:28px}
+.tilt-note{font-size:13px;color:var(--mute);text-align:center;margin-top:12px}
+.tilt-note button{text-decoration:underline;text-underline-offset:3px;font-size:13px;color:var(--ink)}
+/* scroll scenes */
+.scene{position:relative}
+.scene-pin{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdr));height:calc(100svh - var(--hdr) - env(safe-area-inset-top,0px));overflow:hidden;display:flex;flex-direction:column}
+/* scene: what it buys */
+.buys{height:calc(var(--n,6) * 55svh + 100svh)}
+.buys .photo{position:relative;flex:1 1 auto;min-height:0;background:var(--sand)}
+.buys .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.buys .card-on-edge{position:absolute;left:50%;bottom:0;width:min(74%,320px);transform:translate(-50%,42%);z-index:2}
+.buys .meta{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:calc(min(74vw,320px) * .63 * .42 + 18px);padding-bottom:calc(var(--dock) + 4px);flex:none}
+.buys .figure{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.buys .big{font-size:clamp(72px,24vw,104px);line-height:.86;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.buys .what{font-size:16px;line-height:1.3;max-width:15ch;text-align:left;padding-bottom:6px}
+.buys .scale{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:18px;padding-top:12px}
+.buys .scale button{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums;padding:4px 0}
+.buys .scale button[aria-current="true"]{color:var(--ink)}
+/* moods carousel */
+.moods{padding-top:96px}
+.moods h2,.pillars-scene h2,.chat-section h2{font-size:clamp(40px,12.4vw,54px);line-height:.98;letter-spacing:-.025em}
+.mood-row{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:56px 0 40px;scrollbar-width:none;
+  padding-inline:calc(50% - min(31vw,130px))}
+.mood-row::-webkit-scrollbar{display:none}
+.mood{flex:0 0 min(62vw,260px);scroll-snap-align:center;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s}
+.mood[data-near="0"]{transform:scale(.84)}
+.mood-meta{width:min(62vw,260px);margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.mood-meta .top{display:flex;justify-content:space-between;align-items:baseline}
+.mood-meta b{font-weight:400;font-size:20px}
+.mood-meta span{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums}
+.mood-meta p{font-size:15px;font-weight:300;line-height:1.4;color:var(--body);border-top:1px solid var(--line);padding-top:12px}
+/* pillars */
+.pillars-scene{height:calc(4 * 50svh + 100svh);margin-top:96px}
+.pillars-scene .scene-pin{padding-top:20px;padding-bottom:calc(var(--dock) + 4px)}
+.plist{margin-top:22px;display:flex;flex-direction:column}
+.prow{display:flex;flex-direction:column;border-top:1px solid var(--line);padding-block:10px;text-align:left;width:100%}
+.prow .line{display:flex;gap:16px;align-items:center}
+.prow .thumb-img{flex:none;width:58px;height:58px;object-fit:cover;display:block;transition:width .45s cubic-bezier(.2,.8,.2,1),height .45s,opacity .3s}
+.prow b{display:block;font-weight:400;font-size:21px}
+.prow small{display:block;font-size:14px;color:var(--mute);margin-top:2px}
+.prow .open{height:0;overflow:hidden;position:relative;transition:height .5s cubic-bezier(.2,.8,.2,1)}
+.prow .open img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.prow .open .mini{position:absolute;right:14px;bottom:14px;width:38%;transform:rotate(-6deg)}
+.prow[aria-expanded="true"] .open{height:clamp(150px,30svh,250px);margin-bottom:12px}
+.prow[aria-expanded="true"] .thumb-img{width:0;height:58px;opacity:0;margin-right:-16px}
+/* messenger */
+.chat-section{padding-top:96px;display:flex;flex-direction:column;gap:28px}
+.chat{background:var(--chat-bg);border-radius:24px;overflow:hidden;display:flex;flex-direction:column}
+.chat-head{display:flex;align-items:center;gap:10px;background:var(--paper);padding:10px 16px}
+.chat-head i{width:34px;height:34px;border-radius:50%;background:var(--sand-2);display:grid;place-items:center;font-style:normal;font-size:15px}
+.chat-head b{display:block;font-weight:400;font-size:16px;line-height:1.2}
+.chat-head span{display:block;font-size:12px;color:var(--mute)}
+.chat-body{display:flex;flex-direction:column;gap:8px;padding:16px 12px 18px;min-height:470px}
+.msg{max-width:78%;padding:9px 12px 7px;border-radius:16px;font-size:15px;line-height:1.35;background:var(--bubble-in);align-self:flex-start;border-bottom-left-radius:4px;position:relative}
+.msg.out{align-self:flex-end;background:var(--bubble-out);border-radius:16px;border-bottom-right-radius:4px}
+.msg time{display:block;text-align:right;font-size:11px;color:var(--mute);margin-top:2px}
+.msg.gift{width:74%;padding:8px}
+.msg.gift .preview{background:var(--paper);border-radius:10px;overflow:hidden;padding:8px 8px 10px}
+.msg.gift .preview b{display:block;font-weight:400;font-size:13px;margin-top:10px}
+.msg.gift .preview small{display:block;font-size:12px;color:var(--mute)}
+.msg.gift p{padding:8px 4px 0}
+.msg.gift a{color:#1B6FB8;text-decoration:none;font-size:14px;overflow-wrap:anywhere}
+.typing{display:flex;gap:4px;padding:12px 14px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--mute);animation:blink 1.2s infinite both}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.chat .msg{opacity:0;transform:translateY(10px);transition:opacity .45s,transform .45s cubic-bezier(.2,.8,.2,1)}
+.chat .msg.in-view{opacity:1;transform:none}
+.chat-foot{font-size:14px;color:var(--mute);text-align:center}
+.end-cta{padding-top:12px;padding-bottom:140px}
+/* ---------- flow ---------- */
+.flow{padding-top:calc(var(--stepbar) + 8px)}
+.flow .col{padding-bottom:calc(var(--dock) + 40px)}
+.stage{display:flex;justify-content:center;padding-block:10px 22px;transition:padding .35s}
+.stage .gc{transition:max-width .45s cubic-bezier(.2,.8,.2,1)}
+.flow[data-step="4"] .stage .gc{max-width:240px}
+.flow[data-step="5"] .stage .gc{max-width:200px}
+.step{display:flex;flex-direction:column;gap:22px;animation:stepIn .38s cubic-bezier(.2,.8,.2,1)}
+.step.back{animation-name:stepBack}
+@keyframes stepIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+@keyframes stepBack{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+.step[hidden]{display:none}
+.design-head{display:flex;align-items:baseline;justify-content:space-between}
+.design-head b{font-weight:400;font-size:20px}
+.design-head span{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums}
+.thumbs{display:flex;gap:10px;overflow-x:auto;padding:4px;margin:-4px;scrollbar-width:none;scroll-snap-type:x proximity}
+.thumbs::-webkit-scrollbar{display:none}
+.thumb{flex:0 0 auto;width:86px;aspect-ratio:85.6/53.98;border-radius:7px;background:var(--art);background-size:cover;position:relative;scroll-snap-align:center;box-shadow:0 0 0 2px var(--cream),0 0 0 3px transparent;transition:box-shadow .2s}
+.thumb::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(120% 90% at 22% 18%,rgba(255,255,255,.3),rgba(255,255,255,0) 55%)}
+.thumb[aria-pressed="true"]{box-shadow:0 0 0 2px var(--cream),0 0 0 3.5px var(--ink)}
+.hint{font-size:13px;color:var(--mute);line-height:1.4}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.chip{height:48px;border-radius:30px;box-shadow:inset 0 0 0 1px var(--line);background:var(--paper);font-size:16px;font-variant-numeric:tabular-nums;transition:background .2s,color .2s,box-shadow .2s}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--light);box-shadow:none}
+.chip.wide{grid-column:1/-1}
+.covers{display:flex;gap:14px;align-items:center;background:var(--sand);border-radius:16px;padding:16px}
+.covers svg{flex:none;width:44px;height:44px}
+.covers b{display:block;font-weight:400;font-size:16px;line-height:1.3}
+.covers span{display:block;font-size:13px;color:var(--mute);margin-top:4px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label,.label{font-size:12px;color:var(--mute)}
+.input{display:flex;align-items:center;gap:8px;min-height:48px;border-radius:12px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);padding:0 14px;transition:box-shadow .2s}
+.input:focus-within{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.input input,.input textarea,.input select{flex:1;min-width:0;border:0;background:transparent;outline:none;font-size:16px;padding:12px 0}
+.input textarea{resize:none;line-height:1.4;min-height:112px}
+.input .pre{font-size:16px;color:var(--mute)}
+.field.invalid .input{box-shadow:inset 0 0 0 1.5px var(--err)}
+.err{font-size:12px;color:var(--err);display:none}
+.field.invalid .err{display:block}
+.help{font-size:12px;color:var(--mute);display:flex;justify-content:space-between}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.phrases{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.phrases::-webkit-scrollbar{display:none}
+.phrase{flex:none;border-radius:20px;box-shadow:inset 0 0 0 1px var(--line);padding:9px 14px;font-size:14px;background:var(--paper)}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--sand);border-radius:30px;padding:4px;gap:4px}
+.seg button{height:42px;border-radius:26px;font-size:15px;transition:background .2s,box-shadow .2s}
+.seg button[aria-pressed="true"]{background:var(--paper);box-shadow:0 1px 2px rgba(30,28,26,.12)}
+.radios{display:flex;flex-direction:column;gap:8px}
+.radio{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;border-radius:14px;padding:14px 16px;box-shadow:inset 0 0 0 1px var(--line);background:var(--paper)}
+.radio b{display:block;font-weight:400;font-size:16px}
+.radio span{display:block;font-size:13px;color:var(--mute);margin-top:2px}
+.radio i{flex:none;width:20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--line)}
+.radio[aria-checked="true"]{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.radio[aria-checked="true"] i{box-shadow:inset 0 0 0 6px var(--ink)}
+.self-list{display:flex;flex-direction:column;gap:14px}
+.summary{display:flex;flex-direction:column}
+.sum-row{display:grid;grid-template-columns:84px 1fr auto;gap:12px;padding-block:14px;border-top:1px solid var(--line);align-items:start}
+.sum-row:last-child{border-bottom:1px solid var(--line)}
+.sum-row dt{font-size:13px;color:var(--mute);padding-top:2px}
+.sum-row dd{margin:0;font-size:15px;line-height:1.35;min-width:0;overflow-wrap:anywhere}
+.sum-row button{font-size:13px;text-decoration:underline;text-underline-offset:3px;padding-top:2px}
+.total{display:flex;justify-content:space-between;align-items:baseline}
+.total span{font-size:16px}
+.total b{font-weight:400;font-size:30px;font-variant-numeric:tabular-nums}
+.pay-methods .radio b{display:flex;align-items:center;gap:8px}
+.card-fields{display:flex;flex-direction:column;gap:10px}
+.fine{font-size:12px;color:var(--mute);line-height:1.45}
+.pay-error{display:none;font-size:13px;color:var(--err);text-align:center}
+
+/* ---------- done ---------- */
+.done .col{padding-block:calc(env(safe-area-inset-top,0px) + 28px) 140px;display:flex;flex-direction:column;gap:22px;align-items:center;text-align:center}
+.done .gc{max-width:340px;margin-bottom:14px}
+.done .gc.enter .gc-tilt{animation:enter 1.1s cubic-bezier(.16,1,.3,1) both}
+@keyframes enter{from{transform:rotateY(-110deg) rotateX(18deg) translateZ(-120px);opacity:0}60%{opacity:1}to{transform:rotateX(var(--rx)) rotateY(var(--ry))}}
+.done h1{font-size:30px;line-height:1.15}
+.done .lead{text-align:center;margin-inline:auto}
+.share{display:flex;flex-direction:column;gap:10px;width:100%}
+.share-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
+.share-row .btn{padding:0 10px}
+.linkbox{display:flex;align-items:center;gap:10px;background:var(--sand);border-radius:12px;padding:12px 14px;text-align:left}
+.linkbox code{font-family:var(--sans);font-size:14px;flex:1;min-width:0;overflow-wrap:anywhere;user-select:all}
+.details-list{width:100%;text-align:left}
+
+/* ---------- preview sheet ---------- */
+.sheet{position:fixed;inset:0;z-index:70;background:var(--sand);overflow-y:auto;animation:sheetUp .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes sheetUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet-bar{position:sticky;top:0;z-index:2;background:var(--ink);color:var(--light);padding-top:env(safe-area-inset-top,0px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sheet-bar .col{height:48px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sheet-bar .icon-btn{margin:0 -8px 0 0}
+.sheet-body{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sheet-body .col{padding-block:48px 140px;display:flex;flex-direction:column;gap:24px}
+.sheet-body h2{font-size:30px;line-height:1.15}
+.quote{font-size:19px;font-weight:300;line-height:1.45}
+.sheet .dock{z-index:71}
+
+/* ---------- menu & dialog ---------- */
+.scrim{position:fixed;inset:0;z-index:80;background:rgba(30,28,26,.45);animation:fade .25s}
+@keyframes fade{from{opacity:0}}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:min(78vw,320px);z-index:81;background:var(--cream);display:flex;flex-direction:column;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 16px calc(env(safe-area-inset-bottom,0px) + 24px) max(16px,env(safe-area-inset-left,0px));animation:slideIn .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes slideIn{from{transform:translateX(-100%)}}
+.drawer nav{display:flex;flex-direction:column;gap:20px;margin-top:28px}
+.drawer nav a{font-size:20px;text-decoration:none}
+.drawer nav a[aria-current="page"]{color:var(--rust)}
+.dialog{position:fixed;left:0;right:0;bottom:0;z-index:81;background:var(--cream);border-radius:20px 20px 0 0;padding:28px max(16px,env(safe-area-inset-left,0px)) calc(env(safe-area-inset-bottom,0px) + 18px);animation:sheetUp .35s cubic-bezier(.2,.8,.2,1)}
+.dialog .col{display:flex;flex-direction:column;gap:12px}
+.dialog h2{font-size:24px}
+.dialog p{color:var(--body);font-weight:300;margin-bottom:10px}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 112px);transform:translate(-50%,20px);z-index:90;background:var(--ink);color:var(--light);font-size:14px;padding:10px 16px;border-radius:24px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (min-width:760px){
+  .landing .col{gap:96px}
+  .hero h1{font-size:52px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}
+}
+</style>
+
+<header class="site-header" id="siteHeader">
+  <div class="left">
+    <button class="icon-btn" id="menuBtn" aria-label="Open menu">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none"><path d="M.75 8.3h24M.75 15.7h24" stroke="#1E1C1A" stroke-width="1.5" stroke-linecap="square"/></svg>
+    </button>
+    <a class="logo" href="#top" id="logoLink" aria-label="AMA home"><svg viewBox="0 0 69 26" aria-hidden="true"><use href="#ama-logo"/></svg></a>
+  </div>
+  <button class="icon-btn" aria-label="Search">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM15 15l6 6" stroke="#1E1C1A" stroke-width="1.5" stroke-linecap="square"/></svg>
+  </button>
+</header>
+
+<div class="stepbar" id="stepbar" hidden>
+  <div class="stepbar-in">
+    <button class="icon-btn" id="backBtn" aria-label="Back">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M20 12H4M10 6l-6 6 6 6" stroke="#1E1C1A" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="stepbar-title" id="stepTitle" aria-live="polite">Choose a design</div>
+    <button class="icon-btn" id="closeBtn" aria-label="Close">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#1E1C1A" stroke-width="1.25" stroke-linecap="round"/></svg>
+    </button>
+    <div class="progress" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+</div>
+
+<main id="top">
+  <!-- ================= LANDING ================= -->
+  <section class="view landing" id="vLanding">
+    <div class="col">
+      <!-- A1 hero -->
+      <div class="hero">
+        <h1>Give time<br>to feel well</h1>
+        <div class="hero-card"><div class="tilted"><div class="enter"><div data-card="hero" data-design="night" data-amp="1.1"></div></div></div></div>
+        <p class="lead">A gift card for any session on AMA: nutrition, activity, mindfulness, sleep.</p>
+        <div class="facts"><span>From £10</span><span>Valid 24 months</span><span>Sent in 2 minutes</span></div>
+        <button class="btn" data-start id="heroCta">Choose a gift card</button>
+        <p class="tilt-note" id="tiltNote">Drag the card</p>
+      </div>
+    </div>
+
+    <!-- A2 what it buys (pinned, scroll-driven) -->
+    <section class="scene buys bleed" id="buys" aria-label="What each amount covers">
+      <div class="scene-pin">
+        <div class="photo"><img id="buysImg" src="img/pilates.jpg" alt=""><div class="card-on-edge"><div data-card="buys" data-amp=".8"></div></div></div>
+        <div class="meta">
+          <div class="figure"><span class="big" id="buysBig">£25</span><p class="what" id="buysWhat"></p></div>
+          <div class="scale" id="buysScale"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="col">
+      <!-- A3 moods carousel -->
+      <section class="moods">
+        <h2>Six moods.<br>One gift.</h2>
+        <div class="mood-row bleed" id="moodRow"></div>
+        <div class="mood-meta"><div class="top"><b id="moodName">Sand</b><span id="moodIdx">1 / 6</span></div><p>Swipe the card. Tap it to start with this design.</p></div>
+      </section>
+    </div>
+
+    <!-- A4 pillars (pinned list) -->
+    <section class="scene pillars-scene" id="pillars" aria-label="What they can book">
+      <div class="scene-pin"><div class="col" style="width:100%">
+        <h2>Spend it on<br>any session</h2>
+        <div class="plist" id="plist"></div>
+      </div></div>
+    </section>
+
+    <div class="col">
+      <!-- A5 messenger -->
+      <section class="chat-section">
+        <h2>It arrives<br>like a message</h2>
+        <div class="chat" id="chat" aria-label="Example of the gift in a chat">
+          <div class="chat-head"><i aria-hidden="true">A</i><div><b>Anna</b><span>online</span></div></div>
+          <div class="chat-body">
+            <div class="msg">how was the retreat?<time>18:41</time></div>
+            <div class="msg out gift"><div class="preview"><div data-card="chat" data-amp=".7"></div><b id="chatTitle">AMA gift card · £75</b><small>amaforyou.com</small></div><p>a little time just for you<br><a href="#top" tabindex="-1">amaforyou.com/gift/7KQ2-M9XA</a></p><time>18:42 ✓✓</time></div>
+            <div class="msg typing" id="typing" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="msg" id="reply" hidden>omg, thank you<time>18:43</time></div>
+          </div>
+        </div>
+        <p class="chat-foot">Or by email, on the day and time you choose.</p>
+      </section>
+      <div class="end-cta"><button class="btn" data-start>Choose a gift card</button></div>
+    </div>
+  </section>
+
+  <!-- ================= FLOW ================= -->
+  <section class="view flow" id="vFlow" data-step="1" hidden>
+    <div class="col">
+      <div class="stage"><div data-card="flow" data-amp="1.1" id="flowCard"></div></div>
+
+      <!-- 1 design -->
+      <div class="step" data-step="1">
+        <div class="design-head"><b id="designName">Sunrise</b><span id="designIdx">1 / 6</span></div>
+        <div class="thumbs" id="thumbs" role="group" aria-label="Card designs"></div>
+        <p class="hint" id="designHint">Swipe the card or tap a design.</p>
+      </div>
+
+      <!-- 2 amount -->
+      <div class="step" data-step="2" hidden>
+        <div class="chips" id="chips" role="group" aria-label="Amount"></div>
+        <div class="field" id="fAmount" hidden>
+          <label for="amountInput">Your amount</label>
+          <div class="input"><span class="pre">£</span><input id="amountInput" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="120"></div>
+          <span class="err">Enter an amount from £10 to £500</span>
+          <span class="help"><span>From £10 to £500</span></span>
+        </div>
+        <div class="covers" aria-live="polite"><svg viewBox="0 0 48 48" aria-hidden="true" id="coversIcon"><use href="#p-mindfulness"/></svg><div><b id="coversText">Enough for an online therapy session</b><span>Or any mix of sessions on AMA</span></div></div>
+      </div>
+
+      <!-- 3 message -->
+      <div class="step" data-step="3" hidden>
+        <div class="two">
+          <div class="field" id="fTo"><label for="toInput">To</label><div class="input"><input id="toInput" maxlength="30" autocomplete="off" placeholder="Their name"></div><span class="err">Add their name</span></div>
+          <div class="field" id="fFrom"><label for="fromInput">From</label><div class="input"><input id="fromInput" maxlength="30" autocomplete="given-name" placeholder="Your name"></div><span class="err">Add your name</span></div>
+        </div>
+        <div class="field" id="fMsg">
+          <label for="msgInput">Message</label>
+          <div class="input"><textarea id="msgInput" maxlength="300" rows="4" placeholder="Write a few words or pick a phrase below"></textarea></div>
+          <span class="help"><span>Optional</span><span id="msgCount">0 / 300</span></span>
+        </div>
+        <div class="phrases" id="phrases"></div>
+        <button class="link" id="previewBtn" style="align-self:flex-start">Preview what they’ll see</button>
+      </div>
+
+      <!-- 4 delivery -->
+      <div class="step" data-step="4" hidden>
+        <div class="seg" role="group" aria-label="Delivery">
+          <button data-mode="email" aria-pressed="true">Email them</button>
+          <button data-mode="self" aria-pressed="false">I’ll send it myself</button>
+        </div>
+        <div id="modeEmail" class="step-part" style="display:flex;flex-direction:column;gap:22px">
+          <div class="field" id="fEmail"><label for="emailInput" id="emailLabel">Their email</label><div class="input"><input id="emailInput" type="email" inputmode="email" autocomplete="off" placeholder="name@example.com"></div><span class="err">Enter an email like name@example.com</span></div>
+          <div class="radios" role="radiogroup" aria-label="When to send">
+            <span class="label">When</span>
+            <button class="radio" role="radio" data-when="now" aria-checked="true"><div><b>Now</b><span>Right after payment</span></div><i></i></button>
+            <button class="radio" role="radio" data-when="later" aria-checked="false"><div><b>On a date</b><span id="laterSub">Choose the day and time</span></div><i></i></button>
+          </div>
+          <div class="two" id="whenFields" hidden>
+            <div class="field" id="fDate"><label for="dateInput">Date</label><div class="input"><input id="dateInput" type="date"></div><span class="err">Choose a time from now on</span></div>
+            <div class="field" id="fTime"><label for="timeInput">Time</label><div class="input"><input id="timeInput" type="time" value="09:00"></div></div>
+          </div>
+        </div>
+        <div id="modeSelf" class="self-list" hidden>
+          <p style="font-size:16px;line-height:1.45">After payment you’ll get a link and an image of the card to send however you like.</p>
+          <div class="way"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 18.5l1.2-3.4A7.5 7.5 0 1 1 8.6 18l-4.6.5z" stroke="#1E1C1A" stroke-width="1.25" stroke-linejoin="round"/></svg><div><b>WhatsApp or any messenger</b><span>The link shows a preview of the card</span></div></div>
+          <div class="way"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="4.5" width="17" height="15" rx="2" stroke="#1E1C1A" stroke-width="1.25"/><circle cx="9" cy="10" r="1.6" stroke="#1E1C1A" stroke-width="1.25"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5" stroke="#1E1C1A" stroke-width="1.25" stroke-linejoin="round"/></svg><div><b>Image</b><span>Save it, post it or print it</span></div></div>
+        </div>
+      </div>
+
+      <!-- 5 review & pay -->
+      <div class="step" data-step="5" hidden>
+        <dl class="summary" id="summary" style="margin:0"></dl>
+        <div class="field" id="fBuyer"><label for="buyerInput">Your email for the receipt</label><div class="input"><input id="buyerInput" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></div><span class="err">Enter an email like name@example.com</span></div>
+        <div class="radios pay-methods" role="radiogroup" aria-label="Payment method">
+          <span class="label">Pay with</span>
+          <button class="radio" role="radio" data-pay="wallet" aria-checked="true"><div><b>Apple Pay or Google Pay</b><span>Confirm on your phone</span></div><i></i></button>
+          <button class="radio" role="radio" data-pay="card" aria-checked="false"><div><b>Card</b><span>Visa, Mastercard, Amex</span></div><i></i></button>
+        </div>
+        <div class="card-fields" id="cardFields" hidden>
+          <div class="field" id="fCardNo"><label for="cardNo">Card number</label><div class="input"><input id="cardNo" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="19"></div><span class="err">Check the card number</span></div>
+          <div class="two">
+            <div class="field" id="fExp"><label for="cardExp">Expiry</label><div class="input"><input id="cardExp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="7"></div><span class="err">Use MM / YY</span></div>
+            <div class="field" id="fCvc"><label for="cardCvc">Security code</label><div class="input"><input id="cardCvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4"></div><span class="err">3 or 4 digits</span></div>
+          </div>
+        </div>
+        <div class="total"><span>Total</span><b id="totalAmt">£75</b></div>
+        <p class="fine">Valid for 24 months. Spend on any session, plan or bundle at AMA. Not exchangeable for cash. By paying you agree to the gift card terms.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DONE ================= -->
+  <section class="view done" id="vDone" hidden>
+    <div class="col">
+      <div data-card="done" data-amp="1.1" id="doneCard"></div>
+      <h1 id="doneTitle">Your gift is ready</h1>
+      <p class="lead" id="doneLead"></p>
+      <div class="share" id="shareBlock">
+        <a class="btn" id="waBtn" href="#" target="_blank" rel="noopener">Send on WhatsApp</a>
+        <div class="share-row">
+          <button class="btn ghost" id="copyBtn">Copy link</button>
+          <button class="btn ghost" id="imgBtn" hidden>Save image</button>
+          <button class="btn ghost" id="nativeShareBtn" hidden>Share</button>
+        </div>
+        <div class="linkbox"><code id="giftLink">amaforyou.com/gift/7KQ2-M9XA</code></div>
+      </div>
+      <button class="link" id="alsoShare" hidden>Share it myself too</button>
+      <button class="link" id="againBtn">Buy another gift card</button>
+    </div>
+  </section>
+</main>
+
+<!-- fixed CTA dock -->
+<div class="dock off" id="dock">
+  <div class="col">
+    <p class="pay-error" id="payError" role="alert"></p>
+    <button class="btn" id="cta">Continue</button>
+    <p class="dock-note" id="dockNote"></p>
+  </div>
+</div>
+
+<!-- recipient preview -->
+<div class="sheet" id="preview" hidden role="dialog" aria-modal="true" aria-labelledby="pvTitle">
+  <div class="sheet-bar"><div class="col"><span class="small" id="pvBar">Preview · what they will see</span><button class="icon-btn" id="pvClose" aria-label="Close preview"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#FFF3E4" stroke-width="1.25" stroke-linecap="round"/></svg></button></div></div>
+  <div class="sheet-body"><div class="col">
+    <h2 id="pvTitle">Anna, here’s a gift from Andrey</h2>
+    <div data-card="preview" data-amp="1.1"></div>
+    <p class="quote" id="pvMsg"></p>
+    <p class="hint" id="pvMeta"></p>
+    <div class="btn static" aria-hidden="true">Open my gift</div>
+    <p class="hint" style="text-align:center;margin-top:-10px">This button opens the gift for them.</p>
+  </div></div>
+  <div class="dock"><div class="col"><button class="btn ghost" id="pvBack" style="background:var(--sand)">Back to message</button></div></div>
+</div>
+
+<div id="menuLayer" hidden>
+  <div class="scrim" data-close-menu></div>
+  <aside class="drawer" aria-label="Menu">
+    <div>
+      <button class="icon-btn" data-close-menu aria-label="Close menu" style="margin:0 0 0 -8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#1E1C1A" stroke-width="1.25" stroke-linecap="round"/></svg></button>
+      <nav>
+        <a href="https://www.amaforyou.com/" target="_blank" rel="noopener">Discover</a>
+        <a href="https://www.amaforyou.com/" target="_blank" rel="noopener">Professionals</a>
+        <a href="https://www.amaforyou.com/" target="_blank" rel="noopener">For Experts</a>
+        <a href="https://www.amaforyou.com/" target="_blank" rel="noopener">For Business</a>
+        <a href="#top" aria-current="page" data-close-menu>Gift cards</a>
+      </nav>
+    </div>
+    <a class="btn" href="https://www.amaforyou.com/" target="_blank" rel="noopener">Sign up</a>
+  </aside>
+</div>
+
+<div id="leaveLayer" hidden>
+  <div class="scrim" data-keep></div>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="leaveTitle"><div class="col">
+    <h2 id="leaveTitle">Leave the gift card?</h2>
+    <p>Your choices stay saved on this device, so you can pick up where you left off.</p>
+    <button class="btn" data-keep>Keep editing</button>
+    <button class="btn ghost" id="leaveBtn">Leave</button>
+  </div></div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="ama-logo" viewBox="0 0 69 26">
+      <path id="lgA" d="M68.6223 7.19211C68.6223 7.76903 68.4692 8.26903 68.2395 8.88441C66.7085 13.1152 63.5698 21.1921 63.1488 22.7305C63.187 22.8074 63.3019 22.8844 63.3784 22.8844C64.1057 22.8844 65.8281 21.1921 67.5506 19.1921L68.163 19.9998C66.1726 22.9228 63.0722 25.9997 61.5794 25.9997C60.6225 25.9997 59.7039 25.4613 59.7039 24.4228C59.7039 24.1151 59.9718 23.3459 60.3546 22.3074L61.656 18.9613L61.4646 18.8844C59.0149 22.3459 55.1107 25.9997 53.3882 25.9997C51.6275 25.769 50.7089 24.1921 50.7089 22.1921C50.7089 16.1921 56.8331 6.84596 62.7277 6.84596C63.6463 6.84596 64.7946 7.11519 65.5602 7.57673C65.7898 6.92288 65.9812 6.38442 66.1343 5.88442C66.4023 5.84596 66.5171 5.84596 66.7085 5.84596C67.8568 5.84596 68.6223 6.42288 68.6223 7.19211ZM54.9958 22.8459C56.4886 22.8459 60.3163 19.8075 63.1488 14.1152L64.6798 10.1152C63.6846 9.34595 62.4215 8.76903 60.6225 8.76903C57.3307 8.76903 54.0389 16.8844 54.0389 20.7305C54.0389 21.9613 54.4982 22.8459 54.9958 22.8459Z"/>
+      <path id="lgM" d="M51.3376 19.1925L51.9501 20.0002C49.9597 22.731 47.242 25.9233 44.9072 25.9233C43.7206 25.9233 43.4527 25.231 43.4527 24.5387C43.4527 23.4233 48.2755 11.1541 48.3903 10.308C48.2372 9.65411 47.8927 9.23104 47.3186 9.23104C46.0937 9.23104 42.3809 12.5772 37.7877 22.3079L36.4863 25.6156C36.2567 25.6541 36.1418 25.6541 36.1036 25.6541C34.7639 25.6541 34.228 25.1541 34.228 24.2695C34.228 23.8079 34.3811 23.3079 34.7639 22.2695C35.7208 19.6156 39.204 10.808 39.204 10.308C39.0126 9.57719 38.6681 9.23104 38.1322 9.23104C36.4863 9.2695 32.3907 14.0003 28.3334 22.8848C27.9506 23.8848 27.5679 24.8464 27.2999 25.6156C27.1851 25.6541 26.9937 25.6541 26.9172 25.6541C25.5392 25.6541 25.0416 25.1156 25.0416 24.231C25.0416 23.8079 25.1565 23.3848 25.3478 22.7695C26.7258 18.7695 29.6731 11.0387 29.941 9.88488C29.7114 9.57719 29.52 9.46181 29.1755 9.46181C28.5248 9.46181 27.6062 10.6926 26.8789 11.9233L26.0751 11.3849C27.4913 8.19258 28.9076 7.0772 30.3238 7.0772C31.4338 7.0772 32.3142 7.65412 33.118 9.15411L30.0941 16.6926L30.3621 16.8079C33.9983 10.0772 37.0987 6.80797 39.4336 6.80797C41.2326 6.80797 42.1513 8.19258 42.1513 9.38488C42.1513 10.0772 39.8929 15.3079 39.2805 16.6926L39.5485 16.8079C43.7206 9.07719 46.7444 6.80797 48.5817 6.80797C50.3042 6.80797 51.3759 8.07719 51.3759 9.46181C51.3759 10.7695 47.931 19.6156 46.9358 22.6925C46.9741 22.7695 47.0889 22.8464 47.2038 22.8464C47.8927 22.8464 49.8449 21.0002 51.3376 19.1925Z"/>
+      <path id="lgB" d="M27.7888 1.46153L26.3343 5.49998L20.8225 23.1922C21.2052 23.5768 21.4349 23.7307 22.277 23.9615L23.3487 24.2692L23.0042 25.3845H13.3585L13.703 24.2692L14.8131 23.9999C16.4207 23.6153 16.9565 23.3461 17.6455 21.1153L19.368 15.5384C17.7221 15.6538 15.8465 15.7307 14.392 15.7307C13.8179 15.7307 12.8227 15.7307 12.0571 15.6923C11.904 15.923 11.7509 16.1153 11.5978 16.3076C9.9902 18.3846 7.65533 21.6922 6.69842 23.4615C7.04291 23.7307 7.34912 23.8845 7.92327 23.9999L9.10984 24.2692L8.76535 25.3461L1.52588e-05 25.923L0.344504 24.8076C2.56455 23.9999 4.17216 22.6922 6.2391 20.2692C8.8419 17.1538 14.1241 10.5384 17.2628 6.96152C22.1239 1.42307 24.1908 0 25.3774 0C26.4874 0 27.2912 0.230767 27.7888 1.46153ZM19.8273 14.1923L23.4636 2.49999C21.1287 4.57691 17.4159 8.88459 13.1289 14.3846C14.8513 14.2692 16.9565 14.1923 19.8273 14.1923Z"/>
+    </symbol>
+    <symbol id="p-nutrition" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20.14" fill="none" stroke="#B04F13" stroke-width="1.5"/><path fill="#B04F13" d="M16.3887 9.63833C18.0466 7.93437 20.6341 6.98733 22.876 7.77407C25.1179 8.56017 26.584 11.3803 25.5049 13.4997C25.0797 14.335 24.3496 14.9677 23.7793 15.7116C22.5486 17.3175 22.1011 19.426 22.21 21.4479C22.3189 23.4698 22.9431 25.4282 23.6768 27.3151C24.0987 28.3998 24.7461 29.6216 25.8965 29.7838C26.702 29.8972 27.4834 29.4203 28.04 28.8258C28.596 28.2313 29.0039 27.5105 29.5586 26.9147C30.7324 25.6547 32.4663 25.0621 34.1709 24.8297C35.8003 24.6084 37.5602 24.7025 38.9355 25.6061V25.6032C40.3101 26.5061 41.1212 28.4019 40.3936 29.8786C39.6379 31.4111 37.6931 31.8788 35.9893 31.9762C33.8932 32.0963 31.7391 31.9306 29.7402 32.5739C26.3104 33.6774 24.64 36.8802 24.2783 40.2965C24.2686 40.3899 24.2555 40.4921 24.1875 40.5563C24.1156 40.6235 24.0075 40.6266 23.9092 40.6266C23.3848 40.6247 22.8603 40.6217 22.3359 40.6198C21.8362 40.6178 21.3288 40.654 20.835 40.569C20.8019 40.5632 20.7675 40.5562 20.7441 40.5329C20.7125 40.501 20.7129 40.4497 20.7148 40.4049C20.7479 39.7234 20.7557 39.0392 20.6475 38.361C20.5541 37.7762 20.4422 37.2475 20.124 36.7418C19.6237 35.9477 18.838 35.4225 17.9678 35.1071C16.1556 34.4502 14.18 34.5975 12.292 34.4254C10.3388 34.2482 8.16419 33.4323 7.50879 31.5807C7.15491 30.5798 7.16415 29.1712 7.8291 28.2975C7.90169 28.2021 7.98084 28.1114 8.06055 28.0211C8.17851 27.8874 8.29708 27.7535 8.41504 27.6198C8.46234 27.5666 8.51138 27.5126 8.57422 27.4801C11.321 26.0808 15.0727 26.9846 17.1836 29.1403C17.3585 29.3194 17.5239 29.5081 17.6787 29.7047C18.6898 30.9919 19.2778 32.5907 20.4004 33.7819C20.7679 34.1713 21.2423 34.5295 21.7764 34.5075C22.9219 34.4597 23.249 32.8673 22.9522 31.7575C21.9851 28.1419 18.4237 25.9416 16.2031 22.9303C14.7733 20.9914 13.8837 18.6247 13.8584 16.2145C13.8339 13.8045 14.7095 11.3649 16.3887 9.63833ZM33.2598 12.0465C34.7362 11.8993 36.7404 12.3396 37.9199 13.2399C39.3022 14.2948 39.9376 16.2368 39.4482 17.9069C38.9588 19.5769 37.3759 20.866 35.6436 21.0055C34.6462 21.0859 33.6436 20.8147 32.7441 20.3747H32.7432C31.8435 19.9345 31.0147 19.311 30.4541 18.4801C29.8936 17.6493 29.6232 16.5972 29.8447 15.6198C30.1694 14.1904 31.712 12.201 33.2598 12.0465Z"/></symbol>
+    <symbol id="p-activity" viewBox="0 0 48 48"><path fill="#B04F13" d="M11.2142 13.7979C13.1947 13.7816 15.1178 14.6097 16.6869 15.8203C18.2559 17.0309 19.5059 18.6071 20.6234 20.2451C21.339 21.2941 22.0132 22.3872 22.4291 23.5869C23.1375 25.6302 23.1717 28.0893 24.7865 29.5254C25.5111 30.1696 26.4623 30.5011 27.4115 30.6953C28.6628 30.9511 29.9577 30.9943 31.223 30.8223C33.411 30.5244 35.8031 29.6293 37.6927 30.7725C38.8103 31.4484 39.4398 32.6884 40.0004 33.8691C31.0753 34.493 22.0734 33.748 13.1244 33.374C12.1435 33.3328 11.1207 33.2809 10.265 32.7988C9.27183 32.2388 8.70441 31.1985 8.42322 30.125C8.3464 29.8309 8.31037 29.5299 8.24353 29.2344C8.15811 28.8582 8.09047 28.4935 8.15955 28.1074C8.24318 27.6384 8.52133 27.1911 8.97205 27.0068C9.44306 26.814 9.99535 26.8346 10.4623 27.0293C10.5933 27.0841 10.72 27.1519 10.8275 27.2451C10.983 27.3795 11.0893 27.5609 11.1937 27.7383C11.5047 28.2676 11.8231 28.797 12.2133 29.2715C12.4889 29.6068 12.8022 29.9151 13.1595 30.1631C13.4696 30.3781 13.928 30.7412 14.3217 30.5391C14.4867 30.4548 14.5912 30.2872 14.6713 30.1201C15.1753 29.0679 14.9787 27.7187 14.1967 26.8535C13.4874 26.0689 12.425 25.7254 11.4115 25.4248C10.3981 25.1242 9.33352 24.8058 8.59216 24.0518C7.85077 23.297 7.59115 21.9531 8.33435 21.2002C8.76599 20.7629 9.41781 20.627 10.0316 20.6084C11.8706 20.5527 13.7153 21.4128 14.8558 22.8584C16.0497 24.3714 16.433 26.353 17.2484 28.0996C17.6413 28.9413 18.192 29.7315 18.8959 30.3418C19.5143 30.8774 20.5341 31.5305 21.3695 31.0791C21.9097 30.7871 21.8248 30.1242 21.8334 29.5859C21.8433 28.9704 21.777 28.3549 21.6469 27.7539C21.3824 26.5338 20.8566 25.3741 20.1478 24.3496C19.878 23.9598 19.581 23.5884 19.2592 23.2402C17.2786 21.1005 14.5351 19.8073 11.7318 19.0127C10.8938 18.775 10.0275 18.5693 9.29529 18.0967C8.56342 17.624 7.97829 16.8101 8.05017 15.9404C8.16604 14.5435 9.81433 13.8093 11.2142 13.7979ZM27.4554 21.5547C28.2539 20.3265 30.2819 19.4505 31.7406 19.8154C33.1925 20.1792 34.4776 22.067 34.7474 23.4551C35.0538 25.0337 34.2576 26.8604 32.7484 27.4102C32.2982 27.574 31.814 27.6215 31.3353 27.6387C30.4669 27.6699 29.5777 27.5994 28.7748 27.2666C27.9721 26.9338 27.2602 26.3109 26.9681 25.4912C26.8054 25.0344 26.7778 24.5396 26.7914 24.0547C26.8163 23.1819 26.9795 22.2863 27.4554 21.5547Z"/><circle cx="24" cy="24" r="20.14" fill="none" stroke="#B04F13" stroke-width="1.5"/></symbol>
+    <symbol id="p-mindfulness" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20.14" fill="none" stroke="#B04F13" stroke-width="1.5"/><path fill="#B04F13" d="M24.175 18.4403C21.9987 18.4551 19.7731 18.4776 17.7266 19.2198C17.4359 19.3252 17.1156 19.4821 17.0329 19.7805C16.8884 20.3023 17.553 20.6605 18.0863 20.7499C20.434 21.1427 22.901 20.5519 25.1912 21.2009C25.7234 21.3518 26.3338 21.7144 26.284 22.2663C26.2293 22.872 25.4606 23.0821 24.855 23.1232C19.2558 23.5029 13.4764 22.5368 8.11469 24.198C7.32246 24.4437 6.44044 24.8612 6.25483 25.671C6.08401 26.416 6.63151 27.178 7.32355 27.5001C8.01559 27.8221 8.81166 27.8062 9.57323 27.7596C15.3822 27.4052 21.1556 25.6628 26.9323 26.3727C27.5088 26.4434 28.1707 26.602 28.4149 27.1297C28.653 27.6438 28.3393 28.2807 27.8619 28.5852C27.3845 28.8897 26.7932 28.9402 26.2276 28.9632C25.1178 29.0077 24.0048 28.9753 22.8994 28.8667C20.2407 28.605 17.38 27.9379 15.028 29.2068C14.4903 29.497 13.9494 30.0023 14.0304 30.6085C14.1366 31.4062 15.1512 31.6547 15.9521 31.7145C17.4008 31.8226 18.8501 31.9307 20.2987 32.0387C20.7515 32.0728 21.3111 32.1902 21.4233 32.6312C21.5509 33.1305 20.9804 33.5129 20.4898 33.6687C17.6751 34.564 14.5692 33.7532 11.6948 34.4323C10.9371 34.6112 10.0884 35.027 9.97674 35.7989C9.89078 36.3931 10.3134 36.968 10.844 37.2467C11.3751 37.5254 11.9932 37.5704 12.5916 37.6006C14.9464 37.7196 17.385 37.4102 19.7014 37.6999C20.9443 37.8551 22.2922 37.7312 23.5432 37.7202C24.8282 37.7092 26.1132 37.6812 27.3971 37.6357C28.1159 37.6105 28.7938 37.3658 29.4841 37.3394C30.3213 37.3082 31.1469 37.3016 31.8773 36.8237C32.7527 36.2515 33.131 34.8295 32.3262 34.1613C31.9074 33.8135 31.321 33.7746 30.7773 33.7521C29.2044 33.6857 27.5947 33.52 26.036 33.5266C25.8827 33.5271 25.6675 33.5079 25.5575 33.3916C25.4381 33.2654 25.3894 33.0142 25.3763 32.8485C25.3741 32.8233 25.373 32.7969 25.3785 32.7722C25.3834 32.7492 25.3938 32.7278 25.4058 32.707C25.4699 32.595 25.5772 32.5094 25.6998 32.4716C25.7677 32.4507 25.8389 32.4442 25.9095 32.4376C27.2799 32.3109 28.6476 32.3301 30.0202 32.2571C31.5307 32.177 33.3577 32.1753 34.8026 31.6926C35.7634 31.5154 36.9477 31.0276 36.9219 30.0489C36.8978 29.1338 35.7881 28.6648 34.8748 28.667C33.9616 28.6692 32.9805 28.8957 32.18 28.4552C31.7787 28.0564 31.9857 27.3185 32.4428 26.9849C32.8995 26.6514 33.4995 26.6097 34.064 26.58C36.052 26.4753 38.0394 26.3705 40.0274 26.2651C40.7917 26.2245 41.5921 26.1741 42.2458 25.7741C42.8995 25.3742 43.3348 24.5046 42.9921 23.8183C42.5606 22.9537 41.3496 22.9641 40.3903 23.064C38.663 23.2439 36.9236 23.3043 35.1875 23.2456C33.7678 23.1973 32.3777 23.0991 30.9744 22.8758C30.6876 22.8303 30.3908 22.7809 30.1483 22.6207C29.9057 22.4605 29.7311 22.1577 29.8127 21.8784C29.8981 21.5844 30.2162 21.4302 30.508 21.3397C32.721 20.6523 35.1918 21.7215 37.3227 20.7505C37.5308 20.6556 37.7503 20.5124 37.7914 20.2869C37.8379 20.0318 37.6342 19.8025 37.4327 19.6395C35.9266 18.42 33.8193 18.3761 31.8827 18.3892C29.3133 18.4062 26.7439 18.4238 24.175 18.4408V18.4403Z"/><path fill="#B04F13" d="M25.086 9.42581C24.8237 9.61783 24.6086 9.86854 24.4224 10.1352C22.5631 12.7937 23.732 15.516 26.6491 16.5177C27.708 16.8815 28.93 16.7306 29.8695 16.1205C30.809 15.5105 31.4457 14.455 31.5476 13.3374C31.6089 12.6621 31.4852 11.9818 31.2903 11.3322C31.1391 10.8297 30.9393 10.3294 30.5944 9.93438C29.8224 9.05056 28.5243 8.88543 27.3526 8.88872C26.5631 8.89091 25.7244 8.95949 25.086 9.42581Z"/></symbol>
+    <symbol id="p-sleep" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20.14" fill="none" stroke="#B04F13" stroke-width="1.5"/><path fill="#B04F13" d="M16.0645 33.4507C15.1011 33.5005 14.2191 33.9286 13.4598 34.4966C12.6597 35.0951 12.0782 35.8838 11.3467 36.5403C11.0161 36.24 10.6643 35.9253 10.3649 35.5945C10.0917 35.2931 9.7483 35.0801 9.41267 34.8434C9.37587 34.8174 9.33628 34.7859 9.3335 34.7416C9.33015 34.693 9.37308 34.6548 9.41155 34.6244C9.68251 34.4081 9.90608 34.1609 10.1224 33.8937C10.3354 33.631 10.6035 33.4059 10.8327 33.152C11.3423 32.5862 11.9293 32.094 12.4735 31.5613C13.2094 30.8406 13.5373 29.9247 13.5133 28.9148C13.4821 27.5857 12.4127 26.5508 11.5976 25.4955C10.2233 23.7162 9.43664 21.4977 9.38479 19.2572C9.35803 18.1106 9.57212 16.8578 10.4318 16.0912C10.8985 15.6753 11.5034 15.4513 12.0927 15.2372C12.866 14.9557 13.7937 14.6919 14.4594 15.1736C14.7845 15.4087 14.9762 15.7832 15.1145 16.1576C16.0484 18.6786 15.09 21.7079 16.4359 24.0381C17.3218 23.4137 17.3201 22.1321 17.2275 21.058C17.0865 19.4159 16.9454 17.7737 16.8044 16.1316C16.6851 14.7455 16.7648 13.0011 18.0454 12.4342C19.1789 11.9325 20.5454 12.8562 20.929 14.0276C21.3126 15.1991 20.9825 16.4751 20.5699 17.6366C20.1573 18.7981 19.6545 19.9718 19.6946 21.2029C19.7041 21.4889 19.7699 21.8163 20.0224 21.9557C20.294 22.105 20.6351 21.9552 20.8754 21.761C22.1973 20.6941 22.0496 18.7079 22.1645 17.021C22.2787 15.3374 22.78 13.6803 23.6185 12.2118C24.1638 11.2566 24.8863 10.3517 25.8809 9.87111C26.8756 9.38991 28.1846 9.43029 28.9797 10.1936C29.6677 10.8534 29.8405 11.9137 29.6348 12.8407C29.5266 13.3285 29.3521 13.7992 29.1258 14.2444C28.9083 14.6709 28.5576 14.995 28.4378 15.4729C28.4238 15.5293 28.4127 15.5912 28.4383 15.6432C28.4595 15.6864 28.503 15.7146 28.5465 15.7356C28.7193 15.8174 28.9256 15.8075 29.1074 15.7467C29.2891 15.6858 29.4502 15.5774 29.6058 15.4657C30.107 15.1045 30.5686 14.6902 30.9812 14.2323C31.3598 13.8119 31.8582 13.5077 32.3092 13.1598C33.5213 12.2256 34.9904 11.3468 36.4974 11.6349C38.2999 11.9795 39.4239 14.2406 38.6021 15.8689C38.03 17.0022 36.7912 17.6537 35.5607 17.9933C34.3303 18.3329 33.0374 18.4358 31.8298 18.8495C31.1964 19.0669 30.4783 19.6111 30.6963 20.24C31.8688 20.6216 33.1154 20.0282 34.3459 19.9303C35.4911 19.839 36.6206 20.1825 37.7167 20.5221C38.5195 20.7704 39.4278 21.1167 39.7015 21.9048C40.0929 23.0304 38.9048 24.0702 37.7948 24.5226C36.5364 25.0354 35.1632 25.3163 33.8068 25.396C32.4436 25.4756 31.0927 25.6332 29.7212 25.4363C29.0483 25.3396 28.3725 25.1819 27.6962 25.2538C27.02 25.3257 26.3219 25.6886 26.0889 26.3218C26.0309 26.4795 26.0064 26.6637 26.09 26.8097C26.1547 26.9231 26.2734 26.9939 26.39 27.0536C27.2558 27.4944 28.2677 27.5497 29.2395 27.4999C30.2113 27.4502 31.183 27.3053 32.1531 27.3799C32.7932 27.4291 33.4221 27.5741 34.0476 27.7179C34.5215 27.8268 35.0032 27.9391 35.4242 28.1808C36.0129 28.5187 36.8431 29.5232 36.2906 30.1991C36.1517 30.3683 35.9516 30.4739 35.7542 30.5702C32.4386 32.1869 28.4149 32.303 25.0101 30.8805C24.5228 30.6769 24.016 30.4385 23.4914 30.5022C22.9667 30.5658 22.4633 31.0912 22.6484 31.5823C22.7855 31.9463 23.207 32.1056 23.5828 32.2145C26.1184 32.9513 28.7544 33.3489 31.396 33.3937C31.5794 33.3971 31.7684 33.3993 31.9363 33.4734C32.2384 33.6061 32.4018 33.9463 32.4274 34.2732C32.5072 35.3019 31.5159 36.0857 30.567 36.5088C27.8367 37.7261 24.5312 37.5879 21.9141 36.1459C20.0018 35.0923 18.2489 33.3373 16.0645 33.4502V33.4507Z"/></symbol>
+  </defs>
+</svg>
+
+<script>
+(function(){
+'use strict';
+/* =========================================================
+   DATA
+   Card designs are TEMPORARY. Final art: replace `art` with
+   "url('cards/sunrise.jpg')" (1712×1080). Logo and amount stay live layers.
+   ========================================================= */
+var DESIGNS=[
+  {id:'sand',   name:'Sand',   c1:'#F3E6D2',c2:'#C9A57E',ink:'#1E1C1A',edge:'#AE8962'},
+  {id:'night',  name:'Night',  c1:'#4A3B33',c2:'#141210',ink:'#FFF3E4',edge:'#100E0C'},
+  {id:'forest', name:'Forest', c1:'#A3A47C',c2:'#3B402A',ink:'#FFF3E4',edge:'#30351F'},
+  {id:'bloom',  name:'Bloom',  c1:'#F6DCD0',c2:'#D99A86',ink:'#1E1C1A',edge:'#B97C69'},
+  {id:'ember',  name:'Ember',  c1:'#783206',c2:'#2A0F08',ink:'#FFF3E4',edge:'#2A0F08'},
+  {id:'sunrise',name:'Sunrise',c1:'#F4B98C',c2:'#B04F13',ink:'#FFF3E4',edge:'#8E3F10'}
+];
+DESIGNS.forEach(function(d){d.art='linear-gradient(140deg,'+d.c1+' 0%,'+d.c2+' 100%)';});
+var PRESETS=[25,50,75,100,150,250];
+/* Prices from the current AMA catalogue (sample listings). In production: load live services. */
+var ITEMS=[
+  {a:'a discovery call',p:5,pil:'mindfulness'},
+  {a:'a 15-minute consultation',p:10,pil:'nutrition'},
+  {a:'a Pilates matwork session',p:15,pil:'activity'},
+  {a:'a 60-minute soundbath',p:45,pil:'mindfulness'},
+  {a:'a hypnotherapy session',p:70,pil:'mindfulness'},
+  {a:'an online therapy session',p:75,pil:'mindfulness'},
+  {a:'a 1-month wellness plan',p:80,pil:'nutrition'},
+  {a:'a 4-session sleep bundle',p:85,pil:'sleep'},
+  {a:'a women’s health consultation',p:130,pil:'nutrition'},
+  {a:'a sleep enhancement session',p:250,pil:'sleep'}
+];
+var PRESET_COVERS={25:[2,1],50:[3],75:[5],100:[6,2],150:[8,1],250:[9]};
+var PHRASES=[
+  ['Merry Christmas','Merry Christmas. Here’s some time just for you this winter.'],
+  ['Happy birthday','Happy birthday. Take an hour for yourself, it’s on me.'],
+  ['Time for you','You look after everyone. This one is just for you.'],
+  ['Thank you','Thank you for everything. I hope this brings you a calm moment.']
+];
+var STEP_TITLES=['Choose a design','Amount','Your message','Delivery','Review and pay'];
+var LOGO_PATHS=['lgA','lgM','lgB'].map(function(id){return document.getElementById(id).getAttribute('d');});
+
+/* =========================================================
+   STATE (+ draft in this browser)
+   ========================================================= */
+var DEF={design:'sand',amount:75,custom:false,to:'',from:'',msg:'',mode:'email',email:'',when:'now',date:'',time:'09:00',buyer:'',pay:'wallet'};
+var S=Object.assign({},DEF);
+try{var saved=JSON.parse(localStorage.getItem('ama-gift-draft')||'null');if(saved&&typeof saved==='object')Object.keys(DEF).forEach(function(k){if(k in saved)S[k]=saved[k];});}catch(e){}
+function persist(){try{localStorage.setItem('ama-gift-draft',JSON.stringify(S));}catch(e){}}
+function design(){return DESIGNS.find(function(d){return d.id===S.design;})||DESIGNS[0];}
+function money(n){return '£'+n;}
+var $=function(s,r){return (r||document).querySelector(s);};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+
+/* =========================================================
+   3D CARD
+   ========================================================= */
+var cards=[];
+var LOGO_SVG='<svg viewBox="0 0 69 26" aria-hidden="true"><use href="#ama-logo"/></svg>';
+function buildCard(host){
+  var amp=parseFloat(host.getAttribute('data-amp')||'1');
+  var el=document.createElement('div');el.className='gc';el.setAttribute('role','img');
+  if(host.hasAttribute('data-nodrag'))el.classList.add('nodrag');
+  var edges='';for(var i=1;i<=7;i++)edges+='<i class="gc-edge" style="transform:translateZ('+(-i*0.45)+'px)"></i>';
+  el.innerHTML='<div class="gc-tilt">'+edges+'<div class="gc-face"><div class="gc-art"></div><div class="gc-foil"></div><div class="gc-glare"></div><div class="gc-rim"></div><div class="gc-logo">'+LOGO_SVG+'</div><span class="gc-kind">Gift card</span><span class="gc-amt"></span></div></div><div class="gc-shadow"></div>';
+  host.replaceWith(el);if(host.id)el.id=host.id;
+  var c={el:el,amp:amp,rx:0,ry:0,vx:0,vy:0,tx:0,ty:0,phase:Math.random()*6.28,visible:true,drag:null,hover:false,idle:1,
+    key:host.getAttribute('data-card'),fixedDesign:host.getAttribute('data-design'),nodrag:el.classList.contains('nodrag')};
+  cards.push(c);
+  attachPointer(c);
+  return c;
+}
+function designById(id){return DESIGNS.find(function(d){return d.id===id;})||DESIGNS[0];}
+function paintCard(c,d,amount){
+  c.el.style.setProperty('--art',d.art);c.el.style.setProperty('--c2',d.c2);
+  c.el.style.setProperty('--ink-c',d.ink);c.el.style.setProperty('--edge',d.edge);
+  c.el.querySelector('.gc-amt').textContent=money(amount);
+  c.el.setAttribute('aria-label',d.name+' AMA gift card, '+money(amount));
+}
+function bump(c){c.el.classList.remove('swap');void c.el.offsetWidth;c.el.classList.add('swap');}
+
+/* ---------- tilt physics ----------
+   Every card is a damped spring towards a target angle.
+   Target = finger offset from where the touch started (no jump on touch),
+   or cursor position (desktop), or phone tilt (gyroscope), or a slow idle sway. */
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches;
+var gyro={on:false,got:false,b0:null,g0:null,x:0,y:0};
+var MAXX=20, MAXY=24;
+function soft(v,m){return m*Math.tanh(v/m);} // rubber band: never hits a hard stop
+function attachPointer(c){
+  var el=c.el;
+  el.addEventListener('pointerdown',function(e){
+    maybeAskGyro();
+    if(c.nodrag&&e.pointerType!=='mouse')return;
+    c.drag={x0:e.clientX,y0:e.clientY,bx:c.rx/c.amp,by:c.ry/c.amp};
+    try{el.setPointerCapture(e.pointerId);}catch(_){}
+  });
+  el.addEventListener('pointermove',function(e){
+    if(c.drag){
+      var dx=e.clientX-c.drag.x0, dy=e.clientY-c.drag.y0;
+      c.tx=soft(c.drag.bx-dy*0.16,MAXX);c.ty=soft(c.drag.by+dx*0.2,MAXY);
+    }else if(e.pointerType==='mouse'){
+      var r=el.getBoundingClientRect();var px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+      c.hover=true;c.tx=(0.5-py)*18;c.ty=(px-0.5)*22;
+    }
+  });
+  function end(e){
+    if(!c.drag)return;var d=c.drag;c.drag=null;c.idle=0;
+    var dx=e.clientX-d.x0, dy=e.clientY-d.y0;
+    if(c.onSwipe&&Math.abs(dx)>56&&Math.abs(dx)>Math.abs(dy)*1.3)c.onSwipe(dx<0?1:-1);
+  }
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+  el.addEventListener('pointerleave',function(){c.hover=false;c.idle=0;});
+}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){var c=cards.find(function(k){return k.el===en.target;});if(c)c.visible=en.isIntersecting;});},{rootMargin:'120px'});
+function observe(c){io.observe(c.el);}
+var last=performance.now();
+var K=reduce?220:110, DAMP=reduce?30:15; // stiffness / damping: soft, slightly underdamped
+function frame(now){
+  var dt=Math.min((now-last)/1000,1/30);last=now;var t=now/1000;
+  for(var i=0;i<cards.length;i++){
+    var c=cards[i];if(!c.visible||!c.el.isConnected||c.el.offsetParent===null)continue;
+    var tx,ty;
+    if(c.drag||c.hover){tx=c.tx;ty=c.ty;}
+    else{
+      c.idle=Math.min(1,c.idle+dt*0.6); // sway fades back in slowly after a touch
+      var sx=reduce?0:Math.sin(t*0.6+c.phase)*4*c.idle, sy=reduce?0:Math.sin(t*0.45+c.phase*1.3)*6*c.idle;
+      if(gyro.on&&gyro.got){tx=gyro.x+sx*0.3;ty=gyro.y+sy*0.3;}else{tx=sx;ty=sy;}
+    }
+    var ax=K*(tx*c.amp-c.rx)-DAMP*c.vx, ay=K*(ty*c.amp-c.ry)-DAMP*c.vy;
+    c.vx+=ax*dt;c.vy+=ay*dt;c.rx+=c.vx*dt;c.ry+=c.vy*dt;
+    var s=c.el.style;
+    s.setProperty('--rx',c.rx.toFixed(2)+'deg');s.setProperty('--ry',c.ry.toFixed(2)+'deg');
+    s.setProperty('--gx',(50+c.ry*2.4).toFixed(1)+'%');s.setProperty('--gy',(40-c.rx*2.6).toFixed(1)+'%');
+    s.setProperty('--fx',(50+c.ry*2.2).toFixed(1)+'%');s.setProperty('--fy',(50-c.rx*2.2).toFixed(1)+'%');
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* gyroscope: smoothed, baseline = how you hold the phone, drifting slowly back */
+function onOrient(e){
+  if(e.beta==null||e.gamma==null)return;
+  gyro.got=true;
+  var b=e.beta,g=e.gamma;
+  if(gyro.b0===null){gyro.b0=b;gyro.g0=g;}
+  gyro.b0+=(b-gyro.b0)*0.004;gyro.g0+=(g-gyro.g0)*0.004;
+  gyro.x=soft(-(b-gyro.b0)*0.9,MAXX);
+  gyro.y=soft((g-gyro.g0)*0.9,MAXY);
+}
+var needsPerm=typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function';
+var touchDevice=matchMedia('(pointer:coarse)').matches;
+var asked=false;
+function startGyro(){
+  if(gyro.on)return;gyro.on=true;gyro.got=false;gyro.b0=null;
+  window.addEventListener('deviceorientation',onOrient);
+  setTimeout(function(){if(!gyro.got){gyro.on=false;window.removeEventListener('deviceorientation',onOrient);}updateHint();},1600);
+  setTimeout(updateHint,400);
+}
+function maybeAskGyro(){
+  if(asked||!touchDevice)return;asked=true;
+  if(needsPerm){DeviceOrientationEvent.requestPermission().then(function(r){if(r==='granted')startGyro();updateHint();}).catch(function(){updateHint();});}
+}
+if(touchDevice&&'DeviceOrientationEvent' in window&&!needsPerm)startGyro();
+function updateHint(){
+  var n=$('#tiltNote');if(!n)return;
+  if(gyro.on&&gyro.got){n.textContent='Tilt your phone';return;}
+  if(needsPerm&&!asked){n.innerHTML='Drag the card or <button type="button" id="tiltAsk">turn on tilt</button>';var b=$('#tiltAsk');if(b)b.addEventListener('click',maybeAskGyro);return;}
+  n.textContent=finePointer?'Move the cursor over the card':'Drag the card';
+}
+updateHint();
+
+/* =========================================================
+   BUILD CARDS
+   ========================================================= */
+var C={};
+$$('[data-card]').forEach(function(h){var c=buildCard(h);C[c.key]=c;observe(c);});
+var FLOW_CARDS=['flow','preview','done'];
+function paintAll(){var d=design();FLOW_CARDS.forEach(function(k){if(C[k])paintCard(C[k],d,S.amount);});}
+paintCard(C.hero,designById('night'),75);
+paintCard(C.chat,designById('sand'),75);
+
+/* ---------- A2: what each amount buys (pinned, scroll-driven) ---------- */
+var BUYS=[
+  {a:25, img:'pilates',  d:'sand',  t:'A Pilates matwork session and a 15-minute consultation'},
+  {a:50, img:'calm',     d:'sand',  t:'A 60-minute soundbath'},
+  {a:75, img:'therapy',  d:'forest',t:'An online therapy session, 60 min'},
+  {a:100,img:'nutrition',d:'forest',t:'A 1-month wellness plan and a Pilates session'},
+  {a:150,img:'portrait', d:'night', t:'A women’s health consultation, 60 min'},
+  {a:250,img:'sleep',    d:'night', t:'A sleep enhancement session, 60 min'}
+];
+BUYS.forEach(function(b){var i=new Image();i.src='img/'+b.img+'.jpg';}); // preload: cuts stay instant
+var buys=$('#buys'), buysIdx=-1, bigVal=25, bigAnim=null;
+buys.style.setProperty('--n',BUYS.length);
+$('#buysScale').innerHTML=BUYS.map(function(b,i){return '<button type="button" data-i="'+i+'">'+money(b.a)+'</button>';}).join('');
+$('#buysScale').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var i=+b.dataset.i;var r=buys.getBoundingClientRect();var span=buys.offsetHeight-innerHeight;window.scrollTo({top:window.scrollY+r.top+span*(i+0.5)/BUYS.length,behavior:reduce?'auto':'smooth'});});
+function rollTo(v){
+  var from=bigVal,start=performance.now(),dur=reduce?0:420;cancelAnimationFrame(bigAnim);
+  function step(n){var p=dur?Math.min(1,(n-start)/dur):1;var e=1-Math.pow(1-p,3);var cur=Math.round(from+(v-from)*e);$('#buysBig').textContent=money(cur);if(p<1)bigAnim=requestAnimationFrame(step);else bigVal=v;}
+  bigAnim=requestAnimationFrame(step);
+}
+function setBuys(i){
+  if(i===buysIdx)return;buysIdx=i;var b=BUYS[i];
+  $('#buysImg').src='img/'+b.img+'.jpg'; // hard cut, no fade
+  $('#buysWhat').textContent=b.t;
+  paintCard(C.buys,designById(b.d),b.a);
+  rollTo(b.a);
+  $$('#buysScale button').forEach(function(x,k){x.setAttribute('aria-current',k===i);});
+}
+setBuys(0);
+
+/* ---------- A3: moods carousel ---------- */
+var moodRow=$('#moodRow'), moodCards=[];
+DESIGNS.forEach(function(d,i){
+  var b=document.createElement('button');b.type='button';b.className='mood';b.setAttribute('aria-label','Start with the '+d.name+' design');b.dataset.near=i===0?'1':'0';
+  b.innerHTML='<div data-card="mood" data-nodrag data-amp=".7"></div>';moodRow.appendChild(b);
+  var c=buildCard(b.firstChild);observe(c);paintCard(c,d,75);moodCards.push(b);
+  b.addEventListener('click',function(){
+    var cur=+moodRow.dataset.cur||0;
+    if(cur!==i){b.scrollIntoView({inline:'center',block:'nearest',behavior:reduce?'auto':'smooth'});return;}
+    S.design=d.id;persist();startFlow(1);
+  });
+});
+function moodScroll(){
+  var mid=moodRow.scrollLeft+moodRow.clientWidth/2, best=0, bd=1e9;
+  moodCards.forEach(function(m,i){var c=m.offsetLeft+m.offsetWidth/2;var dd=Math.abs(c-mid);if(dd<bd){bd=dd;best=i;}});
+  moodRow.dataset.cur=best;
+  moodCards.forEach(function(m,i){m.dataset.near=i===best?'1':'0';});
+  $('#moodName').textContent=DESIGNS[best].name;$('#moodIdx').textContent=(best+1)+' / '+DESIGNS.length;
+}
+moodRow.addEventListener('scroll',function(){requestAnimationFrame(moodScroll);},{passive:true});
+
+/* ---------- A4: pillars (pinned list, the row for the current scroll position opens) ---------- */
+var PILLARS=[
+  {n:'Nutrition',  s:'Diet plans, women’s health, gut health', img:'nutrition', d:'sand'},
+  {n:'Activity',   s:'Pilates, running, personal training',    img:'run',       d:'forest'},
+  {n:'Mindfulness',s:'Therapy, soundbath, hypnotherapy',        img:'calm',      d:'sand'},
+  {n:'Sleep',      s:'Sleep coaching and enhancement',          img:'sleep',     d:'night'}
+];
+var plist=$('#plist'), pillars=$('#pillars'), pIdx=-1, pManual=false;
+PILLARS.forEach(function(p,i){
+  var r=document.createElement('button');r.type='button';r.className='prow';r.setAttribute('aria-expanded','false');
+  r.innerHTML='<div class="open"><img src="img/'+p.img+'.jpg" alt=""><div class="mini"><div data-card="pillar" data-nodrag data-amp=".6"></div></div></div><div class="line"><img class="thumb-img" src="img/'+p.img+'.jpg" alt=""><div><b>'+p.n+'</b><small>'+p.s+'</small></div></div>';
+  plist.appendChild(r);var c=buildCard(r.querySelector('[data-card]'));observe(c);paintCard(c,designById(p.d),[25,50,75,150][i]);
+  r.addEventListener('click',function(){setPillar(i);});
+});
+function setPillar(i){if(i===pIdx)return;pIdx=i;$$('.prow',plist).forEach(function(r,k){r.setAttribute('aria-expanded',k===i);});}
+setPillar(1);
+
+/* scroll driver for both pinned scenes */
+function sceneProgress(el){var pin=el.querySelector('.scene-pin');var top=parseFloat(getComputedStyle(pin).top)||0;var r=el.getBoundingClientRect();var span=Math.max(1,el.offsetHeight-pin.offsetHeight);return clamp((top-r.top)/span,0,0.9999);}
+function onScroll(){
+  if(view!=='landing')return;
+  setBuys(Math.floor(sceneProgress(buys)*BUYS.length));
+  setPillar(Math.floor(sceneProgress(pillars)*PILLARS.length));
+}
+window.addEventListener('scroll',function(){requestAnimationFrame(onScroll);},{passive:true});
+
+/* ---------- A5: messenger plays once when it comes into view ---------- */
+var chatPlayed=false;
+var chatMsgs=$$('#chat .msg').filter(function(m){return m.id!=='reply';});
+new IntersectionObserver(function(es,obs){
+  if(!es[0].isIntersecting||chatPlayed)return;chatPlayed=true;obs.disconnect();
+  var typing=$('#typing'), reply=$('#reply');
+  if(reduce){chatMsgs.forEach(function(m){m.classList.add('in-view');});typing.hidden=true;reply.hidden=false;reply.classList.add('in-view');return;}
+  setTimeout(function(){chatMsgs[0].classList.add('in-view');},150);
+  setTimeout(function(){chatMsgs[1].classList.add('in-view');},800);
+  setTimeout(function(){typing.classList.add('in-view');},1700);
+  setTimeout(function(){typing.hidden=true;reply.hidden=false;void reply.offsetWidth;reply.classList.add('in-view');},3300);
+},{threshold:0.35}).observe($('#chat'));
+
+// flow: thumbnails
+var thumbs=$('#thumbs');
+DESIGNS.forEach(function(d){var t=document.createElement('button');t.className='thumb';t.type='button';t.style.setProperty('--art',d.art);t.setAttribute('aria-label',d.name);t.dataset.id=d.id;t.addEventListener('click',function(){setDesign(d.id);});thumbs.appendChild(t);});
+// flow: amount chips
+var chips=$('#chips');
+PRESETS.forEach(function(p){var b=document.createElement('button');b.className='chip';b.type='button';b.textContent=money(p);b.dataset.v=p;b.addEventListener('click',function(){S.custom=false;setAmount(p);renderAmount();});chips.appendChild(b);});
+var other=document.createElement('button');other.className='chip wide';other.type='button';other.textContent='Other amount';other.addEventListener('click',function(){S.custom=true;renderAmount();var i=$('#amountInput');i.value=PRESETS.indexOf(S.amount)<0?S.amount:'';setTimeout(function(){i.focus();},50);});chips.appendChild(other);
+// flow: phrases
+var ph=$('#phrases');
+PHRASES.forEach(function(p){var b=document.createElement('button');b.className='phrase';b.type='button';b.textContent=p[0];b.addEventListener('click',function(){var m=$('#msgInput');m.value=p[1];S.msg=p[1];persist();renderMsgCount();});ph.appendChild(b);});
+
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function coversFor(a){
+  var picks=PRESET_COVERS[a];
+  if(!picks){picks=[];var rest=a;for(var n=0;n<2;n++){var best=-1;for(var i=ITEMS.length-1;i>=0;i--){if(ITEMS[i].p<=rest&&picks.indexOf(i)<0){best=i;break;}}if(best<0)break;picks.push(best);rest-=ITEMS[best].p;if(rest<5)break;}}
+  var names=picks.map(function(i){return ITEMS[i].a;});
+  return {text:names.join(' and '),pil:ITEMS[picks[0]]?ITEMS[picks[0]].pil:'mindfulness'};
+}
+
+/* =========================================================
+   SETTERS
+   ========================================================= */
+function setDesign(id,dir){
+  if(S.design===id)return;S.design=id;persist();
+  var d=design();paintCard(C.flow,d,S.amount);bump(C.flow);
+  renderDesign();
+}
+function setAmount(v){
+  S.amount=v;persist();
+  paintCard(C.flow,design(),v);bump(C.flow);
+  var cv=coversFor(v);$('#coversText').textContent='Enough for '+cv.text;$('#coversIcon').innerHTML='<use href="#p-'+cv.pil+'"/>';
+}
+C.flow.onSwipe=function(dir){if(currentStep!==1)return;var i=DESIGNS.findIndex(function(d){return d.id===S.design;});var n=(i+dir+DESIGNS.length)%DESIGNS.length;setDesign(DESIGNS[n].id);};
+
+/* =========================================================
+   RENDERERS
+   ========================================================= */
+function renderDesign(){
+  var i=DESIGNS.findIndex(function(d){return d.id===S.design;});
+  $('#designName').textContent=DESIGNS[i].name;$('#designIdx').textContent=(i+1)+' / '+DESIGNS.length;
+  $$('.thumb').forEach(function(t){var on=t.dataset.id===S.design;t.setAttribute('aria-pressed',on);if(on&&currentStep===1)t.scrollIntoView({block:'nearest',inline:'center',behavior:reduce?'auto':'smooth'});});
+}
+function renderAmount(){
+  $$('.chip[data-v]').forEach(function(b){b.setAttribute('aria-pressed',!S.custom&&+b.dataset.v===S.amount);});
+  other.setAttribute('aria-pressed',S.custom);
+  $('#fAmount').hidden=!S.custom;
+  var cv=coversFor(S.amount);$('#coversText').textContent='Enough for '+cv.text;$('#coversIcon').innerHTML='<use href="#p-'+cv.pil+'"/>';
+}
+function renderMsgCount(){$('#msgCount').textContent=$('#msgInput').value.length+' / 300';}
+function renderDelivery(){
+  $$('.seg button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.mode===S.mode);});
+  $('#modeEmail').style.display=S.mode==='email'?'flex':'none';$('#modeSelf').hidden=S.mode!=='self';
+  $$('[data-when]').forEach(function(b){b.setAttribute('aria-checked',b.dataset.when===S.when);});
+  $('#whenFields').hidden=S.when!=='later';
+  $('#emailLabel').textContent=(S.to?S.to+'’s':'Their')+' email';
+  $('#laterSub').textContent=S.when==='later'&&S.date?('We’ll send it on '+fmtDate(S.date)+' at '+S.time+' your time'):'Choose the day and time';
+}
+function fmtDate(iso){try{var d=new Date(iso+'T12:00:00');return d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});}catch(e){return iso;}}
+function deliveryText(){
+  if(S.mode==='self')return 'You’ll get a link and an image to send';
+  return 'Email to '+(S.email||'—')+'\n'+(S.when==='now'?'Right after payment':fmtDate(S.date)+' at '+S.time);
+}
+function renderSummary(){
+  var rows=[['Design',design().name,1],['Amount',money(S.amount),2],['To',S.to,3],['From',S.from,3],['Message',S.msg||'No message',3],['Delivery',deliveryText(),4]];
+  $('#summary').innerHTML=rows.map(function(r){return '<div class="sum-row"><dt>'+r[0]+'</dt><dd>'+esc(r[1]).replace(/\n/g,'<br>')+'</dd><button type="button" data-edit="'+r[2]+'" aria-label="Edit '+r[0].toLowerCase()+'">Edit</button></div>';}).join('');
+  $('#totalAmt').textContent=money(S.amount);
+  $$('[data-pay]').forEach(function(b){b.setAttribute('aria-checked',b.dataset.pay===S.pay);});
+  $('#cardFields').hidden=S.pay!=='card';
+}
+function esc(s){return String(s).replace(/[&<>"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch];});}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+var view='landing', currentStep=1;
+var dock=$('#dock'), cta=$('#cta');
+function show(v){
+  view=v;
+  $('#vLanding').hidden=v!=='landing';$('#vFlow').hidden=v!=='flow';$('#vDone').hidden=v!=='done';
+  $('#stepbar').hidden=v!=='flow';
+  window.scrollTo(0,0);
+  updateDock();
+}
+function startFlow(step){
+  paintAll();show('flow');goStep(step||1,0);
+  $('#toInput').value=S.to;$('#fromInput').value=S.from;$('#msgInput').value=S.msg;$('#emailInput').value=S.email;$('#buyerInput').value=S.buyer;$('#timeInput').value=S.time;$('#dateInput').value=S.date;
+  renderMsgCount();
+}
+function goStep(n,dir){
+  currentStep=n;
+  var flow=$('#vFlow');flow.dataset.step=n;
+  $$('.step',flow).forEach(function(s){var on=+s.dataset.step===n;s.hidden=!on;if(on){s.classList.toggle('back',dir<0);s.style.animation='none';void s.offsetWidth;s.style.animation='';}});
+  $('#stepTitle').textContent=STEP_TITLES[n-1];
+  $$('.progress i').forEach(function(p,i){p.classList.toggle('on',i<n);});
+  if(n===1)renderDesign();if(n===2)renderAmount();if(n===4)renderDelivery();if(n===5)renderSummary();
+  $('#payError').style.display='none';
+  updateDock();
+  if(dir!==0)window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+}
+function updateDock(){
+  var note=$('#dockNote');note.textContent='';
+  if(view==='flow'){
+    dock.classList.remove('off');
+    cta.textContent=currentStep===5?('Pay '+money(S.amount)):'Continue';
+    if(currentStep===5)note.textContent='Prototype: no payment is taken';
+  }else if(view==='landing'){
+    cta.textContent='Choose a gift card';dock.classList.toggle('off',heroVisible);
+  }else{dock.classList.add('off');}
+}
+var heroVisible=true;
+new IntersectionObserver(function(es){heroVisible=es[0].isIntersecting;if(view==='landing')updateDock();}).observe($('#heroCta'));
+
+$$('[data-start]').forEach(function(b){b.addEventListener('click',function(){startFlow(1);});});
+cta.addEventListener('click',function(){
+  if(view==='landing'){startFlow(1);return;}
+  if(view!=='flow')return;
+  if(!validate(currentStep))return;
+  if(currentStep<5){goStep(currentStep+1,1);return;}
+  pay();
+});
+$('#backBtn').addEventListener('click',function(){if(currentStep>1)goStep(currentStep-1,-1);else show('landing');});
+$('#closeBtn').addEventListener('click',function(){$('#leaveLayer').hidden=false;$('[data-keep].btn').focus();});
+$$('[data-keep]').forEach(function(b){b.addEventListener('click',function(){$('#leaveLayer').hidden=true;});});
+$('#leaveBtn').addEventListener('click',function(){$('#leaveLayer').hidden=true;show('landing');});
+$('#logoLink').addEventListener('click',function(e){e.preventDefault();show('landing');});
+$('#summary').addEventListener('click',function(e){var b=e.target.closest('[data-edit]');if(b)goStep(+b.dataset.edit,-1);});
+
+/* menu */
+$('#menuBtn').addEventListener('click',function(){$('#menuLayer').hidden=false;});
+$$('[data-close-menu]').forEach(function(b){b.addEventListener('click',function(e){if(b.tagName==='A')e.preventDefault();$('#menuLayer').hidden=true;if(b.tagName==='A')show('landing');});});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){$('#menuLayer').hidden=true;$('#leaveLayer').hidden=true;closePreview();}});
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+$('#amountInput').addEventListener('input',function(e){
+  var v=e.target.value.replace(/\D/g,'').slice(0,3);e.target.value=v;
+  var n=+v;$('#fAmount').classList.remove('invalid');
+  if(n>=10&&n<=500)setAmount(n);
+});
+$('#toInput').addEventListener('input',function(e){S.to=e.target.value.trim();persist();$('#fTo').classList.remove('invalid');});
+$('#fromInput').addEventListener('input',function(e){S.from=e.target.value.trim();persist();$('#fFrom').classList.remove('invalid');});
+$('#msgInput').addEventListener('input',function(e){S.msg=e.target.value;persist();renderMsgCount();});
+$$('.seg button').forEach(function(b){b.addEventListener('click',function(){S.mode=b.dataset.mode;persist();renderDelivery();});});
+$$('[data-when]').forEach(function(b){b.addEventListener('click',function(){S.when=b.dataset.when;if(S.when==='later'&&!S.date){var d=new Date();d.setDate(d.getDate()+1);S.date=d.toISOString().slice(0,10);$('#dateInput').value=S.date;}persist();renderDelivery();});});
+$('#emailInput').addEventListener('input',function(e){S.email=e.target.value.trim();persist();$('#fEmail').classList.remove('invalid');});
+$('#dateInput').addEventListener('input',function(e){S.date=e.target.value;persist();$('#fDate').classList.remove('invalid');renderDelivery();});
+$('#timeInput').addEventListener('input',function(e){S.time=e.target.value||'09:00';persist();renderDelivery();});
+(function(){var d=new Date();$('#dateInput').min=d.toISOString().slice(0,10);})();
+$('#buyerInput').addEventListener('input',function(e){S.buyer=e.target.value.trim();persist();$('#fBuyer').classList.remove('invalid');});
+$$('[data-pay]').forEach(function(b){b.addEventListener('click',function(){S.pay=b.dataset.pay;persist();renderSummary();});});
+$('#cardNo').addEventListener('input',function(e){var v=e.target.value.replace(/\D/g,'').slice(0,16);e.target.value=v.replace(/(.{4})/g,'$1 ').trim();$('#fCardNo').classList.remove('invalid');});
+$('#cardExp').addEventListener('input',function(e){var v=e.target.value.replace(/\D/g,'').slice(0,4);e.target.value=v.length>2?v.slice(0,2)+' / '+v.slice(2):v;$('#fExp').classList.remove('invalid');});
+$('#cardCvc').addEventListener('input',function(e){e.target.value=e.target.value.replace(/\D/g,'').slice(0,4);$('#fCvc').classList.remove('invalid');});
+
+var EMAIL=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+function fail(ids){
+  ids.forEach(function(id){$(id).classList.add('invalid');});
+  var first=$(ids[0]);if(first){first.scrollIntoView({block:'center',behavior:reduce?'auto':'smooth'});var inp=first.querySelector('input,textarea');if(inp)setTimeout(function(){inp.focus({preventScroll:true});},250);}
+  return false;
+}
+function validate(step){
+  if(step===2&&S.custom){var n=+$('#amountInput').value;if(!(n>=10&&n<=500))return fail(['#fAmount']);}
+  if(step===3){var bad=[];if(!S.to)bad.push('#fTo');if(!S.from)bad.push('#fFrom');if(bad.length)return fail(bad);}
+  if(step===4&&S.mode==='email'){
+    var b2=[];if(!EMAIL.test(S.email))b2.push('#fEmail');
+    if(S.when==='later'){var when=new Date(S.date+'T'+(S.time||'09:00'));if(!S.date||isNaN(when)||when<new Date())b2.push('#fDate');}
+    if(b2.length)return fail(b2);
+  }
+  if(step===5){
+    var b3=[];if(!EMAIL.test(S.buyer))b3.push('#fBuyer');
+    if(S.pay==='card'){
+      if($('#cardNo').value.replace(/\D/g,'').length<15)b3.push('#fCardNo');
+      var ex=$('#cardExp').value.replace(/\D/g,'');if(ex.length!==4||+ex.slice(0,2)<1||+ex.slice(0,2)>12)b3.push('#fExp');
+      if($('#cardCvc').value.length<3)b3.push('#fCvc');
+    }
+    if(b3.length)return fail(b3);
+  }
+  return true;
+}
+
+/* =========================================================
+   PREVIEW (recipient view)
+   ========================================================= */
+var lastFocus=null;
+function openPreview(){
+  lastFocus=document.activeElement;
+  var to=S.to||'Anna', from=S.from||'a friend';
+  $('#pvBar').textContent='Preview · what '+to+' will see';
+  $('#pvTitle').textContent=to+', here’s a gift from '+from;
+  $('#pvMsg').textContent=S.msg?('“'+S.msg+'”'):'';
+  var exp=new Date();exp.setMonth(exp.getMonth()+24);
+  $('#pvMeta').textContent=money(S.amount)+' to spend on any session at AMA. Valid until '+exp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'.';
+  paintCard(C.preview,design(),S.amount);
+  $('#preview').hidden=false;document.body.style.overflow='hidden';$('#pvClose').focus();
+}
+function closePreview(){if($('#preview').hidden)return;$('#preview').hidden=true;document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
+$('#previewBtn').addEventListener('click',openPreview);
+$('#pvClose').addEventListener('click',closePreview);$('#pvBack').addEventListener('click',closePreview);
+
+/* =========================================================
+   PAYMENT → DONE
+   ========================================================= */
+function code(){var a='ABCDEFGHJKMNPQRSTUVWXYZ23456789',s='';for(var i=0;i<8;i++){s+=a[Math.floor(Math.random()*a.length)];if(i===3)s+='-';}return s;}
+var giftCode='';
+function pay(){
+  cta.setAttribute('aria-busy','true');cta.innerHTML='<span class="spin" aria-hidden="true"></span>Processing payment';
+  setTimeout(function(){
+    cta.removeAttribute('aria-busy');
+    giftCode=code();
+    renderDone();show('done');
+  },1500);
+}
+function renderDone(){
+  var d=design(), to=S.to||'them';
+  paintCard(C.done,d,S.amount);
+  var el=C.done.el;el.classList.remove('enter','glint');void el.offsetWidth;el.classList.add('enter','glint');
+  var link='amaforyou.com/gift/'+giftCode;$('#giftLink').textContent=link;
+  var text=to+', I got you an AMA gift card: '+money(S.amount)+' for any session.'+(S.msg?' “'+S.msg+'”':'')+' Open it here: https://'+link;
+  $('#waBtn').href='https://wa.me/?text='+encodeURIComponent(text);
+  shareText=text;
+  if(S.mode==='self'){
+    $('#doneTitle').textContent='Your gift is ready';
+    $('#doneLead').textContent='Send it to '+to+' in a message. The link opens the card with your note. A receipt is on its way to '+S.buyer+'.';
+    $('#shareBlock').hidden=false;$('#alsoShare').hidden=true;
+  }else{
+    $('#doneTitle').textContent=S.when==='now'?'Your gift is on its way':'Your gift is scheduled';
+    $('#doneLead').textContent=(S.when==='now'?'We’ve emailed it to '+S.email+'.':'We’ll email it to '+S.email+' on '+fmtDate(S.date)+' at '+S.time+'.')+' A receipt is in '+S.buyer+'.';
+    $('#shareBlock').hidden=true;$('#alsoShare').hidden=false;
+  }
+}
+var shareText='';
+$('#alsoShare').addEventListener('click',function(){$('#shareBlock').hidden=false;this.hidden=true;});
+$('#againBtn').addEventListener('click',function(){var keepFrom=S.from,keepBuyer=S.buyer;S=Object.assign({},DEF,{from:keepFrom,buyer:keepBuyer});persist();show('landing');});
+$('#copyBtn').addEventListener('click',function(){
+  var t='https://'+$('#giftLink').textContent;
+  function sel(){var r=document.createRange();r.selectNodeContents($('#giftLink'));var s=getSelection();s.removeAllRanges();s.addRange(r);toast('Link selected. Copy it from the menu');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){toast('Link copied');},sel);}else sel();
+});
+var inFrame=false;try{inFrame=window.self!==window.top;}catch(e){inFrame=true;}
+if(navigator.share&&!inFrame){$('#nativeShareBtn').hidden=false;$('#nativeShareBtn').addEventListener('click',function(){navigator.share({title:'AMA gift card',text:shareText}).catch(function(){});});}
+
+/* card image (1712×1080) for messengers, drawn on canvas */
+function cardPNG(){
+  var d=design(),W=1712,H=1080,cv=document.createElement('canvas');cv.width=W;cv.height=H;var x=cv.getContext('2d');
+  var r=64;x.beginPath();x.moveTo(r,0);x.arcTo(W,0,W,H,r);x.arcTo(W,H,0,H,r);x.arcTo(0,H,0,0,r);x.arcTo(0,0,W,0,r);x.closePath();x.clip();
+  var a=140*Math.PI/180,cx=W/2,cy=H/2,len=Math.abs(W*Math.sin(a))+Math.abs(H*Math.cos(a));
+  var g=x.createLinearGradient(cx-Math.sin(a)*len/2,cy+Math.cos(a)*len/2,cx+Math.sin(a)*len/2,cy-Math.cos(a)*len/2);
+  g.addColorStop(0,d.c1);g.addColorStop(1,d.c2);x.fillStyle=g;x.fillRect(0,0,W,H);
+  var rg=x.createRadialGradient(W*.22,H*.18,0,W*.22,H*.18,W*.65);rg.addColorStop(0,'rgba(255,255,255,.30)');rg.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=rg;x.fillRect(0,0,W,H);
+  x.save();x.translate(96,92);x.scale(4.45,4.45);x.fillStyle=d.ink;LOGO_PATHS.forEach(function(p){x.fill(new Path2D(p));});x.restore();
+  x.fillStyle=d.ink;x.globalAlpha=.72;x.font='400 50px "Google Sans Flex","Google Sans","Helvetica Neue",Arial,sans-serif';x.textAlign='right';x.textBaseline='top';
+  x.fillText('Gift card',W-96,106);x.globalAlpha=1;if('letterSpacing' in x)x.letterSpacing='0px';
+  x.textAlign='left';x.textBaseline='alphabetic';x.font='400 172px "Google Sans Flex","Google Sans","Helvetica Neue",Arial,sans-serif';x.fillText(money(S.amount),88,H-84);
+  return new Promise(function(res){cv.toBlob(res,'image/png');});
+}
+var downloads=null;
+if(window.claude&&typeof window.claude.use==='function'){
+  window.claude.use('downloads').then(function(dl){downloads=dl;if(dl)$('#imgBtn').hidden=false;}).catch(function(){});
+}
+$('#imgBtn').addEventListener('click',function(){
+  if(!downloads)return;
+  cardPNG().then(function(blob){return downloads.save({filename:'ama-gift-card-'+giftCode+'.png',data:blob});})
+  .then(function(){toast('Image saved');})
+  .catch(function(err){var c=err&&err.code;if(c==='declined')return;if(c==='unavailable'||c==='not_granted'){ $('#imgBtn').hidden=true; }toast('Couldn’t save the image here');});
+});
+
+/* toast */
+var tt;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show');},2200);}
+
+/* keep the CTA above the on-screen keyboard */
+if(window.visualViewport){
+  var vv=window.visualViewport;var fix=function(){var off=Math.max(0,window.innerHeight-vv.height-vv.offsetTop);dock.style.transform=off>40?'translateY('+(-off)+'px)':'';};
+  vv.addEventListener('resize',fix);vv.addEventListener('scroll',fix);
+}
+
+/* start */
+paintAll();renderAmount();renderDesign();show('landing');
+})();
+</script>
+
+</body></html>
