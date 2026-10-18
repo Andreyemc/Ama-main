@@ -10,7 +10,7 @@
 /* Layout: AMA site header fixed on top; flow = one persistent 3D card on a stage + one step below + fixed CTA dock. Mobile first, single brand (light) theme by choice. */
 :root{
   --cream:#F7EEE0; --paper:#FFFAF3; --sand:#EFE3D1; --sand-2:#E5D5BF;
-  --ink:#1E1C1A; --body:#4F473F; --mute:#7A6F64; --line:rgba(30,28,26,.14);
+  --ink:#1E1C1A; --body:#4F473F; --mute:#6E6358; --line:rgba(30,28,26,.14);
   --rust:#B04F13; --rust-press:#A2460D; --light:#FFF3E4; --brown:#461A0F; --brown-2:#783206; --err:#B3261E;
   --sans:"Google Sans Flex","Google Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -63,7 +63,7 @@ main{padding-top:var(--hdr)}
   font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;background:var(--rust);color:var(--light);transition:background .2s,transform .15s,opacity .2s}
 a.btn{text-decoration:none}
 .btn:active{transform:scale(.985)}
-.btn.static{pointer-events:none;background:var(--ink);color:var(--light)}
+.btn.static{pointer-events:none}
 .btn:hover{background:var(--rust-press)}
 .btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
 .btn.ghost:hover{background:rgba(30,28,26,.05)}
@@ -104,6 +104,7 @@ a.btn{text-decoration:none}
 .gc-amt{position:absolute;left:5.4cqw;bottom:4.6cqw;font-size:10cqw;line-height:1;letter-spacing:-.01em;color:var(--ink-c);font-variant-numeric:tabular-nums}
 .gc-shadow{position:absolute;left:8%;right:8%;bottom:-6%;height:24%;border-radius:50%;background:radial-gradient(closest-side,rgba(70,26,15,.42),rgba(70,26,15,0));filter:blur(6px);
   transform:translate(calc(var(--ry) * -1.1px),calc(var(--rx) * 0.6px));z-index:-1;pointer-events:none}
+.gc.no-amt .gc-amt{visibility:hidden}
 .gc.swap .gc-tilt{animation:swap .42s cubic-bezier(.2,.8,.2,1)}
 @keyframes swap{0%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(.96)}40%{opacity:.6}100%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(1)}}
 .gc.glint .gc-face::after{content:"";position:absolute;inset:-20%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-80%);animation:glint 1.3s .55s ease-out forwards;mix-blend-mode:soft-light}
@@ -114,7 +115,7 @@ a.btn{text-decoration:none}
 .landing .col{display:flex;flex-direction:column}
 .bleed{margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
 /* hero */
-.hero{display:flex;flex-direction:column;padding-top:20px;min-height:calc(100svh - var(--hdr) - 20px)}
+.hero{display:flex;flex-direction:column;padding-top:20px;min-height:calc(100svh - var(--hdr) - 84px)} /* the photo of the next section peeks at the bottom */
 .hero h1{font-size:clamp(48px,14.6vw,68px);line-height:.96;letter-spacing:-.03em}
 .hero-card{perspective:1100px;padding:44px 26px 40px;display:flex;justify-content:center}
 .hero-card .tilted{width:100%;max-width:330px} /* straight card, present from the first frame: no entrance animation */
@@ -144,9 +145,9 @@ a.btn{text-decoration:none}
 .buys .meta{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:calc(min(74vw,320px) * .63 * .42 + 18px);padding-bottom:calc(var(--dock) + 4px);flex:none}
 .buys .figure{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
 .buys .big{font-size:clamp(72px,24vw,104px);line-height:.86;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
-.buys .what{font-size:16px;line-height:1.3;max-width:15ch;text-align:left;padding-bottom:6px}
-.buys .scale{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:18px;padding-top:12px}
-.buys .scale button{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums;padding:4px 0}
+.buys .what{font-size:16px;line-height:1.3;max-width:170px;text-align:left;padding-bottom:6px}
+.buys .scale{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:12px;padding-top:0}
+.buys .scale button{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums;min-width:44px;min-height:44px;padding:0 2px}
 .buys .scale button[aria-current="true"]{color:var(--ink)}
 /* moods carousel */
 .moods{padding-top:96px}
@@ -206,6 +207,7 @@ a.btn{text-decoration:none}
 .stage .gc{transition:max-width .45s cubic-bezier(.2,.8,.2,1)}
 .flow[data-step="4"] .stage .gc{max-width:240px}
 .flow[data-step="5"] .stage .gc{max-width:200px}
+.flow.typing .stage{display:none} /* keyboard open on a custom amount: chips and field sit right under the step bar */
 .step{display:flex;flex-direction:column;gap:22px;animation:stepIn .38s cubic-bezier(.2,.8,.2,1)}
 .step.back{animation-name:stepBack}
 @keyframes stepIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
@@ -361,7 +363,6 @@ a.btn{text-decoration:none}
           <div><dt>Delivery</dt><dd>In 2 minutes or on a date you choose</dd></div>
         </dl></div></div>
         <button class="btn" data-start id="heroCta">Choose a gift card</button>
-        <p class="tilt-note" id="tiltNote">Drag the card</p>
       </div>
     </div>
 
@@ -468,8 +469,6 @@ a.btn{text-decoration:none}
         </div>
         <div id="modeSelf" class="self-list" hidden>
           <p style="font-size:16px;line-height:1.45">After payment you’ll get a link and an image of the card to send however you like.</p>
-          <div class="way"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 18.5l1.2-3.4A7.5 7.5 0 1 1 8.6 18l-4.6.5z" stroke="#1E1C1A" stroke-width="1.25" stroke-linejoin="round"/></svg><div><b>WhatsApp or any messenger</b><span>The link shows a preview of the card</span></div></div>
-          <div class="way"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="4.5" width="17" height="15" rx="2" stroke="#1E1C1A" stroke-width="1.25"/><circle cx="9" cy="10" r="1.6" stroke="#1E1C1A" stroke-width="1.25"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5" stroke="#1E1C1A" stroke-width="1.25" stroke-linejoin="round"/></svg><div><b>Image</b><span>Save it, post it or print it</span></div></div>
         </div>
       </div>
 
@@ -489,7 +488,6 @@ a.btn{text-decoration:none}
             <div class="field" id="fCvc"><label for="cardCvc">Security code</label><div class="input"><input id="cardCvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4"></div><span class="err">3 or 4 digits</span></div>
           </div>
         </div>
-        <div class="total"><span>Total</span><b id="totalAmt">£75</b></div>
         <p class="fine">Valid for 24 months. Spend on any session, plan or bundle at AMA. Not exchangeable for cash. By paying you agree to the gift card terms.</p>
       </div>
     </div>
@@ -534,7 +532,7 @@ a.btn{text-decoration:none}
     <p class="quote" id="pvMsg"></p>
     <p class="hint" id="pvMeta"></p>
     <div class="btn static" aria-hidden="true">Open my gift</div>
-    <p class="hint" style="text-align:center;margin-top:-10px">This button opens the gift for them.</p>
+    <p class="hint" id="pvTap" style="text-align:center;margin-top:-10px">They tap this to open the gift</p>
   </div></div>
   <div class="dock"><div class="col"><button class="btn ghost" id="pvBack" style="background:var(--sand)">Back to message</button></div></div>
 </div>
@@ -788,17 +786,17 @@ var C={};
 $$('[data-card]').forEach(function(h){var c=buildCard(h);C[c.key]=c;observe(c);});
 var FLOW_CARDS=['flow','preview','done'];
 function paintAll(){var d=design();FLOW_CARDS.forEach(function(k){if(C[k])paintCard(C[k],d,S.amount);});}
-paintCard(C.hero,designById('night'),75);
+paintCard(C.hero,designById('night'),75);C.hero.el.classList.add('no-amt'); // no amount until it is chosen
 paintCard(C.chat,designById('sand'),75);
 
 /* ---------- A2: what each amount buys (pinned, scroll-driven) ---------- */
 var BUYS=[
   {a:25, img:'pilates',  d:'sand',  t:'A Pilates matwork session and a 15-minute consultation'},
   {a:50, img:'calm',     d:'sand',  t:'A 60-minute soundbath'},
-  {a:75, img:'therapy',  d:'forest',t:'An online therapy session, 60 min'},
+  {a:75, img:'therapy',  d:'forest',t:'An online therapy session, 60\u00A0min'},
   {a:100,img:'nutrition',d:'forest',t:'A 1-month wellness plan and a Pilates session'},
-  {a:150,img:'portrait', d:'night', t:'A women’s health consultation, 60 min'},
-  {a:250,img:'sleep',    d:'night', t:'A sleep enhancement session, 60 min'}
+  {a:150,img:'portrait', d:'night', t:'A women’s health consultation, 60\u00A0min'},
+  {a:250,img:'sleep',    d:'night', t:'A sleep enhancement session, 60\u00A0min'}
 ];
 BUYS.forEach(function(b){var i=new Image();i.src='img/'+b.img+'.jpg';}); // preload: cuts stay instant
 var buys=$('#buys'), buysIdx=-1, bigVal=25, bigAnim=null;
@@ -832,7 +830,7 @@ var moodRow=$('#moodRow'), moodCards=[];
 DESIGNS.forEach(function(d,i){
   var b=document.createElement('button');b.type='button';b.className='mood';b.setAttribute('aria-label','Start with the '+d.name+' design');b.dataset.near=i===0?'1':'0';
   b.innerHTML='<div data-card="mood" data-nodrag data-amp=".7"></div>';moodRow.appendChild(b);
-  var c=buildCard(b.firstChild);observe(c);paintCard(c,d,75);moodCards.push(b);
+  var c=buildCard(b.firstChild);observe(c);paintCard(c,d,75);c.el.classList.add('no-amt');moodCards.push(b);
   b.addEventListener('click',function(){
     var cur=+moodRow.dataset.cur||0;
     if(cur!==i){b.scrollIntoView({inline:'center',block:'nearest',behavior:reduce?'auto':'smooth'});return;}
@@ -951,7 +949,6 @@ function deliveryText(){
 function renderSummary(){
   var rows=[['Design',design().name,1],['Amount',money(S.amount),2],['To',S.to,3],['From',S.from,3],['Message',S.msg||'No message',3],['Delivery',deliveryText(),4]];
   $('#summary').innerHTML=rows.map(function(r){return '<div class="sum-row"><dt>'+r[0]+'</dt><dd>'+esc(r[1]).replace(/\n/g,'<br>')+'</dd><button type="button" data-edit="'+r[2]+'" aria-label="Edit '+r[0].toLowerCase()+'">Edit</button></div>';}).join('');
-  $('#totalAmt').textContent=money(S.amount);
   $$('[data-pay]').forEach(function(b){b.setAttribute('aria-checked',b.dataset.pay===S.pay);});
   $('#cardFields').hidden=S.pay!=='card';
 }
@@ -974,8 +971,11 @@ function startFlow(step){
   $('#toInput').value=S.to;$('#fromInput').value=S.from;$('#msgInput').value=S.msg;$('#emailInput').value=S.email;$('#buyerInput').value=S.buyer;$('#timeInput').value=S.time;$('#dateInput').value=S.date;
   renderMsgCount();
 }
+var amountSeen=false; // the amount shows on the card once the amount step has been reached
 function goStep(n,dir){
   currentStep=n;
+  if(n>=2)amountSeen=true;
+  C.flow.el.classList.toggle('no-amt',n===1&&!amountSeen);
   var flow=$('#vFlow');flow.dataset.step=n;
   $$('.step',flow).forEach(function(s){var on=+s.dataset.step===n;s.hidden=!on;if(on){s.classList.toggle('back',dir<0);s.style.animation='none';void s.offsetWidth;s.style.animation='';}});
   $('#stepTitle').textContent=STEP_TITLES[n-1];
@@ -1021,6 +1021,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){$('#menuLay
 /* =========================================================
    INPUTS
    ========================================================= */
+$('#amountInput').addEventListener('focus',function(){$('#vFlow').classList.add('typing');});
+$('#amountInput').addEventListener('blur',function(){$('#vFlow').classList.remove('typing');});
 $('#amountInput').addEventListener('input',function(e){
   var v=e.target.value.replace(/\D/g,'').slice(0,3);e.target.value=v;
   var n=+v;$('#fAmount').classList.remove('invalid');
@@ -1076,6 +1078,7 @@ function openPreview(){
   var to=S.to||'Anna', from=S.from||'a friend';
   $('#pvBar').textContent='Preview · what '+to+' will see';
   $('#pvTitle').textContent=to+', here’s a gift from '+from;
+  $('#pvTap').textContent=to+' taps this to open the gift';
   $('#pvMsg').textContent=S.msg?('“'+S.msg+'”'):'';
   var exp=new Date();exp.setMonth(exp.getMonth()+24);
   $('#pvMeta').textContent=money(S.amount)+' to spend on any session at AMA. Valid until '+exp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'.';
