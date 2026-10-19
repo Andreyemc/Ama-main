@@ -19,8 +19,8 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{background:var(--cream);-webkit-text-size-adjust:100%;overscroll-behavior-y:contain} /* soft rubber band at the top and the bottom; no pull-to-refresh. Fixed header and button stay put */
-body{overscroll-behavior-y:contain;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html{background:var(--cream);-webkit-text-size-adjust:100%;overscroll-behavior-y:none} /* native bounce off: on iPhone it drags the fixed header down and starts pull-to-refresh; the page content gets its own rubber band below */
+body{overscroll-behavior-y:none;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--cream)}
 /* purchase steps sit on white with the same forms; the done screens sit on dark grey */
 html.t-flow{--cream:#FFFFFF;--paper:#F4F4F4;--sand:#F4F4F4;--sand-2:#E4E4E4;--mute:#686868;--line:rgba(0,0,0,.12)}
@@ -1754,6 +1754,28 @@ if(isIOS){
     i.addEventListener('focus',function(){i.blur();});el.appendChild(i);};
   $$('#cta,.chip,.seg button,.radio,#backBtn,#closeBtn').forEach(addHx); // not on the phrases: a switch under the finger takes the sideways drag, and the row would not scroll
 }
+/* rubber band: pulled past the top or the bottom, the page content stretches a little and springs back.
+   The header, the step bar and the button are fixed outside it, so they never move. */
+(function(){
+  if(reduce||!('ontouchstart' in window))return;
+  var M=$('main'), y0=null, x0=0, dir=null, off=0;
+  function maxY(){return document.documentElement.scrollHeight-window.innerHeight;}
+  function band(d){var h=window.innerHeight*0.18;return (d<0?-1:1)*h*(1-Math.exp(-Math.abs(d)/(h*1.6)));}
+  function blocked(){return document.body.style.overflow==='hidden'||document.querySelector('.done.ov');}
+  document.addEventListener('touchstart',function(e){if(e.touches.length!==1||blocked())return;y0=e.touches[0].clientY;x0=e.touches[0].clientX;dir=null;},{passive:true});
+  document.addEventListener('touchmove',function(e){
+    if(y0===null)return;var t=e.touches[0],dy=t.clientY-y0,dx=t.clientX-x0;
+    if(dir===null){if(Math.abs(dy)<6&&Math.abs(dx)<6)return;dir=Math.abs(dy)>Math.abs(dx)?'v':'h';}
+    if(dir!=='v')return;
+    var atTop=window.scrollY<=0&&dy>0, atEnd=window.scrollY>=maxY()-1&&dy<0;
+    if(!atTop&&!atEnd){if(off){off=0;M.style.transform='';}y0=t.clientY;return;} // still scrolling: the band starts from where the edge is reached
+    off=band(dy);M.style.transition='none';M.style.transform='translate3d(0,'+off.toFixed(1)+'px,0)';
+  },{passive:true});
+  function release(){if(y0===null)return;y0=null;if(!off)return;off=0;
+    M.style.transition='transform .5s cubic-bezier(.2,.8,.2,1)';M.style.transform='';
+    setTimeout(function(){if(!off)M.style.transition='';},520);}
+  document.addEventListener('touchend',release,{passive:true});document.addEventListener('touchcancel',release,{passive:true});
+})();
 /* start */
 paintAll();renderAmount();renderDesign();show('landing');
 })();
