@@ -1195,7 +1195,8 @@ function makeCarousel(row,key,onPick,onNear,onPlace){
   /* iOS haptic on a swipe: a transparent system switch lies over the row. Dragging a switch's thumb across the middle toggles it,
      and iOS plays its tick for a real finger. Before each touch the switch is set so the expected swipe direction is the one that toggles. */
   var lastDir=1, sw=null;
-  if(isIOS){
+  /* only on purchase step 1, which never scrolls: on the landing a switch under the finger would take the vertical scroll as well */
+  if(isIOS&&key!=='mood'){
     sw=document.createElement('input');sw.type='checkbox';sw.setAttribute('switch','');sw.className='hx hx-row';sw.tabIndex=-1;sw.setAttribute('aria-hidden','true');
     sw.addEventListener('focus',function(){sw.blur();});row.appendChild(sw);
     row.addEventListener('pointerdown',function(){var expect=cur===0?1:cur===items.length-1?-1:lastDir;sw.checked=expect>0;sw._moved=false;},true);
