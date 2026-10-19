@@ -290,6 +290,28 @@ a.btn{text-decoration:none}
 .tlist dt{font-size:13px;color:var(--mute)}
 .tlist dd{margin:4px 0 0;font-size:18px;line-height:1.3}
 .tfine{margin-top:16px;font-size:14px;color:var(--mute)}
+/* A4 categories on brown */
+.cats{margin-top:96px;background:#994715;color:#FFF3E4;padding:72px max(16px,env(safe-area-inset-left,0px)) 80px}
+.cats h2,.whysec h2{font-size:clamp(40px,12.4vw,54px);line-height:.98;letter-spacing:-.025em}
+.clead{margin-top:16px;font-size:17px;line-height:1.4;color:rgba(255,243,228,.75);max-width:36ch}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px}
+.stat{background:#783206;border-radius:16px;padding:22px 16px 20px;display:flex;flex-direction:column}
+.stat small{font-size:14px;color:rgba(255,243,228,.75)}
+.stat b{font-weight:400;font-size:48px;line-height:1.1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px}
+.stat span{font-size:17px;line-height:1.3;color:rgba(255,243,228,.75);margin-top:12px}
+.stat em{display:block;font-style:normal;color:#FFF3E4;font-weight:500}
+.btn.on-dark{background:transparent;color:#FFF3E4;box-shadow:inset 0 0 0 1px #FFF3E4;margin-top:24px}
+.btn.on-dark:hover{background:rgba(255,243,228,.08)}
+@media (min-width:760px){.stats{grid-template-columns:repeat(4,1fr)}}
+/* A6 why gift with AMA */
+.whysec{background:var(--paper);padding:72px max(16px,env(safe-area-inset-left,0px)) 80px;margin-top:96px}
+.why{display:flex;flex-direction:column;gap:10px;margin-top:28px}
+.why div{background:#F7EEE0;border-radius:16px;padding:20px 18px}
+.why svg{display:block;width:24px;height:24px;fill:var(--rust);margin-bottom:16px} /* icons: Iconoteka, regular weight (MIT) */
+.why b{display:block;font-weight:400;font-size:20px}
+.why span{display:block;font-size:15px;color:var(--mute);margin-top:4px}
+.wfine{margin-top:16px;font-size:14px;color:var(--mute)}
+.wlink{font-size:14px;color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .tlink{font-size:14px;color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .landing{padding-bottom:calc(var(--dock) + 48px)} /* room for the fixed CTA, which is the only buy button below the hero */
 /* ---------- flow ---------- */
@@ -545,10 +567,18 @@ html.no-tr *,html.no-tr *::before,html.no-tr *::after{transition:none!important}
       </section>
     </div>
 
-    <!-- A4 pillars (horizontal slides) -->
-    <section class="pillars" id="pillars" aria-label="What they can book">
-      <div class="col"><h2>Spend it on<br>any session</h2></div>
-      <div class="ptrack bleed" id="plist"></div>
+    <!-- A4 what they can spend it on: four categories on brown (L4c, after the client review) -->
+    <section class="cats bleed" id="pillars" aria-label="Spend it on what feels right">
+      <div class="col">
+        <h2>Spend it on<br>what feels right</h2>
+        <p class="clead">Four ways to feel well. They pick the practitioner, the time and the pace.</p>
+        <div class="stats">
+          <div class="stat"><small>from</small><b>£10</b><span><em>Nutrition</em>Diet plans, gut health, women’s health</span></div>
+          <div class="stat"><small>from</small><b>£15</b><span><em>Activity</em>Pilates, running, personal training</span></div>
+          <div class="stat"><small>from</small><b>£5</b><span><em>Mindfulness</em>Therapy, soundbath, hypnotherapy</span></div>
+          <div class="stat"><small>from</small><b>£85</b><span><em>Sleep</em>Sleep coaching and enhancement</span></div>
+        </div>
+      </div>
     </section>
 
     <div class="col">
@@ -567,18 +597,22 @@ html.no-tr *,html.no-tr *::before,html.no-tr *::after{transition:none!important}
         <p class="chat-foot">Or by email, on the day and time you choose.</p>
       </section>
 
-      <!-- A6 gift card terms, written out (no modal) -->
-      <section class="terms-sec" aria-labelledby="termsH">
-        <h2 id="termsH">Gift card<br>terms</h2>
-        <dl class="tlist">
-          <div><dt>Amount</dt><dd>From £10 to £500</dd></div>
-          <div><dt>Valid</dt><dd>24 months from purchase</dd></div>
-          <div><dt>Delivery</dt><dd>In 2 minutes or on a date you choose</dd></div>
-          <div><dt>Spend on</dt><dd>Any session, plan or bundle on AMA</dd></div>
-        </dl>
-        <p class="tfine">Not exchangeable for cash. <button type="button" class="tlink" id="fullTerms">Full gift card terms</button></p>
-      </section>
     </div>
+
+    <!-- A6 why gift with AMA (L6c, after the client review); the terms live in its fine print -->
+    <section class="whysec bleed" aria-labelledby="whyH">
+      <div class="col">
+        <h2 id="whyH">Why gift<br>with AMA</h2>
+        <div class="why">
+          <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.50051 1.32501L21.0005 10.85V13.15L4.50051 22.675L2.65051 20.9L5.82551 12L2.65051 3.10001L4.50051 1.32501ZM4.75051 20.475L18.1005 12.825L7.42551 12.9L4.75051 20.475ZM4.75051 3.52501L7.42551 11.1L18.1005 11.175L4.75051 3.52501Z"/></svg><b>Delivered in 2 minutes</b><span>By email or in any messenger.</span></div>
+          <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.0005 11.25C11.2255 11.25 10.6255 10.65 10.6255 9.875C10.6255 9.1 11.2255 8.5 12.0005 8.5C12.7755 8.5 13.3755 9.1 13.3755 9.875C13.3755 10.65 12.7755 11.25 12.0005 11.25ZM12.0005 15.975C11.2255 15.975 10.6255 15.375 10.6255 14.6C10.6255 13.825 11.2255 13.225 12.0005 13.225C12.7755 13.225 13.3755 13.825 13.3755 14.6C13.3755 15.375 12.7755 15.975 12.0005 15.975ZM16.5255 11.25C15.7505 11.25 15.1505 10.65 15.1505 9.875C15.1505 9.1 15.7505 8.5 16.5255 8.5C17.3005 8.5 17.9005 9.1 17.9005 9.875C17.9005 10.65 17.3005 11.25 16.5255 11.25ZM16.5255 15.975C15.7505 15.975 15.1505 15.375 15.1505 14.6C15.1505 13.825 15.7505 13.225 16.5255 13.225C17.3005 13.225 17.9005 13.825 17.9005 14.6C17.9005 15.375 17.3005 15.975 16.5255 15.975ZM7.47549 11.25C6.70049 11.25 6.10049 10.65 6.10049 9.875C6.10049 9.1 6.70049 8.5 7.47549 8.5C8.25049 8.5 8.85049 9.1 8.85049 9.875C8.85049 10.65 8.25049 11.25 7.47549 11.25ZM7.47549 15.975C6.70049 15.975 6.10049 15.375 6.10049 14.6C6.10049 13.825 6.70049 13.225 7.47549 13.225C8.25049 13.225 8.85049 13.825 8.85049 14.6C8.85049 15.375 8.25049 15.975 7.47549 15.975ZM2.00049 20.5V4H6.00049V2.425C6.00049 1.9 6.40049 1.5 6.92549 1.5C7.45049 1.5 7.85049 1.9 7.85049 2.425V4H16.1505V2.425C16.1505 1.9 16.5505 1.5 17.0755 1.5C17.6005 1.5 18.0005 1.9 18.0005 2.425V4H22.0005V20.5H2.00049ZM3.85049 18.7H20.1505V5.8H3.85049V18.7Z"/></svg><b>Right on the day</b><span>Schedule it for a birthday morning.</span></div>
+          <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.6505 6.375C17.9005 6.075 18.0505 5.675 18.0505 5.1V3.9H5.95049V5.1C5.95049 5.675 6.10049 6.075 6.35049 6.375L11.0755 12L6.47549 17.475C6.10049 17.925 5.95049 18.35 5.95049 18.9V20.1H18.0505V18.9C18.0505 18.35 17.9005 17.925 17.5255 17.475L12.9255 12L17.6505 6.375ZM4.82549 7.525C4.25049 6.825 4.00049 6.1 4.00049 5.1V2H20.0005V5.1C20.0005 6.1 19.7505 6.825 19.1755 7.525L15.4005 12L19.1755 16.475C19.7505 17.175 20.0005 17.9 20.0005 18.9V22H4.00049V18.9C4.00049 17.9 4.25049 17.175 4.82549 16.475L8.60049 12L4.82549 7.525Z"/></svg><b>Valid for 24 months</b><span>No rush to book.</span></div>
+          <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.00049 12.45V9.99998H4.50049C5.50049 9.99998 6.37549 10.1 7.20049 10.325C7.17549 10.15 7.17549 9.99998 7.17549 9.84998C7.17549 7.52497 8.17549 5.54998 10.1755 3.54998L12.0005 1.72498L13.8255 3.54998C15.8255 5.54998 16.8255 7.52497 16.8255 9.84998C16.8255 9.99998 16.8255 10.15 16.8005 10.325C17.6255 10.1 18.5005 9.99998 19.5005 9.99998H22.0005V12.45C22.0005 18.35 18.4255 21.5 12.0005 21.5C5.57549 21.5 2.00049 18.35 2.00049 12.45ZM3.85049 12.45C3.85049 17.075 6.37549 19.425 11.1005 19.675C11.0755 14.125 8.85049 11.8 4.50049 11.8H3.85049V12.45ZM19.5005 11.8C15.1505 11.8 12.9255 14.125 12.9005 19.675C17.6255 19.425 20.1505 17.075 20.1505 12.45V11.8H19.5005ZM9.02549 9.84998C9.02549 10.325 9.12549 10.8 9.27549 11.2C10.5005 11.975 11.4255 13.15 12.0005 14.7C12.5755 13.15 13.5005 11.975 14.7255 11.2C14.8755 10.8 14.9755 10.325 14.9755 9.84998C14.9755 8.02497 14.2255 6.49998 12.5505 4.82498L12.0005 4.27498L11.4505 4.82498C9.77549 6.49998 9.02549 8.02497 9.02549 9.84998Z"/></svg><b>Any session</b><span>Sessions, plans and bundles.</span></div>
+          <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 1.5C13.142 1.5 16.5 4.858 16.5 9C16.5 13.142 13.142 16.5 9 16.5C4.858 16.5 1.5 13.142 1.5 9C1.5 4.858 4.858 1.5 9 1.5ZM9 3.4C5.907 3.4 3.4 5.907 3.4 9C3.4 12.093 5.907 14.6 9 14.6C12.093 14.6 14.6 12.093 14.6 9C14.6 5.907 12.093 3.4 9 3.4ZM8.3 18.375C8.525 18.387 8.762 18.4 9 18.4C9.5 18.4 9.988 18.363 10.463 18.288C11.475 19.688 13.137 20.6 15 20.6C18.087 20.6 20.6 18.087 20.6 15C20.6 13.137 19.688 11.475 18.288 10.463C18.363 9.988 18.4 9.5 18.4 9C18.4 8.762 18.387 8.525 18.375 8.3C20.825 9.537 22.5 12.075 22.5 15C22.5 19.137 19.137 22.5 15 22.5C12.075 22.5 9.537 20.825 8.3 18.375ZM6.825 5.75L10.175 5.75L10.175 12.25L8.325 12.25L8.325 7.55L6.825 7.55Z"/></svg><b>From £10 to £500</b><span>Any amount in between.</span></div>
+        </div>
+        <p class="wfine">Not exchangeable for cash. <button type="button" class="wlink" id="fullTerms">Full gift card terms</button></p>
+      </div>
+    </section>
   </section>
 
   <!-- ================= FLOW ================= -->
@@ -1271,15 +1305,7 @@ if(window.ResizeObserver){var nmsT;var nmsRO=new ResizeObserver(function(){cance
 window.addEventListener('resize',function(){requestAnimationFrame(noMicroScroll);});
 
 /* ---------- A4: pillars (horizontal slides, images only) ---------- */
-var PILLARS=[
-  {n:'Nutrition',  s:'Diet plans, women’s health, gut health', img:'p-nutrition'},
-  {n:'Activity',   s:'Pilates, running, personal training',    img:'p-activity'},
-  {n:'Mindfulness',s:'Therapy, soundbath, hypnotherapy',        img:'p-mindfulness'},
-  {n:'Sleep',      s:'Sleep coaching and enhancement',          img:'p-sleep'}
-];
-$('#plist').innerHTML=PILLARS.map(function(p,i){
-  return '<figure class="pslide"><img src="img/'+p.img+'.avif" alt="" loading="lazy"><figcaption class="ptext"><div><b>'+p.n+'</b><small>'+p.s+'</small></div><span class="pnum">'+(i+1)+' / '+PILLARS.length+'</span></figcaption></figure>';
-}).join('');
+
 
 /* scroll driver for the pinned amounts scene */
 function sceneProgress(el){var pin=el.querySelector('.scene-pin');var top=parseFloat(getComputedStyle(pin).top)||0;var r=el.getBoundingClientRect();var span=Math.max(1,el.offsetHeight-pin.offsetHeight);return clamp((top-r.top)/span,0,0.9999);}
@@ -1719,7 +1745,7 @@ if(window.visualViewport){
 if('IntersectionObserver' in window&&!reduce){
   var rvIO=new IntersectionObserver(function(es){es.forEach(function(en){if(!en.isIntersecting)return;var el=en.target;rvIO.unobserve(el);el.classList.add('in');
     setTimeout(function(){el.classList.remove('rv','in');},800);});},{threshold:0.12,rootMargin:'0px 0px -6% 0px'});
-  $$('#vLanding .moods > *, #vLanding .pillars h2, #vLanding #plist, #vLanding .chat-section > h2, #vLanding .chat-section > p').forEach(function(el){el.classList.add('rv');rvIO.observe(el);});
+  $$('#vLanding .moods > *, #vLanding .cats h2, #vLanding .cats .clead, #vLanding .stats, #vLanding .whysec h2, #vLanding .why, #vLanding .chat-section > h2, #vLanding .chat-section > p').forEach(function(el){el.classList.add('rv');rvIO.observe(el);});
 }
 /* iOS 26.5+ lets only a real finger tap on a system switch play a haptic; script-triggered ticks were closed by Apple.
    So on iPhone each key control carries a transparent switch under the finger. Android keeps navigator.vibrate. */
