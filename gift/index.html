@@ -203,6 +203,122 @@ a.btn{text-decoration:none}
 .pslide b{display:block;font-weight:400;font-size:22px}
 .pslide small{display:block;font-size:14px;color:var(--mute);margin-top:4px}
 .pslide .pnum{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums;flex:none}
+/* messenger: the real WhatsApp screen inside a photo of an iPhone (frame 528x1074, screen hole 466x1014 at 30,30). Screen drawn in a 393pt grid: 1u = 1pt */
+.chat-section{padding-top:96px;display:flex;flex-direction:column;gap:28px}
+.phone{position:relative;width:min(100%,326px);margin:0 auto;aspect-ratio:528/1074;container-type:inline-size}
+.ph-frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.ph-screen{position:absolute;left:5.682%;top:2.793%;width:88.258%;height:94.413%;border-radius:11.74cqw;overflow:hidden;background:#EFEAE2}
+.wa{--u:calc(88.258cqw / 393);position:absolute;inset:0;display:flex;flex-direction:column;font-family:-apple-system,"SF Pro Text",system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;color:#111B21;font-size:calc(16*var(--u));line-height:1.3;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+.wa svg{display:block;flex:none}
+.wa-status{position:relative;height:calc(54*var(--u));background:#F7F7F7;flex:none}
+.wa-status svg{position:absolute;left:0;top:0;width:100%;height:auto}
+.wa-nav{display:flex;align-items:center;height:calc(52*var(--u));padding:0 calc(19*var(--u)) 0 calc(10*var(--u));background:rgba(247,247,247,.96);box-shadow:inset 0 calc(-.5*var(--u)) 0 #C6C6C8;flex:none}
+.wa-nav .back{width:calc(12*var(--u));height:calc(20*var(--u))}
+.wa-badge{margin-left:calc(5*var(--u));min-width:calc(26*var(--u));height:calc(20*var(--u));border-radius:calc(10*var(--u));background:#1DAA61;color:#fff;font-size:calc(13*var(--u));font-weight:600;display:grid;place-items:center;padding:0 calc(6*var(--u))}
+.wa-av{width:calc(36*var(--u));height:calc(36*var(--u));border-radius:50%;margin-left:calc(9*var(--u));object-fit:cover;background:#ddd}
+.wa-who{margin-left:calc(8*var(--u));flex:1;min-width:0;line-height:1.2}
+.wa-who b{display:block;font-weight:600;font-size:calc(16.5*var(--u))}
+.wa-who span{display:block;font-size:calc(12*var(--u));color:#8A8A8E;transition:opacity .2s}
+.wa-nav .video{width:calc(26*var(--u));height:calc(18*var(--u))}
+.wa-nav .call{width:calc(20*var(--u));height:calc(20*var(--u));margin-left:calc(19*var(--u))}
+.wa-body{flex:1;min-height:0;display:flex;flex-direction:column;align-items:flex-start;padding:calc(20*var(--u)) calc(8*var(--u)) 0 calc(11*var(--u));gap:calc(10*var(--u))}
+.wa-date{align-self:center;background:#fff;border-radius:calc(8*var(--u));padding:calc(4*var(--u)) calc(10*var(--u));font-size:calc(12*var(--u));font-weight:500;color:#54656F;box-shadow:0 calc(.5*var(--u)) calc(1*var(--u)) rgba(11,20,26,.13);margin-bottom:calc(5*var(--u))}
+.wa-b{position:relative;max-width:calc(300*var(--u));background:#fff;border-radius:calc(16*var(--u));padding:calc(10*var(--u)) calc(12*var(--u)) calc(8*var(--u)) calc(15*var(--u));box-shadow:0 calc(.5*var(--u)) calc(1*var(--u)) rgba(11,20,26,.13);display:flex;align-items:flex-end;gap:calc(10*var(--u))}
+.wa-b time{font-size:calc(11*var(--u));color:#667781;white-space:nowrap;display:flex;align-items:center;gap:calc(4*var(--u));line-height:1;padding-bottom:calc(1*var(--u))}
+.wa-b.out{align-self:flex-end;background:#D9FDD3;width:calc(300*var(--u));padding:calc(4*var(--u)) calc(4*var(--u)) calc(7*var(--u));flex-direction:column;align-items:stretch;gap:0}
+.wa-lp{background:#CFEFC6;border-radius:calc(12*var(--u));overflow:hidden}
+.wa-lp img{display:block;width:100%;aspect-ratio:292/153;object-fit:cover;background:#F7EEE0}
+.wa-lp div{padding:calc(8*var(--u)) calc(10*var(--u)) calc(9*var(--u))}
+.wa-lp b{display:block;font-weight:600;font-size:calc(14*var(--u))}
+.wa-lp p{font-size:calc(13*var(--u));color:#5E6C74;margin-top:calc(3*var(--u));line-height:1.3}
+.wa-lp small{display:block;font-size:calc(12*var(--u));color:#8696A0;margin-top:calc(3*var(--u))}
+.wa-txt{padding:calc(8*var(--u)) calc(11*var(--u)) 0}
+.wa-txt a{color:#027EB5;text-decoration:none}
+.wa-b.out time{align-self:flex-end;padding:calc(3*var(--u)) calc(6*var(--u)) 0 0}
+.wa-ticks{width:calc(16*var(--u));height:calc(11*var(--u))}
+.wa-react{position:absolute;left:calc(16*var(--u));bottom:calc(-17*var(--u));width:calc(30*var(--u));height:calc(24*var(--u));border-radius:calc(12*var(--u));background:#fff;display:grid;place-items:center;box-shadow:0 0 0 calc(2*var(--u)) #EFEAE2,0 calc(1*var(--u)) calc(2*var(--u)) rgba(11,20,26,.15);transform:scale(0);transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.wa-react svg{width:calc(14*var(--u));height:calc(13*var(--u))}
+.wa-react.on{transform:none}
+.wa-input{flex:none;height:calc(90*var(--u));background:#F7F7F7;box-shadow:inset 0 calc(.5*var(--u)) 0 #C6C6C8;position:relative}
+.wa-input .plus{position:absolute;left:calc(12*var(--u));top:calc(13*var(--u));width:calc(22*var(--u));height:calc(22*var(--u))}
+.wa-field{position:absolute;left:calc(44*var(--u));top:calc(7*var(--u));width:calc(244*var(--u));height:calc(34*var(--u));border-radius:calc(17*var(--u));background:#fff;box-shadow:inset 0 0 0 calc(.5*var(--u)) #D1D1D6}
+.wa-field svg{position:absolute;right:calc(8*var(--u));top:calc(7*var(--u));width:calc(20*var(--u));height:calc(20*var(--u))}
+.wa-input .cam{position:absolute;left:calc(300*var(--u));top:calc(14*var(--u));width:calc(24*var(--u));height:calc(20*var(--u))}
+.wa-input .mic{position:absolute;left:calc(354*var(--u));top:calc(12*var(--u));width:calc(16*var(--u));height:calc(24*var(--u))}
+.wa-home{position:absolute;left:50%;bottom:calc(8*var(--u));width:calc(134*var(--u));height:calc(5*var(--u));margin-left:calc(-67*var(--u));border-radius:calc(3*var(--u));background:#000}
+.phone .wa-b{opacity:0;transform:translateY(calc(12*var(--u))) scale(.98);transform-origin:left bottom;transition:opacity .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.phone .wa-b.out{transform-origin:right bottom}
+.phone .wa-b.in-view{opacity:1;transform:none}
+.chat-foot{font-size:14px;color:var(--mute);text-align:center}
+.landing{padding-bottom:40px}
+.landing .col{display:flex;flex-direction:column}
+.bleed{margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+/* hero */
+.hero{display:flex;flex-direction:column;padding-top:20px;min-height:calc(100svh - var(--hdr) - 84px)} /* the photo of the next section peeks at the bottom */
+.hero h1{font-size:clamp(48px,14.6vw,68px);line-height:.96;letter-spacing:-.03em}
+.hero-card{perspective:1100px;padding:44px 26px 40px;display:flex;justify-content:center}
+.hero-card .tilted{width:100%;max-width:330px} /* straight card, present from the first frame: no entrance animation */
+.hero .lead{max-width:32ch}
+/* gift card terms, folded into an info toggle */
+.info-btn{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:14px;color:var(--mute);align-self:flex-start;padding:4px 0}
+.info-btn svg{width:16px;height:16px;flex:none}
+.info-btn[aria-expanded="true"]{color:var(--ink)}
+.hero .btn{margin-top:28px}
+.tilt-note{font-size:13px;color:var(--mute);text-align:center;margin-top:12px}
+.tilt-note button{text-decoration:underline;text-underline-offset:3px;font-size:13px;color:var(--ink)}
+/* scroll scenes */
+.scene{position:relative}
+.scene-pin{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdr));height:calc(100svh - var(--hdr) - env(safe-area-inset-top,0px));overflow:hidden;display:flex;flex-direction:column}
+/* scene: what it buys */
+.buys .scene-pin{position:relative;top:auto;height:auto;overflow:visible} /* not pinned: the page scrolls normally */
+.buys .photo{flex:none;height:min(56svh,520px);touch-action:pan-y}
+.buys .photo img{pointer-events:none;-webkit-user-drag:none;user-select:none} /* no native image drag stealing the swipe */
+.buys .photo{position:relative;flex:1 1 auto;min-height:0;background:var(--sand)}
+.buys .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.buys .card-on-edge{position:absolute;left:50%;bottom:0;width:min(74%,320px);transform:translate(-50%,42%);z-index:2}
+.buys .meta{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:calc(min(74vw,320px) * .63 * .42 + 18px);padding-bottom:calc(var(--dock) + 4px);flex:none}
+.buys .figure{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.buys .big{font-size:clamp(72px,24vw,104px);line-height:.86;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.buys .what{font-size:16px;line-height:1.3;max-width:170px;text-align:left;padding-bottom:6px}
+.buys .scale{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:12px;padding-top:0}
+.buys .scale button{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums;min-width:44px;min-height:44px;padding:0 2px}
+.buys .scale button[aria-current="true"]{color:var(--ink)}
+/* moods carousel */
+.moods{padding-top:96px}
+/* card standing on its side: the landscape card is rotated 90° clockwise inside a portrait box */
+.up{position:relative;width:100%;aspect-ratio:53.98/85.6}
+.up>.gc{position:absolute;top:0;left:100%;width:calc(100% * 85.6 / 53.98);max-width:none;transform-origin:0 0;transform:rotate(90deg)}
+/* stepwise flip carousel (as in the reference): centre card flat, neighbours almost edge-on;
+   one swipe turns exactly one card, the focused one turns away while the next turns in */
+.ucar{--uw:min(56vw,233px);position:relative;height:calc(var(--uw) * 85.6 / 53.98 + 64px);perspective:1100px;touch-action:pan-y;user-select:none;-webkit-user-select:none;overflow:hidden}
+.ucar>button{position:absolute;top:28px;left:50%;width:var(--uw);margin-left:calc(var(--uw) / -2);transform-style:preserve-3d;will-change:transform;-webkit-tap-highlight-color:transparent}
+.ucar>button:focus-visible{outline:none}
+.ucar:focus-visible{outline:2px solid var(--rust);outline-offset:-2px}
+.dsg-row{--uw:min(62vw,250px);margin-top:36px} /* JS refits size and offset to the screen: equal space above and below the card */ /* P1b: bigger card, lower, more air under the name */
+.design-top{text-align:center;padding-top:36px}
+.design-top h2{font-size:30px;font-weight:500;line-height:1.2;letter-spacing:-.01em}
+.design-top p{font-size:15px;color:var(--mute);margin-top:12px}
+.flow[data-step="1"] .step{gap:0}
+.flow[data-step="1"] .stage{display:none}
+.moods h2,.pillars h2,.chat-section h2{font-size:clamp(40px,12.4vw,54px);line-height:.98;letter-spacing:-.025em}
+.mood-meta{width:100%;display:flex;flex-direction:column;gap:12px}
+.mood-meta .top{display:flex;justify-content:space-between;align-items:baseline}
+.mood-meta b{font-weight:400;font-size:20px}
+.mood-meta span{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums}
+.mood-meta p{font-size:15px;font-weight:300;line-height:1.4;color:var(--body);border-top:1px solid var(--line);padding-top:12px}
+/* pillars: horizontal slides running off the right edge, one per screen plus a slice of the next */
+.pillars{padding-top:96px}
+.ptrack{--gut:calc(max(16px,env(safe-area-inset-left,0px)) + max(0px,(100% - 2 * max(16px,env(safe-area-inset-left,0px)) - var(--col)) / 2));
+  display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;
+  margin-top:28px;padding-left:var(--gut);scroll-padding-left:var(--gut)}
+.ptrack::-webkit-scrollbar{display:none}
+.ptrack::after{content:"";flex:0 0 6px} /* breathing room after the last slide */
+.pslide{flex:0 0 min(calc(100% - 56px),440px);scroll-snap-align:start;display:flex;flex-direction:column;margin:0}
+.pslide img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--sand)}
+.pslide .ptext{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding-top:14px}
+.pslide b{display:block;font-weight:400;font-size:22px}
+.pslide small{display:block;font-size:14px;color:var(--mute);margin-top:4px}
+.pslide .pnum{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums;flex:none}
 /* messenger */
 .chat-section{padding-top:96px;display:flex;flex-direction:column;gap:28px}
 .chat{background:var(--chat-bg);border-radius:24px;overflow:hidden;display:flex;flex-direction:column}
@@ -478,14 +594,36 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
       <!-- A5 messenger -->
       <section class="chat-section">
         <h2>It arrives<br>like a message</h2>
-        <div class="chat" id="chat" aria-label="Example of the gift in a chat">
-          <div class="chat-head"><i aria-hidden="true">A</i><div><b>Anna</b><span>online</span></div></div>
-          <div class="chat-body">
-            <div class="msg">how was the retreat?<time>18:41</time></div>
-            <div class="msg out gift"><div class="preview"><div data-card="chat" data-amp=".7"></div><b id="chatTitle">AMA gift card</b><small>amaforyou.com</small></div><p>a little time just for you<br><a href="#top" tabindex="-1">amaforyou.com/gift/7KQ2-M9XA</a></p><time>18:42 ✓✓</time></div>
-            <div class="msg typing" id="typing" aria-hidden="true"><i></i><i></i><i></i></div>
-            <div class="msg" id="reply" hidden>omg, thank you<time>18:43</time></div>
-          </div>
+        <div class="phone" id="chat" role="img" aria-label="Example: the gift arrives as a WhatsApp message with a link and a cover picture">
+          <div class="ph-screen" aria-hidden="true"><div class="wa">
+            <div class="wa-status"><svg class="sb" viewBox="0 0 288 46" fill="#000" aria-hidden="true"><path d="M216.8 19c-.4 0-.7.3-.7.7v7.6c0 .4.3.7.7.7h1c.4 0 .7-.3.7-.7v-7.6c0-.4-.3-.7-.7-.7h-1zM212.2 21.7c0-.4.3-.7.7-.7h1c.4 0 .7.3.7.7v5.6c0 .4-.3.7-.7.7h-1c-.4 0-.7-.3-.7-.7v-5.6zM209 22.9c-.4 0-.7.3-.7.7v3.7c0 .4.3.7.7.7h1c.4 0 .7-.3.7-.7v-3.7c0-.4-.3-.7-.7-.7h-1zM205.1 24.6c-.4 0-.7.3-.7.7v2c0 .4.3.7.7.7h1c.4 0 .7-.3.7-.7v-2c0-.4-.3-.7-.7-.7h-1z"/><path fill-rule="evenodd" d="M230.1 20.9c1.8 0 3.6.7 4.9 2 .1.1.3.1.4 0l.9-1c.1 0 .1-.1.1-.2s0-.1-.1-.2c-3.4-3.3-8.9-3.3-12.3 0-.1.1-.1.1-.1.2s0 .1.1.2l.9 1c.1.1.3.1.4 0 1.3-1.3 3.1-2 4.8-2zm0 3.1c1 0 2 .4 2.7 1 .1.1.3.1.4 0l.9-1c.1 0 .1-.1.1-.2s0-.1-.1-.2c-2.2-2.1-5.7-2.1-8 0-.1.1-.1.1-.1.2s0 .1.1.2l.9 1c.1.1.3.1.4 0 .7-.6 1.7-1 2.7-1zm1.9 2.1c0 .1 0 .1-.1.2l-1.6 1.7c0 .1-.1.1-.2.1s-.1 0-.2-.1l-1.6-1.7c-.1-.1-.1-.1-.1-.2s0-.1.1-.2c1-.9 2.6-.9 3.6 0 .1.1.1.1.1.2z"/><rect x="243.2" y="20.1" width="15.4" height="6.6" rx="2"/><path opacity=".4" fill-rule="evenodd" d="M255.3 18.6h-8.8c-.7 0-1.2 0-1.6 0-.4 0-.8.1-1.1.2-.8.3-1.5 1-1.8 1.8-.1.3-.2.7-.2 1.1v3.3c0 .4.1.8.2 1.1.3.8 1 1.5 1.8 1.8.3.1.7.2 1.1.2.4 0 .9 0 1.6 0h8.8c.7 0 1.2 0 1.6 0 .4 0 .8-.1 1.1-.2.8-.3 1.5-1 1.8-1.8.1-.3.2-.7.2-1.1v-3.3c0-.4-.1-.8-.2-1.1-.3-.8-1-1.5-1.8-1.8-.3-.1-.7-.2-1.1-.2-.4 0-.9 0-1.6 0zm-11.3.9c.2-.1.5-.1.9-.2h10.4c.4 0 .7.1.9.2.6.3 1.1.8 1.4 1.4.1.2.1.5.2.9v4.9c0 .4-.1.7-.2.9-.3.6-.8 1.1-1.4 1.4-.2.1-.5.1-.9.2h-10.4c-.4 0-.7-.1-.9-.2-.6-.3-1.1-.8-1.4-1.4-.1-.2-.1-.5-.2-.9v-4.9c0-.4.1-.7.2-.9.3-.6.8-1.1 1.4-1.4zM260.8 21.9c.6.2 1 .8 1 1.5s-.4 1.2-1 1.5v-3z"/><path d="M48 19.3c2.1 0 3.7 1.5 3.7 4.7 0 3-1.4 4.8-3.7 4.8-1.7 0-3-1-3.3-2.4v-.1h1.8c.2.6.7 1 1.5 1 1.3 0 1.9-1.3 1.9-2.9v-.2h-.1c-.3.7-1.1 1.3-2.3 1.3-1.8 0-2.9-1.3-2.9-3 0-1.8 1.4-3.2 3.4-3.2zm0 4.8c.9 0 1.7-.7 1.7-1.6 0-1-.7-1.7-1.6-1.7-.9 0-1.6.7-1.6 1.6 0 1 .7 1.7 1.5 1.7zm6.3-1.2c-.6 0-1.1-.5-1.1-1.1 0-.6.5-1.1 1.1-1.1s1.1.5 1.1 1.1c0 .6-.5 1.1-1.1 1.1zm0 4.5c-.6 0-1.1-.5-1.1-1.1 0-.6.5-1.1 1.1-1.1s1.1.5 1.1 1.1c0 .6-.5 1.1-1.1 1.1zm7.1 1.2v-1.7h-4.4v-1.5c1.1-2 2.4-4 3.6-5.9h2.6v5.9h1.2v1.5h-1.2v1.7h-1.8zm-2.8-3.1h2.8V21h-.1c-.9 1.3-1.8 2.9-2.7 4.4v.1zm9.1 3.1v-7.2h-.1l-2.2 1.5v-1.7l2.3-1.6h1.9v9h-1.9z"/></svg></div>
+            <div class="wa-nav">
+              <svg class="back" viewBox="0 0 9 15" fill="none"><path d="M7.3 1.5L1.5 7.3l5.8 5.9" stroke="#1DAA61" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="wa-badge">12</span>
+              <img class="wa-av" src="img/wa-avatar.jpg" alt="" width="36" height="36" loading="lazy" decoding="async">
+              <div class="wa-who"><b>Anna</b><span id="waState">online</span></div>
+              <svg class="video" viewBox="0 0 20 14" fill="none"><path d="M9.5 1.5H3.7C2 1.5.7 2.8.7 4.4v4.4c0 1.6 1.3 2.9 3 2.9h5.8c1.6 0 2.9-1.3 2.9-2.9V4.4c0-1.6-1.3-2.9-2.9-2.9z" stroke="#1DAA61" stroke-width="1.3"/><path d="M13.2 5.3l4.5-2.7v7.9l-4.5-2.6V5.3z" stroke="#1DAA61" stroke-width="1.3" stroke-linejoin="round"/></svg>
+              <svg class="call" viewBox="0 0 15 15" fill="none"><path d="M3.8 1.2c.4 0 .7.2 1 .6l1 2.3c.2.4.1.9-.2 1.2l-1 1c.7 1.5 2.1 2.9 3.7 3.7l1-1c.4-.4.8-.4 1.2-.2l2.3 1c.4.2.7.6.7 1v1.6c0 .7-.5 1.2-1.2 1.2C6.3 13.6 1.1 8.4 1.1 2.3c0-.6.5-1.1 1.2-1.1h1.5z" stroke="#1DAA61" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="wa-body">
+              <span class="wa-date">Today</span>
+              <div class="wa-b">how was the retreat?<time>18:41</time></div>
+              <div class="wa-b out">
+                <div class="wa-lp"><img src="img/wa-cover.jpg" alt="" width="292" height="153" loading="lazy" decoding="async"><div><b>AMA Gift Card</b><p>Give time to feel well. An AMA gift card for any session, plan or bundle.</p><small>amaforyou.com</small></div></div>
+                <p class="wa-txt">Anna, happy birthday! A little time just for you, on any session at AMA<br><a>amaforyou.com/gift/7KQ2-M9XA</a></p>
+                <time>18:42<svg class="wa-ticks" viewBox="0 0 12 9" fill="none"><path d="M.7 4.3l2.1 2.1 4.5-5.1M4.7 6.3l.7.7 5.3-5.8" stroke="#53BDEB" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg></time>
+              </div>
+              <div class="wa-b" id="reply">omg, thank you!!<time>18:43</time><span class="wa-react" id="waReact"><svg viewBox="0 0 11 10"><path d="M5.1 8.9S.6 6.2.6 3.1C.6 1.6 1.7.6 2.9.6c1 0 1.8.5 2.2 1.3C5.6 1.1 6.4.6 7.3.6c1.3 0 2.4 1 2.4 2.5 0 3.1-4.6 5.8-4.6 5.8z" fill="#E8344E"/></svg></span></div>
+            </div>
+            <div class="wa-input">
+              <svg class="plus" viewBox="0 0 17 17" fill="none"><path d="M8.1 1.5v13.2M1.5 8.1h13.2" stroke="#1DAA61" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="wa-field"><svg viewBox="0 0 15 15" fill="none"><path d="M7.3 13.6a6.2 6.2 0 116.2-6.2c0 .6-.3 1.2-.8 1.7l-3.6 3.6c-.4.5-1.1.9-1.8.9z" stroke="#1DAA61" stroke-width="1.25"/><path d="M13.2 8.4h-2.6a1.8 1.8 0 00-1.8 1.9v2.9" stroke="#1DAA61" stroke-width="1.25"/></svg></span>
+              <svg class="cam" viewBox="0 0 18 15" fill="none"><path d="M2.2 3.7h2.6l1.3-1.9h5.4l1.3 1.9h2.6c.6 0 1.1.5 1.1 1.1v7.3c0 .6-.5 1.1-1.1 1.1H2.2c-.6 0-1.1-.5-1.1-1.1V4.8c0-.6.5-1.1 1.1-1.1z" stroke="#1DAA61" stroke-width="1.25"/><circle cx="8.8" cy="8.1" r="2.8" stroke="#1DAA61" stroke-width="1.25"/></svg>
+              <svg class="mic" viewBox="0 0 12 18" fill="none"><path d="M8.4 3.7a2.6 2.6 0 00-5.1 0v4.4a2.6 2.6 0 005.1 0V3.7z" stroke="#1DAA61" stroke-width="1.25"/><path d="M10.6 8.1a4.8 4.8 0 01-9.5 0M5.9 12.8v3.3" stroke="#1DAA61" stroke-width="1.25" stroke-linecap="round"/></svg>
+              <span class="wa-home"></span>
+            </div>
+          </div></div>
+          <img class="ph-frame" src="img/iphone.webp" alt="" width="528" height="1074" loading="lazy" decoding="async" draggable="false">
         </div>
         <p class="chat-foot">Or by email, on the day and time you choose.</p>
       </section>
@@ -955,7 +1093,6 @@ $$('[data-card]').forEach(function(h){var c=buildCard(h);C[c.key]=c;observe(c);}
 var FLOW_CARDS=['flow','preview','done'];
 function paintAll(){var d=design();FLOW_CARDS.forEach(function(k){if(C[k])paintCard(C[k],d,S.amount);});}
 paintCard(C.hero,designById('night'),75);C.hero.el.classList.add('no-amt'); // no amount until it is chosen
-paintCard(C.chat,designById('sand'),75);C.chat.el.classList.add('no-amt'); // the link preview never shows the amount
 
 /* ---------- A2: what each amount buys (pinned, scroll-driven) ---------- */
 var BUYS=[
@@ -1142,15 +1279,17 @@ window.addEventListener('scroll',function(){requestAnimationFrame(onScroll);},{p
 
 /* ---------- A5: messenger plays once when it comes into view ---------- */
 var chatPlayed=false;
-var chatMsgs=$$('#chat .msg').filter(function(m){return m.id!=='reply';});
+var chatMsgs=$$('#chat .wa-b');
 new IntersectionObserver(function(es,obs){
   if(!es[0].isIntersecting||chatPlayed)return;chatPlayed=true;obs.disconnect();
-  var typing=$('#typing'), reply=$('#reply');
-  if(reduce){chatMsgs.forEach(function(m){m.classList.add('in-view');});typing.hidden=true;reply.hidden=false;reply.classList.add('in-view');return;}
-  setTimeout(function(){chatMsgs[0].classList.add('in-view');},150);
-  setTimeout(function(){chatMsgs[1].classList.add('in-view');},800);
-  setTimeout(function(){typing.classList.add('in-view');},1700);
-  setTimeout(function(){typing.hidden=true;reply.hidden=false;void reply.offsetWidth;reply.classList.add('in-view');},3300);
+  var state=$('#waState'), react=$('#waReact');
+  function say(t){state.style.opacity=0;setTimeout(function(){state.textContent=t;state.style.opacity=1;},180);}
+  if(reduce){chatMsgs.forEach(function(m){m.classList.add('in-view');});react.classList.add('on');return;}
+  setTimeout(function(){chatMsgs[0].classList.add('in-view');},200);
+  setTimeout(function(){chatMsgs[1].classList.add('in-view');},900);
+  setTimeout(function(){say('typing…');},1900);
+  setTimeout(function(){say('online');chatMsgs[2].classList.add('in-view');},3500);
+  setTimeout(function(){react.classList.add('on');},4300);
 },{threshold:0.35}).observe($('#chat'));
 
 // flow: thumbnails
