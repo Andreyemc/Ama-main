@@ -19,8 +19,8 @@
 *{box-sizing:border-box}
 body{margin:0}
 [hidden]{display:none!important}
-html{background:var(--cream);-webkit-text-size-adjust:100%;overscroll-behavior-y:none} /* no rubber-band or pull-to-refresh: the fixed header and button never move with a swipe */
-body{overscroll-behavior-y:none;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html{background:var(--cream);-webkit-text-size-adjust:100%;overscroll-behavior-y:contain} /* soft rubber band at the top and the bottom; no pull-to-refresh. Fixed header and button stay put */
+body{overscroll-behavior-y:contain;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--top,var(--cream))}
 html:not(.t-buy):not(.t-done){--top:#1E0904}
 /* purchase steps sit on white with the same forms; the done screens sit on dark grey */
@@ -1159,6 +1159,7 @@ function show(v,opts){
   var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.setAttribute('content',v==='buy'?'#FFFAF3':v==='done'?'#461A0F':'#1E0904');
   $('#vLanding').hidden=v!=='landing';$('#vBuy').hidden=v!=='buy';$('#vDone').hidden=v!=='done';
   if(!opts.keepScroll)window.scrollTo(0,0);
+  if(typeof edgeColour==='function')edgeColour();
   updateBar();
   if(v==='done')requestAnimationFrame(fitDone);
 }
@@ -1170,6 +1171,10 @@ function startBuy(at){
   if(at==='amount')requestAnimationFrame(function(){var el=$('#secAmount');window.scrollTo(0,el.getBoundingClientRect().top+window.scrollY-var_hdr()-8);});
 }
 function var_hdr(){return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr'))||58;}
+/* rubber band: the area that shows past the top or the bottom of the landing takes the colour of the block at that edge */
+function edgeColour(){var H=document.documentElement;if(view!=='landing'){H.style.backgroundColor='';return;}
+  H.style.backgroundColor=window.scrollY<(document.documentElement.scrollHeight-window.innerHeight)/2?'#1E0904':'#461A0F';}
+window.addEventListener('scroll',edgeColour,{passive:true});
 window.addEventListener('popstate',function(){if(view!=='landing'){show('landing');}});
 $$('[data-buy]').forEach(function(b){b.addEventListener('click',function(){haptic('medium');startBuy(b.getAttribute('data-buy'));});});
 $('#logoLink').addEventListener('click',function(e){e.preventDefault();if(view!=='landing'){try{history.replaceState(null,'',location.pathname);}catch(_){}show('landing');}else window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});});

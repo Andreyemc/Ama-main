@@ -10,7 +10,7 @@
 :root{--cream:#F7EEE0;--paper:#FFFAF3;--sand:#EFE3D1;--ink:#1E1C1A;--body:#4F473F;--mute:#6E6358;--line:rgba(30,28,26,.14);--rust:#B04F13;--light:#FFF3E4;
   --sans:"Google Sans Flex","Google Sans","Helvetica Neue",Helvetica,Arial,sans-serif;--hdr:58px;color-scheme:light}
 *{box-sizing:border-box}[hidden]{display:none!important}
-html{background:var(--cream);-webkit-text-size-adjust:100%;overscroll-behavior-y:none}
+html{background:var(--cream);-webkit-text-size-adjust:100%;overscroll-behavior-y:contain}
 body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s,color .3s}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--cream)}
 html.dark{--cream:#2B2A28;--paper:#3A3836;--sand:#3A3836;--ink:#FFFFFF;--body:#D9D3CC;--mute:#B5AEA6;--line:rgba(255,255,255,.2)}
