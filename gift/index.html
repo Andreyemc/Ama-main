@@ -25,6 +25,15 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 html.t-flow{--cream:#FFFFFF;--paper:#F4F4F4;--sand:#F4F4F4;--sand-2:#E4E4E4;--mute:#686868;--line:rgba(0,0,0,.12)}
 html.t-done{--cream:#2B2A28;--paper:#3A3836;--sand:#3A3836;--ink:#FFFFFF;--body:#D9D3CC;--mute:#B5AEA6;--line:rgba(255,255,255,.2)}
 html.t-done .btn.ghost:hover{background:rgba(255,255,255,.08)}
+/* mood colour (Figma: A · Mood colour): on the landing "Six moods" and on purchase step 1 the screen takes the colour of the card in focus.
+   The background is mixed per frame in JS (scroll and swipe); text, icons and the button switch at the halfway point with a 200 ms fade. */
+body,.site-header,.stepbar,.stepbar-title,.mood-meta b,.mood-meta span,.dock-note,#vLanding h2:not(.rv),#vLanding p:not(.rv){transition:color .2s}
+.mood-meta p:not(.rv){transition:color .2s,border-color .2s}
+.progress i{transition:background-color .2s}
+html[data-mood-dark] .dock .col{background:linear-gradient(to bottom,rgba(255,255,255,.12),rgba(255,255,255,.05));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 0 0 1px rgba(255,255,255,.1),0 10px 26px -6px rgba(0,0,0,.3)}
+.dock .col{transition:background .2s,box-shadow .2s}
+@media (prefers-reduced-motion:reduce){html,body,.site-header,.stepbar,body::before{transition:background-color .2s}}
 button,input,textarea,select{font:inherit;color:inherit}
 button{cursor:pointer;background:none;border:0;padding:0}
 a{color:inherit}
@@ -45,7 +54,7 @@ p{margin:0}
 .logo svg{display:block;width:100%;height:100%}
 
 /* ---------- flow step bar ---------- */
-.stepbar{position:fixed;top:calc(env(safe-area-inset-top,0px) + var(--hdr));left:0;right:0;z-index:49;background:var(--cream);height:var(--stepbar);
+.stepbar{color:var(--ink);position:fixed;top:calc(env(safe-area-inset-top,0px) + var(--hdr));left:0;right:0;z-index:49;background:var(--cream);height:var(--stepbar);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .stepbar-in{max-width:var(--col);margin:0 auto;height:100%;display:grid;grid-template-columns:40px 1fr 40px;align-items:center;position:relative}
 .stepbar-title{text-align:center;font-size:16px}
@@ -53,7 +62,7 @@ p{margin:0}
 .stepbar .icon-btn:last-child{justify-self:end}
 .progress{position:absolute;left:0;right:0;bottom:4px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
 .progress i{height:2px;border-radius:1px;background:var(--line);position:relative;overflow:hidden}
-.progress i::after{content:"";position:absolute;inset:0;background:var(--ink);transform:scaleX(0);transform-origin:left center;transition:transform .3s cubic-bezier(.2,.8,.2,1)} /* the segment fills from the left */
+.progress i::after{content:"";position:absolute;inset:0;background:var(--ink);transform:scaleX(0);transform-origin:left center;transition:transform .3s cubic-bezier(.2,.8,.2,1),background-color .2s} /* the segment fills from the left */
 .progress i.on::after{transform:none}
 
 /* ---------- views ---------- */
@@ -64,13 +73,13 @@ main{padding-top:var(--hdr)}
 
 /* ---------- buttons ---------- */
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:46px;border-radius:30px;padding:0 24px;
-  font-family:var(--sans);font-size:16px;letter-spacing:0;background:var(--rust);color:var(--light);transition:background .2s,transform .15s,opacity .2s}
+  font-family:var(--sans);font-size:16px;letter-spacing:0;background:var(--rust);color:var(--light);transition:background .2s,color .2s,transform .15s,opacity .2s}
 a.btn{text-decoration:none}
 .btn .bi{width:20px;height:20px;flex:none;fill:currentColor} /* icons: Iconoteka (MIT); WhatsApp glyph: Simple Icons (CC0) */
 .share-row .btn .bi{width:18px;height:18px}
 .cta-l{display:inline-block} /* label slides on change */
 /* text that changes in place: fade with a light blur */
-.tx{transition:opacity .17s ease,filter .17s ease,transform .17s cubic-bezier(.2,.8,.2,1)}
+.tx{transition:opacity .17s ease,filter .17s ease,transform .17s cubic-bezier(.2,.8,.2,1),color .2s}
 .tx.tx-out{opacity:0;filter:blur(4px);transform:translateY(-3px);transition-duration:.1s}
 .btn.static{pointer-events:none}
 .btn:hover{background:var(--rust-press)}
@@ -455,11 +464,11 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
 <div class="stepbar" id="stepbar" hidden>
   <div class="stepbar-in">
     <button class="icon-btn" id="backBtn" aria-label="Back">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M20 12H4M10 6l-6 6 6 6" stroke="#1E1C1A" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M20 12H4M10 6l-6 6 6 6" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
     <div class="stepbar-title" id="stepTitle" aria-live="polite">Choose a design</div>
     <button class="icon-btn" id="closeBtn" aria-label="Close">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#1E1C1A" stroke-width="1.25" stroke-linecap="round"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/></svg>
     </button>
     <div class="progress" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
   </div>
@@ -621,13 +630,13 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
       <!-- 5 review & pay -->
       <div class="step" data-step="5" hidden>
         <dl class="summary" id="summary" style="margin:0"></dl>
-        <div class="field" id="fBuyer"><label for="buyerInput">Your email for the receipt</label><div class="input"><input id="buyerInput" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></div><span class="err">Enter an email like name@example.com</span></div>
         <div class="radios pay-methods" role="radiogroup" aria-label="Payment method">
           <span class="label">Pay with</span>
           <button class="radio" role="radio" data-pay="wallet" aria-checked="true" id="walletOpt"><div><b id="walletName">Apple Pay</b><span id="walletSub">Face ID on this iPhone</span></div><i></i></button>
           <button class="radio" role="radio" data-pay="card" aria-checked="false"><div><b>Card</b><span>Visa, Mastercard, Amex</span></div><i></i></button>
         </div>
         <div class="card-fields" id="cardFields" hidden>
+          <div class="field" id="fBuyer"><!-- under the options: choosing Card never moves the options themselves --><label for="buyerInput">Your email for the receipt</label><div class="input"><input id="buyerInput" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></div><span class="err">Enter an email like name@example.com</span></div>
           <div class="field" id="fCardNo"><label for="cardNo">Card number</label><div class="input"><input id="cardNo" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="19"></div><span class="err">Check the card number</span></div>
           <div class="two">
             <div class="field" id="fExp"><label for="cardExp">Expiry</label><div class="input"><input id="cardExp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="7"></div><span class="err">Use MM / YY</span></div>
@@ -1073,7 +1082,67 @@ setBuys(0);dPlace();
 
 /* ---------- upright card carousel, stepwise flip ----------
    slot s = position relative to the focus (0 centre, ±1 neighbours). Halfway (|s|≈.5) cards are nearly edge-on. */
-function makeCarousel(row,key,onPick,onNear){
+/* ---------- mood colour ---------- */
+var MOOD={ // from the Figma palette; every text pair passes WCAG AA
+  sand:   {bg:'#DCC7A8',text:'#1E1C1A',mute:'#54442F',btn:'#6E5032',btnText:'#FFF3E4'},
+  night:  {bg:'#2D2622',text:'#FFF3E4',mute:'#CDBFB2',btn:'#F1E4D3',btnText:'#1E1C1A',dark:1},
+  forest: {bg:'#252A1C',text:'#F3F0E2',mute:'#C8CBB2',btn:'#DADCC0',btnText:'#1E1C1A',dark:1},
+  bloom:  {bg:'#E8C2B2',text:'#1E1C1A',mute:'#583A32',btn:'#8E4433',btnText:'#FFF3E4'},
+  ember:  {bg:'#48200D',text:'#FFF3E4',mute:'#E0C2AE',btn:'#F2B98E',btnText:'#2A0F08',dark:1},
+  sunrise:{bg:'#FBE9DA',text:'#1E1C1A',mute:'#6A4C3B',btn:'#B04F13',btnText:'#FFF3E4'}
+};
+/* colours are mixed in OKLab, so halfway between two moods never turns muddy */
+function hx2lin(h){return [1,3,5].map(function(i){var c=parseInt(h.substr(i,2),16)/255;return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);});}
+function lin2lab(c){var l=Math.cbrt(0.4122214708*c[0]+0.5363325363*c[1]+0.0514459929*c[2]),m=Math.cbrt(0.2119034982*c[0]+0.6806995451*c[1]+0.1073969566*c[2]),s=Math.cbrt(0.0883024619*c[0]+0.2817188376*c[1]+0.6299787005*c[2]);
+  return [0.2104542553*l+0.7936177850*m-0.0040720468*s,1.9779984951*l-2.4285922050*m+0.4505937099*s,0.0259040371*l+0.7827717662*m-0.8086757660*s];}
+function lab2rgb(L){var l=Math.pow(L[0]+0.3963377774*L[1]+0.2158037573*L[2],3),m=Math.pow(L[0]-0.1055613458*L[1]-0.0638541728*L[2],3),s=Math.pow(L[0]-0.0894841775*L[1]-1.2914855480*L[2],3);
+  return [4.0767416621*l-3.3077115913*m+0.2309699292*s,-1.2684380046*l+2.6097574011*m-0.3413193965*s,-0.0041960863*l-0.7034186147*m+1.7076147010*s].map(function(c){
+    c=c<=0.0031308?12.92*c:1.055*Math.pow(c,1/2.4)-0.055;return Math.round(Math.min(1,Math.max(0,c))*255);});}
+var LAB={};function lab(h){return LAB[h]||(LAB[h]=lin2lab(hx2lin(h)));}
+function mixLab(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];}
+function rgbStr(c){return 'rgb('+c[0]+','+c[1]+','+c[2]+')';}
+function rgbHex(c){return '#'+c.map(function(v){return (v<16?'0':'')+v.toString(16);}).join('');}
+var moodPos={landing:0,flow:0}, moodT=0, moodRaf=0, moodLast=0, moodOn=null, moodTC='';
+/* how much the mood owns the screen: on the landing it follows the scroll (in as the block's top goes from 85 % to 35 % of the screen,
+   out as its bottom leaves); on purchase step 1 it is full, easing in and out over 350 ms when the step changes */
+function moodTarget(){
+  if(view==='flow')return currentStep===1?1:0;
+  if(view!=='landing')return 0;
+  var sec=document.querySelector('#vLanding .moods');if(!sec)return 0;var r=sec.getBoundingClientRect(),h=window.innerHeight;
+  var tin=clamp((h*0.85-r.top)/(h*0.5),0,1), tout=clamp((r.bottom-h*0.55)/(h*0.3),0,1), t=Math.min(tin,tout);
+  return reduce?(t>=0.5?1:0):t;
+}
+function moodKick(){if(!moodRaf){moodLast=performance.now();moodRaf=requestAnimationFrame(moodFrame);}}
+function moodFrame(now){
+  moodRaf=0;var dt=Math.min(0.05,Math.max(0,(now-moodLast)/1000));moodLast=now;
+  var target=moodTarget();
+  if(view==='landing'||reduce)moodT=target; // scroll drives it directly
+  else{var d=target-moodT,stepT=dt/0.35;moodT=Math.abs(d)<=stepT?target:moodT+(d>0?stepT:-stepT);}
+  moodPaint();
+  if(moodT!==target)moodRaf=requestAnimationFrame(moodFrame);
+}
+function moodPaint(){
+  var html=document.documentElement, st=html.style;
+  var pos=view==='flow'?moodPos.flow:moodPos.landing, i=Math.floor(pos), f=pos-i;
+  var a=MOOD[DESIGNS[clamp(i,0,DESIGNS.length-1)].id], b=MOOD[DESIGNS[clamp(i+1,0,DESIGNS.length-1)].id];
+  var base=view==='flow'?'#FFFFFF':view==='done'?'#2B2A28':'#F7EEE0', tc=base;
+  if(moodT<=0.001){st.removeProperty('--cream');}
+  else{var e=moodT<0.5?2*moodT*moodT:1-Math.pow(-2*moodT+2,2)/2; // eased, so the colour settles softly at both ends
+    var c=lab2rgb(mixLab(lab(base),mixLab(lab(a.bg),lab(b.bg),f),e));st.setProperty('--cream',rgbStr(c));tc=rgbHex(c);}
+  if(tc!==moodTC){moodTC=tc;var mt=document.querySelector('meta[name="theme-color"]');if(mt)mt.setAttribute('content',tc);} // the browser bar takes the colour too
+  /* text, icons and the button belong to the card nearest the middle, and switch once the colour is past halfway */
+  var id=moodT>=0.5?DESIGNS[clamp(Math.round(pos),0,DESIGNS.length-1)].id:null;
+  if(id===moodOn)return;moodOn=id;
+  var keys=['--ink','--body','--mute','--line','--rust','--rust-press','--light'];
+  if(!id){keys.forEach(function(k){st.removeProperty(k);});html.removeAttribute('data-mood-dark');return;}
+  var m=MOOD[id],t=lab2rgb(lab(m.text));
+  st.setProperty('--ink',m.text);st.setProperty('--body',m.mute);st.setProperty('--mute',m.mute);st.setProperty('--line','rgba('+t[0]+','+t[1]+','+t[2]+',.2)');
+  st.setProperty('--rust',m.btn);st.setProperty('--rust-press',m.btn);st.setProperty('--light',m.btnText);
+  if(m.dark)html.setAttribute('data-mood-dark','');else html.removeAttribute('data-mood-dark');
+}
+window.addEventListener('scroll',function(){if(view==='landing')moodKick();},{passive:true});
+window.addEventListener('resize',moodKick);
+function makeCarousel(row,key,onPick,onNear,onPlace){
   var items=[], cards=[], cur=0, p=0, near=0, anim=null, drag=null;
   row.tabIndex=0;row.setAttribute('role','listbox');
   DESIGNS.forEach(function(d,i){
@@ -1097,6 +1166,7 @@ function makeCarousel(row,key,onPick,onNear){
     });
     /* the name changes as the new card passes the middle, not after it stops */
     var n=clamp(cur+Math.round(p),0,items.length-1); if(n!==near){near=n;if(onNear)onNear(n);}
+    if(onPlace)onPlace(clamp(cur+p,0,items.length-1));
   }
   function settle(){ cards.forEach(function(k,n){var was=k.still;k.still=n!==cur;if(was&&!k.still)k.idle=0;}); onPick(cur); } // the card in focus picks up its sway gently
   /* critically damped spring: carries the finger's speed, quick start, long soft finish, no overshoot */
@@ -1148,13 +1218,13 @@ function makeCarousel(row,key,onPick,onNear){
   return {go:go,current:function(){return cur;},near:function(){return near;},sync:function(){place();},item:function(){return items[cur];}};
 }
 var moodRow=$('#moodRow');
-var moods=makeCarousel(moodRow,'mood',function(i){},function(i){swapText($('#moodName'),DESIGNS[i].name);swapText($('#moodIdx'),(i+1)+' / '+DESIGNS.length);if(cta&&view==='landing')updateDock();});
+var moods=makeCarousel(moodRow,'mood',function(i){},function(i){swapText($('#moodName'),DESIGNS[i].name);swapText($('#moodIdx'),(i+1)+' / '+DESIGNS.length);if(cta&&view==='landing')updateDock();},function(x){moodPos.landing=x;moodKick();});
 window.addEventListener('load',function(){moods.sync();});
 var moodsSeen=false; // once the carousel has been on screen, the buy button starts with the design in focus
 var moodsInView=false; // while the carousel is on screen the buy button names the design in focus
 new IntersectionObserver(function(es){moodsInView=es[0].isIntersecting;if(moodsInView)moodsSeen=true;if(cta&&view==='landing')updateDock();},{threshold:0.5}).observe(moodRow);
 /* purchase step 1 uses the same carousel */
-var dsg=makeCarousel($('#dsgRow'),'dsg',function(i){ if(view==='flow'&&currentStep===1) setDesign(DESIGNS[i].id); else renderDesignHead(i); },function(i){renderDesignHead(i);});
+var dsg=makeCarousel($('#dsgRow'),'dsg',function(i){ if(view==='flow'&&currentStep===1) setDesign(DESIGNS[i].id); else renderDesignHead(i); },function(i){renderDesignHead(i);},function(x){moodPos.flow=x;moodKick();});
 /* step 1: the card sits halfway between the description and the button, whatever the browser bars leave of the screen */
 function fitDesignRow(){
   var row=$('#dsgRow');if(view!=='flow'||currentStep!==1||!row.offsetParent)return;
@@ -1301,6 +1371,7 @@ function show(v){
   $('#stepbar').hidden=v!=='flow';
   window.scrollTo(0,0);
   updateDock();if(typeof noMicroScroll==='function')requestAnimationFrame(noMicroScroll);
+  moodOn=undefined;moodTC='';moodKick();
 }
 function startFlow(step){
   paintAll();show('flow');goStep(step||1,0);
@@ -1334,7 +1405,7 @@ function goStep(n,dir){
   $$('.progress i').forEach(function(p,i){p.classList.toggle('on',i<n);});
   if(n===1){renderDesign();fitDesignRow();}if(n===2)renderAmount();if(n===4)renderDelivery();if(n===5)renderSummary();
   $('#payError').style.display='none';
-  updateDock();noMicroScroll();
+  updateDock();noMicroScroll();moodKick();
   if(fromUp)turnCard(C.flow.el,fromUp,90,820);
   if(fromStage){var up2=dsg.item()&&dsg.item().querySelector('.up');if(up2){var r=up2.getBoundingClientRect();
     if(!reduce&&up2.animate&&r.width){var k=fromStage.width/r.height,dx=(fromStage.left+fromStage.width/2)-(r.left+r.width/2),dy=(fromStage.top+fromStage.height/2)-(r.top+r.height/2);
@@ -1396,7 +1467,7 @@ $$('[data-start]').forEach(function(b){b.addEventListener('click',function(){sta
 $$('[data-start]').forEach(function(b){b.addEventListener('click',function(){haptic('medium');});});
 cta.addEventListener('click',function(){
   haptic('medium');
-  if(view==='landing'){if(moodsSeen){S.design=DESIGNS[moods.current()].id;persist();}startFlow(1);return;}
+  if(view==='landing'){if(moodsSeen){S.design=DESIGNS[moods.near()].id;persist();}startFlow(1);return;} // the design the button names, even mid-turn
   if(view!=='flow')return;
   if(!validate(currentStep))return;
   if(currentStep<5){goStep(currentStep+1,1);return;}
