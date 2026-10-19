@@ -419,7 +419,7 @@ html.no-tr *,html.no-tr *::before,html.no-tr *::after{transition:none!important}
 .sheet-bar .icon-btn{margin:0 -8px 0 0}
 .sheet-body{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .sheet-body .col{padding-block:48px 140px;display:flex;flex-direction:column;gap:24px;text-align:center} /* what the recipient sees: centred, on the colour of the card */
-.sheet{color:var(--ink);transition:background-color .3s}
+.sheet{color:var(--ink)}
 .sheet .hint{color:var(--mute)}
 .sheet-bar{--ink:#1E1C1A;--light:#FFF3E4}
 .sheet-body h2{font-size:30px;line-height:1.15}
@@ -1594,7 +1594,7 @@ function veilIn(el,parts,hexc){
     st.background='linear-gradient(rgba('+c+','+v(2).toFixed(3)+'),rgba('+c+','+v(3).toFixed(3)+'))';
     var bl='blur('+v(4).toFixed(1)+'px)';st.backdropFilter=bl;st.webkitBackdropFilter=bl;
     if(t<K[K.length-1][0]&&!el.hidden){el._veil=requestAnimationFrame(f);return;}
-    st.background='';st.backdropFilter='';st.webkitBackdropFilter='';parts.forEach(function(p){if(p)p.style.opacity='';});
+    st.background='rgb('+c+')';st.backdropFilter='';st.webkitBackdropFilter='';parts.forEach(function(p){if(p)p.style.opacity='';}); // ends on the same solid colour, so nothing blinks when the layer is handed over
   })(t0);
 }
 function closePreview(){if($('#preview').hidden)return;$('#preview').hidden=true;document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
