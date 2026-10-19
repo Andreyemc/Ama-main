@@ -260,7 +260,7 @@ a.btn{text-decoration:none}
 .tlink{font-size:14px;color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .landing{padding-bottom:calc(var(--dock) + 48px)} /* room for the fixed CTA, which is the only buy button below the hero */
 /* ---------- flow ---------- */
-.flow{padding-top:calc(var(--stepbar) + 8px)}
+.flow{padding-top:calc(var(--stepbar) + 8px);overflow-x:clip} /* the turning card may be wider than the screen for a moment; the page must not shift sideways */
 .flow .col{padding-bottom:calc(var(--dock-space,108px) + 24px)} /* --dock-space = the real height of the floating button area, set in JS */
 .stage{display:flex;justify-content:center;padding-block:10px 22px;transition:padding .35s}
 .stage .gc{transition:max-width .45s cubic-bezier(.2,.8,.2,1)}
