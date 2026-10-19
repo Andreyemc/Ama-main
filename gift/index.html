@@ -482,7 +482,7 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
           <div class="chat-head"><i aria-hidden="true">A</i><div><b>Anna</b><span>online</span></div></div>
           <div class="chat-body">
             <div class="msg">how was the retreat?<time>18:41</time></div>
-            <div class="msg out gift"><div class="preview"><div data-card="chat" data-amp=".7"></div><b id="chatTitle">AMA gift card · £75</b><small>amaforyou.com</small></div><p>a little time just for you<br><a href="#top" tabindex="-1">amaforyou.com/gift/7KQ2-M9XA</a></p><time>18:42 ✓✓</time></div>
+            <div class="msg out gift"><div class="preview"><div data-card="chat" data-amp=".7"></div><b id="chatTitle">AMA gift card</b><small>amaforyou.com</small></div><p>a little time just for you<br><a href="#top" tabindex="-1">amaforyou.com/gift/7KQ2-M9XA</a></p><time>18:42 ✓✓</time></div>
             <div class="msg typing" id="typing" aria-hidden="true"><i></i><i></i><i></i></div>
             <div class="msg" id="reply" hidden>omg, thank you<time>18:43</time></div>
           </div>
@@ -955,7 +955,7 @@ $$('[data-card]').forEach(function(h){var c=buildCard(h);C[c.key]=c;observe(c);}
 var FLOW_CARDS=['flow','preview','done'];
 function paintAll(){var d=design();FLOW_CARDS.forEach(function(k){if(C[k])paintCard(C[k],d,S.amount);});}
 paintCard(C.hero,designById('night'),75);C.hero.el.classList.add('no-amt'); // no amount until it is chosen
-paintCard(C.chat,designById('sand'),75);
+paintCard(C.chat,designById('sand'),75);C.chat.el.classList.add('no-amt'); // the link preview never shows the amount
 
 /* ---------- A2: what each amount buys (pinned, scroll-driven) ---------- */
 var BUYS=[
@@ -1434,7 +1434,7 @@ function renderDone(){
   paintCard(C.done,d,S.amount);
   var el=C.done.el;el.classList.remove('enter','glint');void el.offsetWidth;el.classList.add('enter','glint');
   var link='amaforyou.com/gift/'+giftCode;$('#giftLink').textContent=link;
-  var text=to+', I got you an AMA gift card: '+money(S.amount)+' for any session.'+(S.msg?' “'+S.msg+'”':'')+' Open it here: https://'+link;
+  var text=to+', I got you an AMA gift card for any session.'+(S.msg?' “'+S.msg+'”':'')+' Open it here: https://'+link; // greeting yes, amount no: the recipient sees it when they open the gift
   $('#waBtn').href='https://wa.me/?text='+encodeURIComponent(text);
   shareText=text;
   if(S.mode==='self'){
@@ -1469,7 +1469,7 @@ function cardPNG(){
   x.save();x.translate(96,92);x.scale(4.45,4.45);x.fillStyle=d.ink;LOGO_PATHS.forEach(function(p){x.fill(new Path2D(p));});x.restore();
   x.fillStyle=d.ink;x.globalAlpha=.72;x.font='400 50px "Google Sans Flex","Google Sans","Helvetica Neue",Arial,sans-serif';x.textAlign='right';x.textBaseline='top';
   x.fillText('Gift card',W-96,106);x.globalAlpha=1;if('letterSpacing' in x)x.letterSpacing='0px';
-  x.textAlign='left';x.textBaseline='alphabetic';x.font='400 172px "Google Sans Flex","Google Sans","Helvetica Neue",Arial,sans-serif';x.fillText(money(S.amount),88,H-84);
+  /* the image goes into a chat: no amount on it, the recipient sees the amount when they open the gift */
   return new Promise(function(res){cv.toBlob(res,'image/png');});
 }
 var downloads=null;
