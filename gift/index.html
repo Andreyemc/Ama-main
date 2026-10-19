@@ -280,6 +280,11 @@ a.btn{text-decoration:none}
 .step.back{animation-name:stepBack}
 @keyframes stepIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
 @keyframes stepBack{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+/* while the card turns, nothing else is on screen near it: the step's content comes in only as the card rises (and on Back, the title only once the card has come down) */
+.stage{position:relative;z-index:2}
+.step.after-turn{animation:afterTurn .36s .46s cubic-bezier(.2,.8,.2,1) both}
+.step.after-turn-back .design-top{animation:afterTurn .3s .36s cubic-bezier(.2,.8,.2,1) both}
+@keyframes afterTurn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .step[hidden]{display:none}
 .design-head{display:flex;align-items:baseline;justify-content:space-between}
 .design-head b{font-weight:400;font-size:20px}
@@ -1400,7 +1405,7 @@ function goStep(n,dir){
   if(n>=2)amountSeen=true;
   C.flow.el.classList.toggle('no-amt',n===1&&!amountSeen);
   var flow=$('#vFlow');flow.dataset.step=n;
-  $$('.step',flow).forEach(function(s){var on=+s.dataset.step===n;s.hidden=!on;if(on){s.classList.toggle('back',dir<0);s.style.animation='none';void s.offsetWidth;s.style.animation='';}});
+  $$('.step',flow).forEach(function(s){var on=+s.dataset.step===n;s.hidden=!on;s.classList.toggle('after-turn',on&&!!fromUp&&!reduce);s.classList.toggle('after-turn-back',on&&!!fromStage&&!reduce);if(on){s.classList.toggle('back',dir<0);s.style.animation='none';void s.offsetWidth;s.style.animation='';}});
   $('#stepTitle').textContent=STEP_TITLES[n-1];
   $$('.progress i').forEach(function(p,i){p.classList.toggle('on',i<n);});
   if(n===1){renderDesign();fitDesignRow();}if(n===2)renderAmount();if(n===4)renderDelivery();if(n===5)renderSummary();
