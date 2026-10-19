@@ -38,7 +38,8 @@ html.t-buy{--cream:#FFFAF3}
 html.t-done{--cream:#461A0F;--paper:#5A2614;--sand:#5A2614;--ink:#FFF3E4;--body:#EBD9C6;--mute:#D9C3AB;--line:rgba(255,243,228,.2)}
 html.t-done .btn.ghost:hover{background:rgba(255,243,228,.08)}
 /* ---------- site header (shared with amaforyou.com) ---------- */
-.site-header{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:50;height:var(--hdr);background:var(--cream);
+/* B: the header is part of the page and scrolls away with it; on the dark hero a fixed cream bar read as a separate plate */
+.site-header{position:relative;z-index:50;height:var(--hdr);background:var(--cream);
   display:flex;align-items:center;justify-content:space-between;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .site-header{color:var(--ink)}
 .site-header .left{display:flex;align-items:center;gap:14px}
@@ -47,7 +48,7 @@ html.t-done .btn.ghost:hover{background:rgba(255,243,228,.08)}
 .logo{display:block;width:69px;height:26px}
 .logo svg{display:block;width:100%;height:100%}
 /* ---------- views ---------- */
-main{padding-top:var(--hdr)}
+main{padding-top:0}
 .view{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .col{max-width:var(--col);margin:0 auto}
 .view[hidden]{display:none!important}
@@ -131,7 +132,7 @@ a.btn{text-decoration:none}
 .gc.v .gc-amt{left:7.6cqw;bottom:15.5cqw;font-size:17cqw}
 
 /* ---------- landing ---------- */
-main{padding-top:var(--hdr)}
+main{padding-top:0}
 .sec{padding:72px max(16px,env(safe-area-inset-left,0px)) 80px}
 .sec.cream{background:#F7EEE0}.sec.paper{background:#FFFAF3}
 .sec.brown{background:var(--brown);color:var(--light)}
@@ -1229,7 +1230,7 @@ $('#cardCvc').addEventListener('input',function(e){e.target.value=e.target.value
 var EMAIL=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 function fail(ids){
   ids.forEach(function(id){$(id).classList.add('invalid');});
-  var first=$(ids[0]);if(first){var top=first.getBoundingClientRect().top+window.scrollY-var_hdr()-window.innerHeight*0.25;window.scrollTo({top:Math.max(0,top),behavior:reduce?'auto':'smooth'});var inp=first.querySelector('input,textarea');if(inp)setTimeout(function(){inp.focus({preventScroll:true});},280);}
+  var first=$(ids[0]);if(first){var top=first.getBoundingClientRect().top+window.scrollY-window.innerHeight*0.25;window.scrollTo({top:Math.max(0,top),behavior:reduce?'auto':'smooth'});var inp=first.querySelector('input,textarea');if(inp)setTimeout(function(){inp.focus({preventScroll:true});},280);}
   return false;
 }
 /* everything above the summary, in page order */
