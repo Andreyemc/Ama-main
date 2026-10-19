@@ -25,6 +25,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 /* purchase steps sit on white with the same forms; the done screens sit on dark grey */
 html.t-flow{--cream:#FFFFFF;--paper:#F4F4F4;--sand:#F4F4F4;--sand-2:#E4E4E4;--mute:#686868;--line:rgba(0,0,0,.12)}
 html.t-done{--cream:#2B2A28;--paper:#3A3836;--sand:#3A3836;--ink:#FFFFFF;--body:#D9D3CC;--mute:#B5AEA6;--line:rgba(255,255,255,.2)}
+html.t-done .btn.ghost{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
 html.t-done .btn.ghost:hover{background:rgba(255,255,255,.08)}
 /* mood colour (Figma: A · Mood colour): on the landing "Six moods" and on purchase step 1 the screen takes the colour of the card in focus.
    The background is mixed per frame in JS (scroll and swipe); text, icons and the button switch at the halfway point with a 200 ms fade. */
@@ -150,14 +151,14 @@ a.btn{text-decoration:none}
 /* hero */
 .hero{display:flex;flex-direction:column;padding-top:20px;min-height:calc(100svh - var(--hdr) - 84px)} /* the photo of the next section peeks at the bottom */
 .hero h1{font-size:clamp(48px,14.6vw,68px);line-height:.96;letter-spacing:-.03em}
-.hero-card{perspective:1100px;padding:44px 26px 40px;display:flex;justify-content:center}
-.hero-card .tilted{width:100%;max-width:330px} /* straight card, present from the first frame: no entrance animation */
-.hero .lead{max-width:32ch}
+.hero-card{perspective:1100px;padding:20px 0 32px;display:flex;justify-content:center}
+.hero-card .tilted{width:100%} /* the card is as wide as the button; straight, present from the first frame */
+.hero .lead{max-width:30ch;margin:auto auto 0;text-align:center} /* the line and the button rest at the bottom of the screen */
 /* gift card terms, folded into an info toggle */
 .info-btn{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:14px;color:var(--mute);align-self:flex-start;padding:4px 0}
 .info-btn svg{width:16px;height:16px;flex:none}
 .info-btn[aria-expanded="true"]{color:var(--ink)}
-.hero .btn{margin-top:28px}
+.hero .btn{margin-top:16px}
 .tilt-note{font-size:13px;color:var(--mute);text-align:center;margin-top:12px}
 .tilt-note button{text-decoration:underline;text-underline-offset:3px;font-size:13px;color:var(--ink)}
 /* scroll scenes */
@@ -215,6 +216,28 @@ a.btn{text-decoration:none}
 .pslide .pnum{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums;flex:none}
 /* messenger: the real WhatsApp screen inside a photo of an iPhone Air (frame 325.5x679.11, screen 297.48x647.3 at 14.06,17.01, radius 43.94). Screen drawn in a 393pt grid: 1u = 1pt */
 .chat-section{padding-top:96px;display:flex;flex-direction:column;gap:28px}
+/* the gift in a chat: a calm AMA-toned conversation, no phone around it */
+.chat{background:var(--chat-bg);border-radius:24px;overflow:hidden;display:flex;flex-direction:column}
+.chat-head{display:flex;align-items:center;gap:10px;background:var(--paper);padding:10px 16px}
+.chat-head i{width:34px;height:34px;border-radius:50%;background:var(--sand-2);flex:none}
+.chat-head b{display:block;font-weight:400;font-size:16px;line-height:1.2}
+.chat-head span{display:block;font-size:12px;color:var(--mute)}
+.chat-body{display:flex;flex-direction:column;gap:8px;padding:16px 12px 18px;min-height:470px}
+.msg{max-width:78%;padding:9px 12px 7px;border-radius:16px;font-size:15px;line-height:1.35;background:var(--bubble-in);align-self:flex-start;border-bottom-left-radius:4px;position:relative}
+.msg.out{align-self:flex-end;background:var(--bubble-out);border-radius:16px;border-bottom-right-radius:4px}
+.msg time{display:block;text-align:right;font-size:11px;color:var(--mute);margin-top:2px}
+.msg.gift{width:74%;padding:8px}
+.msg.gift .preview{background:var(--paper);border-radius:10px;overflow:hidden;padding:8px 8px 10px}
+.msg.gift .preview b{display:block;font-weight:400;font-size:13px;margin-top:10px}
+.msg.gift .preview small{display:block;font-size:12px;color:var(--mute)}
+.msg.gift p{padding:8px 4px 0}
+.msg.gift a{color:#1B6FB8;text-decoration:none;font-size:14px;overflow-wrap:anywhere}
+.typing{display:flex;gap:4px;padding:12px 14px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--mute);animation:blink 1.2s infinite both}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.chat .msg{opacity:0;transform:translateY(10px);transition:opacity .45s,transform .45s cubic-bezier(.2,.8,.2,1)}
+.chat .msg.in-view{opacity:1;transform:none}
 .phone{position:relative;width:min(100%,326px);margin:0 auto;aspect-ratio:325.5/679.11;container-type:inline-size}
 .ph-frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;user-select:none;-webkit-user-drag:none}
 .ph-screen{position:absolute;left:4.3195%;top:2.5047%;width:91.392%;height:95.316%;border-radius:13.5cqw;overflow:hidden;background:#EFEAE2}
@@ -365,9 +388,15 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
 
 /* ---------- done ---------- */
 .done .col{padding-block:calc(env(safe-area-inset-top,0px) + 28px) calc(env(safe-area-inset-bottom,0px) + 40px);display:flex;flex-direction:column;gap:22px;align-items:center;text-align:center}
+.done{overflow-x:clip}
 .done .gc{max-width:340px;margin-bottom:14px}
-.done .gc.enter{animation:turn90 .65s cubic-bezier(.2,.8,.2,1) both} /* arrives upright, as it was chosen, and turns a quarter into landscape; no opacity on a 3D card (Safari flicker) */
-@keyframes turn90{from{transform:rotate(90deg) scale(.8)}to{transform:none}}
+.done.arrive .gc.enter{animation:doneTurn 1.15s cubic-bezier(.45,0,.2,1) .2s both} /* T5–T7: upright and large in the middle of the screen, then a quarter turn into its place; no opacity on a 3D card (Safari flicker) */
+@keyframes doneTurn{0%,26%{transform:translateY(var(--dy,0px)) rotate(90deg) scale(1.22)}100%{transform:none}}
+.done.arrive .col>:not(.gc){animation:doneUp .5s cubic-bezier(.2,.8,.2,1) both}
+.done.arrive .col>:nth-child(2){animation-delay:.78s}.done.arrive .col>:nth-child(3){animation-delay:.86s}.done.arrive .col>:nth-child(4){animation-delay:.94s}
+.done.arrive .col>:nth-child(5),.done.arrive .col>:nth-child(6),.done.arrive .col>:nth-child(7){animation-delay:1.02s}
+@keyframes doneUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.done .btn.again{max-width:none;margin-top:26px} /* P6: Buy another gift card is an outlined button under the links */
 .done h1{font-size:30px;line-height:1.15}
 .done .lead{text-align:center;margin-inline:auto}
 .share{display:flex;flex-direction:column;gap:10px;width:100%}
@@ -439,11 +468,6 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
 .wave.out{display:block;transform:translateY(-60lvh);opacity:0;transition:opacity .42s ease}
 .wave.out::after{opacity:1}
 @keyframes waveUp{from{transform:translateY(100lvh)}to{transform:translateY(-60lvh)}}
-/* Done after paying: card turns in, then title and text fade up one after another */
-.done.arrive .col>*:not(.gc){animation:arriveUp .55s cubic-bezier(.2,.8,.2,1) both}
-.done.arrive .col>:nth-child(2){animation-delay:.12s}.done.arrive .col>:nth-child(3){animation-delay:.2s}.done.arrive .col>:nth-child(4){animation-delay:.28s}
-.done.arrive .col>:nth-child(5){animation-delay:.36s}.done.arrive .col>:nth-child(6){animation-delay:.44s}.done.arrive .col>:nth-child(n+7){animation-delay:.5s}
-@keyframes arriveUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 @media (min-width:760px){
@@ -523,36 +547,14 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
       <!-- A5 messenger -->
       <section class="chat-section">
         <h2>It arrives<br>like a message</h2>
-        <div class="phone" id="chat" role="img" aria-label="Example: the gift arrives as a WhatsApp message with a link and a cover picture">
-          <div class="ph-screen" aria-hidden="true"><div class="wa">
-            <div class="wa-status"><svg class="sb" viewBox="0 0 288 46" fill="#000" aria-hidden="true"><path d="M216.8 19c-.4 0-.7.3-.7.7v7.6c0 .4.3.7.7.7h1c.4 0 .7-.3.7-.7v-7.6c0-.4-.3-.7-.7-.7h-1zM212.2 21.7c0-.4.3-.7.7-.7h1c.4 0 .7.3.7.7v5.6c0 .4-.3.7-.7.7h-1c-.4 0-.7-.3-.7-.7v-5.6zM209 22.9c-.4 0-.7.3-.7.7v3.7c0 .4.3.7.7.7h1c.4 0 .7-.3.7-.7v-3.7c0-.4-.3-.7-.7-.7h-1zM205.1 24.6c-.4 0-.7.3-.7.7v2c0 .4.3.7.7.7h1c.4 0 .7-.3.7-.7v-2c0-.4-.3-.7-.7-.7h-1z"/><path fill-rule="evenodd" d="M230.1 20.9c1.8 0 3.6.7 4.9 2 .1.1.3.1.4 0l.9-1c.1 0 .1-.1.1-.2s0-.1-.1-.2c-3.4-3.3-8.9-3.3-12.3 0-.1.1-.1.1-.1.2s0 .1.1.2l.9 1c.1.1.3.1.4 0 1.3-1.3 3.1-2 4.8-2zm0 3.1c1 0 2 .4 2.7 1 .1.1.3.1.4 0l.9-1c.1 0 .1-.1.1-.2s0-.1-.1-.2c-2.2-2.1-5.7-2.1-8 0-.1.1-.1.1-.1.2s0 .1.1.2l.9 1c.1.1.3.1.4 0 .7-.6 1.7-1 2.7-1zm1.9 2.1c0 .1 0 .1-.1.2l-1.6 1.7c0 .1-.1.1-.2.1s-.1 0-.2-.1l-1.6-1.7c-.1-.1-.1-.1-.1-.2s0-.1.1-.2c1-.9 2.6-.9 3.6 0 .1.1.1.1.1.2z"/><rect x="243.2" y="20.1" width="15.4" height="6.6" rx="2"/><path opacity=".4" fill-rule="evenodd" d="M255.3 18.6h-8.8c-.7 0-1.2 0-1.6 0-.4 0-.8.1-1.1.2-.8.3-1.5 1-1.8 1.8-.1.3-.2.7-.2 1.1v3.3c0 .4.1.8.2 1.1.3.8 1 1.5 1.8 1.8.3.1.7.2 1.1.2.4 0 .9 0 1.6 0h8.8c.7 0 1.2 0 1.6 0 .4 0 .8-.1 1.1-.2.8-.3 1.5-1 1.8-1.8.1-.3.2-.7.2-1.1v-3.3c0-.4-.1-.8-.2-1.1-.3-.8-1-1.5-1.8-1.8-.3-.1-.7-.2-1.1-.2-.4 0-.9 0-1.6 0zm-11.3.9c.2-.1.5-.1.9-.2h10.4c.4 0 .7.1.9.2.6.3 1.1.8 1.4 1.4.1.2.1.5.2.9v4.9c0 .4-.1.7-.2.9-.3.6-.8 1.1-1.4 1.4-.2.1-.5.1-.9.2h-10.4c-.4 0-.7-.1-.9-.2-.6-.3-1.1-.8-1.4-1.4-.1-.2-.1-.5-.2-.9v-4.9c0-.4.1-.7.2-.9.3-.6.8-1.1 1.4-1.4zM260.8 21.9c.6.2 1 .8 1 1.5s-.4 1.2-1 1.5v-3z"/><path d="M48 19.3c2.1 0 3.7 1.5 3.7 4.7 0 3-1.4 4.8-3.7 4.8-1.7 0-3-1-3.3-2.4v-.1h1.8c.2.6.7 1 1.5 1 1.3 0 1.9-1.3 1.9-2.9v-.2h-.1c-.3.7-1.1 1.3-2.3 1.3-1.8 0-2.9-1.3-2.9-3 0-1.8 1.4-3.2 3.4-3.2zm0 4.8c.9 0 1.7-.7 1.7-1.6 0-1-.7-1.7-1.6-1.7-.9 0-1.6.7-1.6 1.6 0 1 .7 1.7 1.5 1.7zm6.3-1.2c-.6 0-1.1-.5-1.1-1.1 0-.6.5-1.1 1.1-1.1s1.1.5 1.1 1.1c0 .6-.5 1.1-1.1 1.1zm0 4.5c-.6 0-1.1-.5-1.1-1.1 0-.6.5-1.1 1.1-1.1s1.1.5 1.1 1.1c0 .6-.5 1.1-1.1 1.1zm7.1 1.2v-1.7h-4.4v-1.5c1.1-2 2.4-4 3.6-5.9h2.6v5.9h1.2v1.5h-1.2v1.7h-1.8zm-2.8-3.1h2.8V21h-.1c-.9 1.3-1.8 2.9-2.7 4.4v.1zm9.1 3.1v-7.2h-.1l-2.2 1.5v-1.7l2.3-1.6h1.9v9h-1.9z"/></svg></div>
-            <div class="wa-nav">
-              <svg class="back" viewBox="0 0 9 15" fill="none"><path d="M7.3 1.5L1.5 7.3l5.8 5.9" stroke="#1DAA61" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span class="wa-badge">12</span>
-              <img class="wa-av" src="img/wa-avatar.jpg" alt="" width="36" height="36" loading="lazy" decoding="async">
-              <div class="wa-who"><b>Anna</b><span id="waState">online</span></div>
-              <svg class="video" viewBox="0 0 20 14" fill="none"><path d="M9.5 1.5H3.7C2 1.5.7 2.8.7 4.4v4.4c0 1.6 1.3 2.9 3 2.9h5.8c1.6 0 2.9-1.3 2.9-2.9V4.4c0-1.6-1.3-2.9-2.9-2.9z" stroke="#1DAA61" stroke-width="1.3"/><path d="M13.2 5.3l4.5-2.7v7.9l-4.5-2.6V5.3z" stroke="#1DAA61" stroke-width="1.3" stroke-linejoin="round"/></svg>
-              <svg class="call" viewBox="0 0 15 15" fill="none"><path d="M3.8 1.2c.4 0 .7.2 1 .6l1 2.3c.2.4.1.9-.2 1.2l-1 1c.7 1.5 2.1 2.9 3.7 3.7l1-1c.4-.4.8-.4 1.2-.2l2.3 1c.4.2.7.6.7 1v1.6c0 .7-.5 1.2-1.2 1.2C6.3 13.6 1.1 8.4 1.1 2.3c0-.6.5-1.1 1.2-1.1h1.5z" stroke="#1DAA61" stroke-width="1.3" stroke-linejoin="round"/></svg>
-            </div>
-            <div class="wa-body">
-              <span class="wa-date">Today</span>
-              <div class="wa-b">how was the retreat?<time>18:41</time></div>
-              <div class="wa-b out">
-                <div class="wa-lp"><img src="img/wa-cover.jpg" alt="" width="292" height="153" loading="lazy" decoding="async"><div><b>AMA Gift Card</b><p>Give time to feel well. An AMA gift card for any session, plan or bundle.</p><small>amaforyou.com</small></div></div>
-                <p class="wa-txt">Anna, happy birthday! A little time just for you, on any session at AMA<br><a>amaforyou.com/gift/7KQ2-M9XA</a></p>
-                <time>18:42<svg class="wa-ticks" viewBox="0 0 12 9" fill="none"><path d="M.7 4.3l2.1 2.1 4.5-5.1M4.7 6.3l.7.7 5.3-5.8" stroke="#53BDEB" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg></time>
-              </div>
-              <div class="wa-b" id="reply">omg, thank you!!<time>18:43</time><span class="wa-react" id="waReact"><svg viewBox="0 0 11 10"><path d="M5.1 8.9S.6 6.2.6 3.1C.6 1.6 1.7.6 2.9.6c1 0 1.8.5 2.2 1.3C5.6 1.1 6.4.6 7.3.6c1.3 0 2.4 1 2.4 2.5 0 3.1-4.6 5.8-4.6 5.8z" fill="#E8344E"/></svg></span></div>
-            </div>
-            <div class="wa-input">
-              <svg class="plus" viewBox="0 0 17 17" fill="none"><path d="M8.1 1.5v13.2M1.5 8.1h13.2" stroke="#1DAA61" stroke-width="1.5" stroke-linecap="round"/></svg>
-              <span class="wa-field"><svg viewBox="0 0 15 15" fill="none"><path d="M7.3 13.6a6.2 6.2 0 116.2-6.2c0 .6-.3 1.2-.8 1.7l-3.6 3.6c-.4.5-1.1.9-1.8.9z" stroke="#1DAA61" stroke-width="1.25"/><path d="M13.2 8.4h-2.6a1.8 1.8 0 00-1.8 1.9v2.9" stroke="#1DAA61" stroke-width="1.25"/></svg></span>
-              <svg class="cam" viewBox="0 0 18 15" fill="none"><path d="M2.2 3.7h2.6l1.3-1.9h5.4l1.3 1.9h2.6c.6 0 1.1.5 1.1 1.1v7.3c0 .6-.5 1.1-1.1 1.1H2.2c-.6 0-1.1-.5-1.1-1.1V4.8c0-.6.5-1.1 1.1-1.1z" stroke="#1DAA61" stroke-width="1.25"/><circle cx="8.8" cy="8.1" r="2.8" stroke="#1DAA61" stroke-width="1.25"/></svg>
-              <svg class="mic" viewBox="0 0 12 18" fill="none"><path d="M8.4 3.7a2.6 2.6 0 00-5.1 0v4.4a2.6 2.6 0 005.1 0V3.7z" stroke="#1DAA61" stroke-width="1.25"/><path d="M10.6 8.1a4.8 4.8 0 01-9.5 0M5.9 12.8v3.3" stroke="#1DAA61" stroke-width="1.25" stroke-linecap="round"/></svg>
-              <span class="wa-home"></span>
-            </div>
-          </div></div>
-          <img class="ph-frame" src="img/iphone-air.webp" alt="" width="959" height="2000" loading="lazy" decoding="async" draggable="false">
+        <div class="chat" id="chat" aria-label="Example of the gift in a chat">
+          <div class="chat-head"><i aria-hidden="true"></i><div><b>Anna</b><span>online</span></div></div>
+          <div class="chat-body">
+            <div class="msg">how was the retreat?<time>18:41</time></div>
+            <div class="msg out gift"><div class="preview"><div data-card="chat" data-amp=".7"></div><b>AMA gift card</b><small>amaforyou.com</small></div><p>a little time just for you 🤍<br><a href="#top" tabindex="-1">amaforyou.com/gift/7KQ2-M9XA</a></p><time>18:42 ✓✓</time></div>
+            <div class="msg" id="reply" hidden>omg 😭 thank you<time>18:43</time></div>
+            <div class="msg typing" id="typing" aria-hidden="true"><i></i><i></i><i></i></div>
+          </div>
         </div>
         <p class="chat-foot">Or by email, on the day and time you choose.</p>
       </section>
@@ -1020,6 +1022,7 @@ $$('[data-card]').forEach(function(h){var c=buildCard(h);C[c.key]=c;observe(c);}
 var FLOW_CARDS=['flow','preview','done'];
 function paintAll(){var d=design();FLOW_CARDS.forEach(function(k){if(C[k])paintCard(C[k],d,S.amount);});}
 paintCard(C.hero,designById('night'),75);C.hero.el.classList.add('no-amt'); // no amount until it is chosen
+paintCard(C.chat,designById('sand'),75);C.chat.el.classList.add('no-amt'); // the link preview never shows the amount
 
 /* ---------- A2: what each amount buys (pinned, scroll-driven) ---------- */
 var BUYS=[
@@ -1279,17 +1282,15 @@ window.addEventListener('scroll',function(){requestAnimationFrame(onScroll);},{p
 
 /* ---------- A5: messenger plays once when it comes into view ---------- */
 var chatPlayed=false;
-var chatMsgs=$$('#chat .wa-b');
+var chatMsgs=$$('#chat .msg').filter(function(m){return m.id!=='reply'&&m.id!=='typing';});
 new IntersectionObserver(function(es,obs){
   if(!es[0].isIntersecting||chatPlayed)return;chatPlayed=true;obs.disconnect();
-  var state=$('#waState'), react=$('#waReact');
-  function say(t){state.style.opacity=0;setTimeout(function(){state.textContent=t;state.style.opacity=1;},180);}
-  if(reduce){chatMsgs.forEach(function(m){m.classList.add('in-view');});react.classList.add('on');return;}
-  setTimeout(function(){chatMsgs[0].classList.add('in-view');},200);
-  setTimeout(function(){chatMsgs[1].classList.add('in-view');},900);
-  setTimeout(function(){say('typing…');},1900);
-  setTimeout(function(){say('online');chatMsgs[2].classList.add('in-view');},3500);
-  setTimeout(function(){react.classList.add('on');},4300);
+  var typing=$('#typing'), reply=$('#reply');
+  if(reduce){chatMsgs.forEach(function(m){m.classList.add('in-view');});reply.hidden=false;reply.classList.add('in-view');typing.classList.add('in-view');return;}
+  setTimeout(function(){chatMsgs[0].classList.add('in-view');},150);
+  setTimeout(function(){chatMsgs[1].classList.add('in-view');},800);
+  setTimeout(function(){typing.classList.add('in-view');},1700);
+  setTimeout(function(){reply.hidden=false;void reply.offsetWidth;reply.classList.add('in-view');},3300); // the reply lands above the dots, and Anna keeps typing
 },{threshold:0.35}).observe($('#chat'));
 
 // flow: thumbnails
@@ -1585,10 +1586,12 @@ function pay(){
     w.className='wave go';
     setTimeout(function(){w.className='wave solid';
       setTimeout(function(){
-        show('done');vd.classList.add('arrive');haptic('success');
+        show('done');
+        var dr=C.done.el.getBoundingClientRect();C.done.el.style.setProperty('--dy',Math.round(window.innerHeight/2-(dr.top+dr.height/2))+'px'); // upright, it starts in the middle of the screen
+        vd.classList.add('arrive');haptic('success');
         requestAnimationFrame(function(){w.className='wave out';});
         setTimeout(function(){w.className='wave';},460);
-        setTimeout(function(){vd.classList.remove('arrive');},1400);
+        setTimeout(function(){vd.classList.remove('arrive');},1900);
       },300);
     },1000);
   },1500);
@@ -1604,11 +1607,11 @@ function renderDone(){
   if(S.mode==='self'){
     $('#doneTitle').textContent='Your gift is ready';
     $('#doneLead').textContent='Send it to '+to+' in a message. The link opens the card with your note. '+receiptLine();
-    $('#shareBlock').hidden=false;$('#alsoShare').hidden=true;
+    $('#shareBlock').hidden=false;$('#alsoShare').hidden=true;$('#againBtn').className='link';
   }else{
     $('#doneTitle').textContent=S.when==='now'?'Your gift is on its way':'Your gift is scheduled';
     $('#doneLead').textContent=(S.when==='now'?'We’ve emailed it to '+S.email+'.':'We’ll email it to '+S.email+' on '+fmtDate(S.date)+' at '+S.time+'.')+' '+receiptLine();
-    $('#shareBlock').hidden=true;$('#alsoShare').hidden=false;
+    $('#shareBlock').hidden=true;$('#alsoShare').hidden=false;$('#againBtn').className='btn ghost again';
   }
 }
 var shareText='';
