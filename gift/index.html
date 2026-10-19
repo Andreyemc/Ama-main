@@ -296,13 +296,18 @@ a.btn{text-decoration:none}
 .clead{margin-top:16px;font-size:17px;line-height:1.4;color:rgba(255,243,228,.75);max-width:36ch}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px}
 .stat{background:#783206;border-radius:16px;padding:22px 16px 20px;display:flex;flex-direction:column}
-.stat small{font-size:14px;color:rgba(255,243,228,.75)}
+.stat>small{font-size:14px;color:rgba(255,243,228,.75)}
 .stat b{font-weight:400;font-size:48px;line-height:1.1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px}
-.stat span{font-size:17px;line-height:1.3;color:rgba(255,243,228,.75);margin-top:12px}
-.stat em{display:block;font-style:normal;color:#FFF3E4;font-weight:500}
+.stat>span{font-size:17px;line-height:1.3;color:rgba(255,243,228,.75);margin-top:12px}
+.stat>span>em{display:block;font-style:normal;color:#FFF3E4;font-weight:500}
 .btn.on-dark{background:transparent;color:#FFF3E4;box-shadow:inset 0 0 0 1px #FFF3E4;margin-top:24px}
 .btn.on-dark:hover{background:rgba(255,243,228,.08)}
 @media (min-width:760px){.stats{grid-template-columns:repeat(4,1fr)}}
+/* prices roll in like a counter when the block comes into view: every digit spins, all four at once, fast */
+.stat b .dg{display:inline-block;height:1.1em;overflow:hidden;vertical-align:top}
+.stat b .dg i{display:block;font-style:normal;transform:translateY(0);will-change:transform}
+.stat b .dg i span{display:block;height:1.1em;line-height:1.1}
+.stats.roll .stat b .dg i{transition:transform .9s cubic-bezier(.16,.84,.24,1);transform:translateY(calc(var(--to) * -1.1em))}
 /* A6 why gift with AMA */
 .whysec{background:var(--paper);padding:72px max(16px,env(safe-area-inset-left,0px)) 80px;margin-top:96px}
 .why{display:flex;flex-direction:column;gap:10px;margin-top:28px}
@@ -1745,7 +1750,7 @@ if(window.visualViewport){
 if('IntersectionObserver' in window&&!reduce){
   var rvIO=new IntersectionObserver(function(es){es.forEach(function(en){if(!en.isIntersecting)return;var el=en.target;rvIO.unobserve(el);el.classList.add('in');
     setTimeout(function(){el.classList.remove('rv','in');},800);});},{threshold:0.12,rootMargin:'0px 0px -6% 0px'});
-  $$('#vLanding .moods > *, #vLanding .cats h2, #vLanding .cats .clead, #vLanding .stats, #vLanding .whysec h2, #vLanding .why, #vLanding .chat-section > h2, #vLanding .chat-section > p').forEach(function(el){el.classList.add('rv');rvIO.observe(el);});
+  $$('#vLanding .moods > *, #vLanding .cats h2, #vLanding .cats .clead, #vLanding .whysec h2, #vLanding .why, #vLanding .chat-section > h2, #vLanding .chat-section > p').forEach(function(el){el.classList.add('rv');rvIO.observe(el);});
 }
 /* iOS 26.5+ lets only a real finger tap on a system switch play a haptic; script-triggered ticks were closed by Apple.
    So on iPhone each key control carries a transparent switch under the finger. Android keeps navigator.vibrate. */
@@ -1754,6 +1759,20 @@ if(isIOS){
     i.addEventListener('focus',function(){i.blur();});el.appendChild(i);};
   $$('#cta,.chip,.seg button,.radio,#backBtn,#closeBtn').forEach(addHx); // not on the phrases: a switch under the finger takes the sideways drag, and the row would not scroll
 }
+/* A4: price counter. Each digit is a reel of 0–9 twice over; it spins one full turn plus the digit, all reels together */
+(function(){
+  var box=document.querySelector('.cats .stats');if(!box)return;
+  $$('.cats .stat b').forEach(function(b){
+    var t=b.textContent;b.setAttribute('aria-label',t);
+    b.innerHTML=t.split('').map(function(ch){
+      if(!/\d/.test(ch))return '<span aria-hidden="true">'+ch+'</span>';
+      var d=+ch,reel='';for(var k=0;k<20;k++)reel+='<span>'+(k%10)+'</span>';
+      return '<span class="dg" aria-hidden="true"><i style="--to:'+(10+d)+'">'+reel+'</i></span>';
+    }).join('');
+  });
+  if(reduce||!('IntersectionObserver' in window)){box.classList.add('roll');return;}
+  new IntersectionObserver(function(es,o){if(!es[0].isIntersecting)return;o.disconnect();requestAnimationFrame(function(){box.classList.add('roll');});},{threshold:.35}).observe(box);
+})();
 /* rubber band: pulled past the top or the bottom, the page content stretches a little and springs back.
    The header, the step bar and the button are fixed outside it, so they never move. */
 (function(){
