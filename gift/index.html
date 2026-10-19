@@ -1590,7 +1590,7 @@ if('IntersectionObserver' in window&&!reduce){
 if(isIOS){
   var addHx=function(el){if(el.querySelector(':scope > .hx'))return;var i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');i.className='hx';i.tabIndex=-1;i.setAttribute('aria-hidden','true');
     i.addEventListener('focus',function(){i.blur();});el.appendChild(i);};
-  $$('#cta,.chip,.seg button,.radio,.phrase,#backBtn,#closeBtn').forEach(addHx);
+  $$('#cta,.chip,.seg button,.radio,#backBtn,#closeBtn').forEach(addHx); // not on the phrases: a switch under the finger takes the sideways drag, and the row would not scroll
 }
 /* start */
 paintAll();renderAmount();renderDesign();show('landing');
