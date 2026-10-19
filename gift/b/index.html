@@ -689,8 +689,7 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
     <div data-card="preview" data-v data-amp="1.1"></div>
     <p class="quote" id="pvMsg"></p>
     <p class="hint" id="pvMeta"></p>
-    <div class="btn static" aria-hidden="true">Open my gift</div>
-    <p class="hint" id="pvTap" style="text-align:center;margin-top:-10px">They tap this to open the gift</p>
+    <div class="btn static" aria-hidden="true">Book a session</div>
   </div></div>
   <div class="dock"><div class="col"><button class="btn ghost" id="pvBack" style="background:var(--sand)">Back to message</button></div></div>
 </div>
@@ -1262,7 +1261,6 @@ function openPreview(){
   var to=S.to||'Anna', from=S.from||'a friend';
   $('#pvBar').textContent='Preview · what '+to+' will see';
   $('#pvTitle').textContent=to+', here’s a gift from '+from;
-  $('#pvTap').textContent=to+' taps this to open the gift';
   $('#pvMsg').textContent=S.msg?('“'+S.msg+'”'):'';
   var exp=new Date();exp.setMonth(exp.getMonth()+24);
   $('#pvMeta').textContent=money(S.amount)+' to spend on any session at AMA. Valid until '+exp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'.';
