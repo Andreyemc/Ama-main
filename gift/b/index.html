@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>AMA Gift Card</title>
-<meta name="theme-color" content="#F7EEE0">
+<meta name="theme-color" content="#1E0904">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300;400;500&display=swap">
@@ -21,7 +21,8 @@ body{margin:0}
 [hidden]{display:none!important}
 html{background:var(--cream);-webkit-text-size-adjust:100%;overscroll-behavior-y:none} /* no rubber-band or pull-to-refresh: the fixed header and button never move with a swipe */
 body{overscroll-behavior-y:none;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--cream)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--top,var(--cream))}
+html:not(.t-buy):not(.t-done){--top:#1E0904}
 /* purchase steps sit on white with the same forms; the done screens sit on dark grey */
 html.t-flow{--cream:#FFFFFF;--paper:#F4F4F4;--sand:#F4F4F4;--sand-2:#E4E4E4;--mute:#686868;--line:rgba(0,0,0,.12)}
 html.t-done{--cream:#2B2A28;--paper:#3A3836;--sand:#3A3836;--ink:#FFFFFF;--body:#D9D3CC;--mute:#B5AEA6;--line:rgba(255,255,255,.2)}
@@ -38,10 +39,11 @@ html.t-buy{--cream:#FFFAF3}
 html.t-done{--cream:#461A0F;--paper:#5A2614;--sand:#5A2614;--ink:#FFF3E4;--body:#EBD9C6;--mute:#D9C3AB;--line:rgba(255,243,228,.2)}
 html.t-done .btn.ghost:hover{background:rgba(255,243,228,.08)}
 /* ---------- site header (shared with amaforyou.com) ---------- */
-/* B: the header is part of the page and scrolls away with it; on the dark hero a fixed cream bar read as a separate plate */
-.site-header{position:relative;z-index:50;height:var(--hdr);background:var(--cream);
+/* B: the header is transparent and sits on the hero, in light; it scrolls away with the page. On the buy and done pages it is in the page colours */
+.site-header{position:absolute;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:50;height:var(--hdr);background:transparent;
   display:flex;align-items:center;justify-content:space-between;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.site-header{color:var(--ink)}
+.site-header{color:var(--light)}
+html.t-buy .site-header,html.t-done .site-header{color:var(--ink)}
 .site-header .left{display:flex;align-items:center;gap:14px}
 .icon-btn{width:40px;height:40px;display:grid;place-items:center;margin:-8px;border-radius:20px}
 .icon-btn svg{display:block}
@@ -117,7 +119,7 @@ a.btn{text-decoration:none}
 .gc-logo,.gc-kind,.gc-amt{background-image:var(--metal);background-size:320% 100%;background-position:var(--mx,50%) 50%;filter:drop-shadow(0 .5px 0 rgba(0,0,0,.22))}
 .gc-logo{-webkit-mask:var(--logo-mask) left center/contain no-repeat;mask:var(--logo-mask) left center/contain no-repeat}
 .gc-kind,.gc-amt{color:transparent!important;-webkit-background-clip:text;background-clip:text}
-.logo svg{fill:var(--ink)}
+.logo svg{fill:currentColor}
 .gc-kind{position:absolute;right:5.6cqw;top:6.4cqw;font-size:3.1cqw;color:var(--ink-c);opacity:.86}
 .gc-amt{position:absolute;left:5.4cqw;bottom:4.6cqw;font-size:10cqw;line-height:1;letter-spacing:-.01em;color:var(--ink-c);font-variant-numeric:tabular-nums}
 .gc.no-amt .gc-amt{visibility:hidden}
@@ -141,7 +143,7 @@ main{padding-top:0}
 .sec .lead{margin-top:16px;font-size:17px;line-height:1.4;color:var(--body);max-width:36ch}
 .sec.brown .lead{color:rgba(255,243,228,.75)}
 /* hero: the card turns in from edge-on while a soft light breathes in behind it */
-.bhero{background:#1E0904;color:var(--light);padding:32px max(16px,env(safe-area-inset-left,0px)) 36px;overflow:hidden}
+.bhero{background:#1E0904;color:var(--light);padding:calc(var(--hdr) + 32px) max(16px,env(safe-area-inset-left,0px)) 36px;overflow:hidden}
 .bhero h1{font-size:clamp(44px,12.4vw,54px);line-height:.98;letter-spacing:-.03em}
 .bhero .lead{margin-top:14px;font-size:17px;line-height:1.4;color:rgba(255,243,228,.75);max-width:34ch}
 .stage{--cw:min(56vw,230px);position:relative;height:clamp(360px,56svh,470px);display:grid;place-items:center;perspective:900px;margin:8px 0 12px}
@@ -217,7 +219,7 @@ main{padding-top:0}
 @media (min-width:760px){.stats{grid-template-columns:repeat(4,1fr)}}
 
 /* ---------- buy page ---------- */
-.buy{padding-bottom:0}
+.buy{padding-top:var(--hdr);padding-bottom:0}
 .buy .col{display:flex;flex-direction:column}
 .bhead{padding:24px 0 20px}
 .bhead h1{font-size:36px;line-height:1.05;letter-spacing:-.02em}
@@ -344,7 +346,7 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
 .fine{font-size:12px;color:var(--mute);line-height:1.45}
 .pay-error{display:none;font-size:13px;color:var(--err);text-align:center}
 /* ---------- done ---------- */
-.done .col{padding-block:calc(env(safe-area-inset-top,0px) + 28px) calc(env(safe-area-inset-bottom,0px) + 40px);display:flex;flex-direction:column;gap:22px;align-items:center;text-align:center}
+.done .col{padding-block:calc(var(--hdr) + 28px) calc(env(safe-area-inset-bottom,0px) + 40px);display:flex;flex-direction:column;gap:22px;align-items:center;text-align:center}
 .done .gc{max-width:340px;margin-bottom:14px}
 .done .gc.enter .gc-tilt{animation:enter 1.1s cubic-bezier(.16,1,.3,1) both}
 @keyframes enter{from{transform:rotateY(-110deg) rotateX(18deg) translateZ(-120px);opacity:0}60%{opacity:1}to{transform:rotateX(var(--rx)) rotateY(var(--ry))}}
@@ -1155,7 +1157,7 @@ var bar=$('#bar'), barCta=$('#barCta');
 function show(v,opts){
   opts=opts||{};view=v;
   document.documentElement.className=v==='buy'?'t-buy':v==='done'?'t-done':'';
-  var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.setAttribute('content',v==='buy'?'#FFFAF3':v==='done'?'#461A0F':'#F7EEE0');
+  var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.setAttribute('content',v==='buy'?'#FFFAF3':v==='done'?'#461A0F':'#1E0904');
   $('#vLanding').hidden=v!=='landing';$('#vBuy').hidden=v!=='buy';$('#vDone').hidden=v!=='done';
   if(!opts.keepScroll)window.scrollTo(0,0);
   updateBar();
