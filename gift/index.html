@@ -389,13 +389,16 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
 /* ---------- done ---------- */
 .done .col{padding-block:calc(env(safe-area-inset-top,0px) + 28px) calc(env(safe-area-inset-bottom,0px) + 40px);display:flex;flex-direction:column;gap:22px;align-items:center;text-align:center}
 .done{overflow-x:clip}
-.done .gc{max-width:340px;margin-bottom:14px}
-.done.arrive .gc.enter{animation:doneTurn 1.15s cubic-bezier(.45,0,.2,1) .2s both} /* T5–T7: upright and large in the middle of the screen, then a quarter turn into its place; no opacity on a 3D card (Safari flicker) */
-@keyframes doneTurn{0%,26%{transform:translateY(var(--dy,0px)) rotate(90deg) scale(1.22)}100%{transform:none}}
-.done.arrive .col>:not(.gc){animation:doneUp .5s cubic-bezier(.2,.8,.2,1) both}
-.done.arrive .col>:nth-child(2){animation-delay:1.2s}.done.arrive .col>:nth-child(3){animation-delay:1.28s}.done.arrive .col>:nth-child(4){animation-delay:1.36s}
-.done.arrive .col>:nth-child(5),.done.arrive .col>:nth-child(6),.done.arrive .col>:nth-child(7){animation-delay:1.44s} /* the text waits until the card has landed */
-.done .gc{position:relative;z-index:2} /* and the card always passes over it, never under */
+.done .dc{width:100%;max-width:340px;margin-bottom:14px}
+.done .dc.up{width:min(65%,260px);max-width:none;margin-bottom:26px} /* P6: after an email delivery the card stands upright, as it was chosen */
+.done .dc .gc{max-width:none;margin:0}
+.done .dc.up>.gc{top:100%;left:0;transform:rotate(-90deg)} /* as in P6: turned anticlockwise, logo and amount along the bottom edge */
+/* Success (storyboard 19 Oct): the Done screen fades in over the paid page through a frosted dark layer, which thickens into the solid grey */
+.veil{position:fixed;inset:0;z-index:91;pointer-events:none}
+html.no-tr *,html.no-tr *::before,html.no-tr *::after{transition:none!important}
+.done.ov{position:fixed;left:0;right:0;top:0;bottom:0;z-index:92;overflow:hidden;pointer-events:none;
+  --cream:#2B2A28;--paper:#3A3836;--sand:#3A3836;--ink:#FFFFFF;--body:#D9D3CC;--mute:#B5AEA6;--line:rgba(255,255,255,.2);color:var(--ink)}
+.done.ov .btn.ghost{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
 @keyframes doneUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .done .btn.again{max-width:none;margin-top:26px} /* P6: Buy another gift card is an outlined button under the links */
 .done h1{font-size:30px;line-height:1.15}
@@ -685,6 +688,7 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
 
 <!-- fixed CTA dock -->
 <div class="wave" id="wave" aria-hidden="true"></div>
+<div class="veil" id="veil" hidden aria-hidden="true"></div>
 <div class="dock off" id="dock">
   <div class="col">
     <p class="pay-error" id="payError" role="alert"></p>
@@ -1022,6 +1026,7 @@ var C={};
 $$('[data-card]').forEach(function(h){var c=buildCard(h);C[c.key]=c;observe(c);});
 var FLOW_CARDS=['flow','preview','done'];
 function paintAll(){var d=design();FLOW_CARDS.forEach(function(k){if(C[k])paintCard(C[k],d,S.amount);});}
+(function(){var h=document.createElement('div');h.id='doneHolder';h.className='dc';C.done.el.parentNode.insertBefore(h,C.done.el);h.appendChild(C.done.el);})(); // the Done card sits in a holder that can stand it upright
 paintCard(C.hero,designById('night'),75);C.hero.el.classList.add('no-amt'); // no amount until it is chosen
 paintCard(C.chat,designById('sand'),75);C.chat.el.classList.add('no-amt'); // the link preview never shows the amount
 
@@ -1581,25 +1586,40 @@ function pay(){
     cta.removeAttribute('aria-busy');
     giftCode=code();
     renderDone();
-    var vd=$('#vDone'),w=$('#wave');
+    var vd=$('#vDone');
     if(reduce){show('done');haptic('success');return;}
-    /* M5: frosted dark glass rolls up (1 s) → settles into solid grey (0.28 s) → Done appears under it and the glass fades away */
-    w.className='wave go';
-    setTimeout(function(){w.className='wave solid';
-      setTimeout(function(){
-        show('done');
-        var dr=C.done.el.getBoundingClientRect();C.done.el.style.setProperty('--dy',Math.round(window.innerHeight/2-(dr.top+dr.height/2))+'px'); // upright, it starts in the middle of the screen
-        vd.classList.add('arrive');haptic('success');
-        requestAnimationFrame(function(){w.className='wave out';});
-        setTimeout(function(){w.className='wave';},460);
-        setTimeout(function(){vd.classList.remove('arrive');},2300);
-      },300);
-    },1000);
+    successIn(vd);haptic('success');
   },1500);
+}
+/* Success, as in the storyboard: the Done screen with its dark layer appears over the paid page (20 % → 50 % → full),
+   the layer is a frosted gradient that first darkens the bottom, then evens out, then thickens into the solid grey.
+   Then the real Done screen takes over in the same place, so nothing moves. */
+function successIn(vd){
+  var main=$('main'), top=main.getBoundingClientRect().top+window.scrollY+parseFloat(getComputedStyle(main).paddingTop);
+  var veil=$('#veil'), col=vd.querySelector('.col'), tc=document.querySelector('meta[name="theme-color"]'), dark=false;
+  vd.hidden=false;vd.classList.add('ov');vd.style.paddingTop=top+'px';col.style.opacity=0;veil.hidden=false;
+  //      t ms, content, layer top, layer bottom, blur px
+  var K=[[0,0,0,0,0],[450,1,0,.5,10],[650,1,.5,.5,10],[1250,1,.5,1,10],[1650,1,1,1,10]];
+  function ease(x){return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;}
+  var t0=performance.now();
+  (function f(now){
+    var t=now-t0,i=0;while(i<K.length-2&&t>K[i+1][0])i++;
+    var A=K[i],B=K[i+1],e=ease(Math.min(1,Math.max(0,(t-A[0])/(B[0]-A[0])))),v=function(j){return A[j]+(B[j]-A[j])*e;};
+    col.style.opacity=v(1).toFixed(3);
+    veil.style.background='linear-gradient(rgba(43,42,40,'+v(2).toFixed(3)+'),rgba(43,42,40,'+v(3).toFixed(3)+'))';
+    var bl='blur('+v(4).toFixed(1)+'px)';veil.style.backdropFilter=bl;veil.style.webkitBackdropFilter=bl;
+    if(!dark&&t>1250){dark=true;if(tc)tc.setAttribute('content','#2B2A28');} // the status bar turns light with the last frames
+    if(t<K[K.length-1][0]){requestAnimationFrame(f);return;}
+    var H=document.documentElement;H.classList.add('no-tr'); // the swap is instant: no colour transitions from the old theme
+    show('done');H.classList.add('no-tr');vd.classList.remove('ov');vd.style.paddingTop='';col.style.opacity='';
+    requestAnimationFrame(function(){requestAnimationFrame(function(){H.classList.remove('no-tr');});});
+    veil.hidden=true;veil.removeAttribute('style');
+  })(t0);
 }
 function renderDone(){
   var d=design(), to=S.to||'them';
   paintCard(C.done,d,S.amount);
+  var up=S.mode!=='self';$('#doneHolder').className='dc'+(up?' up':'');C.done.upright=up; // P6 upright after an email, P6b landscape when they share it
   var el=C.done.el;el.classList.remove('enter','glint');void el.offsetWidth;el.classList.add('enter','glint');
   var link='amaforyou.com/gift/'+giftCode;$('#giftLink').textContent=link;
   var text=to+', I got you an AMA gift card for any session.'+(S.msg?' “'+S.msg+'”':'')+' Open it here: https://'+link; // greeting yes, amount no: the recipient sees it when they open the gift
