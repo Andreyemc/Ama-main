@@ -1773,24 +1773,6 @@ if(isIOS){
   if(reduce||!('IntersectionObserver' in window)){box.classList.add('roll');return;}
   new IntersectionObserver(function(es,o){if(!es[0].isIntersecting)return;o.disconnect();requestAnimationFrame(function(){box.classList.add('roll');});},{threshold:.35}).observe(box);
 })();
-/* lag on scroll (Soft, chosen on the test page): the Why tiles, the price tiles and the chat bubbles follow the page
-   with a small delay each, drift apart while you scroll and settle back one after another. Native scroll, nothing hijacked */
-(function(){
-  if(reduce)return;
-  var BASE=.06, items=[];
-  [$$('.why>div'),$$('.cats .stat'),$$('#chat .msg')].forEach(function(g){g.forEach(function(el,i){el.style.willChange='transform';items.push({el:el,i:i,y:window.scrollY,off:0});});});
-  var last=performance.now();
-  (function frame(now){
-    var dt=Math.min(.05,(now-last)/1000);last=now;var sy=window.scrollY,on=view==='landing';
-    for(var k=0;k<items.length;k++){var it=items[k],r=on&&it.el.getBoundingClientRect();
-      if(!on||r.bottom<-200||r.top>innerHeight+200){it.y=sy;if(it.off){it.el.style.transform='';it.off=0;}continue;}
-      it.y+=(sy-it.y)*(1-Math.exp(-dt/(BASE*(1+it.i*.55)))); // later blocks lag a little more
-      var off=70*Math.tanh((sy-it.y)/70);if(Math.abs(off)<.1)off=0;
-      if(off!==it.off){it.el.style.transform=off?'translate3d(0,'+off.toFixed(1)+'px,0)':'';it.off=off;}
-    }
-    requestAnimationFrame(frame);
-  })(last);
-})();
 /* rubber band: pulled past the top or the bottom, the page content stretches a little and springs back.
    The header, the step bar and the button are fixed outside it, so they never move. */
 (function(){
