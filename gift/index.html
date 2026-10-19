@@ -1779,7 +1779,7 @@ if(isIOS){
   if(reduce||!('ontouchstart' in window))return;
   var M=$('main'), y0=null, x0=0, dir=null, off=0;
   function maxY(){return document.documentElement.scrollHeight-window.innerHeight;}
-  function band(d){var h=window.innerHeight*0.18;return (d<0?-1:1)*h*(1-Math.exp(-Math.abs(d)/(h*1.6)));}
+  function band(d){var h=window.innerHeight;return (d<0?-1:1)*(1-1/(Math.abs(d)*0.55/h+1))*h;} // the curve iOS uses: about half the finger at first, then stiffer
   function blocked(){return document.body.style.overflow==='hidden'||document.querySelector('.done.ov');}
   document.addEventListener('touchstart',function(e){if(e.touches.length!==1||blocked())return;y0=e.touches[0].clientY;x0=e.touches[0].clientX;dir=null;},{passive:true});
   document.addEventListener('touchmove',function(e){
@@ -1794,6 +1794,17 @@ if(isIOS){
     M.style.transition='transform .5s cubic-bezier(.2,.8,.2,1)';M.style.transform='';
     setTimeout(function(){if(!off)M.style.transition='';},520);}
   document.addEventListener('touchend',release,{passive:true});document.addEventListener('touchcancel',release,{passive:true});
+  /* a flick that runs into the top or the bottom bounces: the content overshoots by its speed and springs back */
+  var ly=window.scrollY,lt=performance.now(),v=0,bouncing=false;
+  window.addEventListener('scroll',function(){
+    var now=performance.now(),y=window.scrollY,dt=Math.max(1,now-lt);v=v*.5+((y-ly)/dt)*.5;ly=y;lt=now;
+    if(y0!==null||bouncing||blocked()||!M.animate)return;
+    var hitTop=y<=0&&v<-.4, hitEnd=y>=maxY()-1&&v>.4;
+    if(!hitTop&&!hitEnd)return;
+    var o=Math.min(70,Math.abs(v)*22)*(hitTop?1:-1);bouncing=true;v=0;
+    var a=M.animate([{transform:'translate3d(0,0,0)'},{transform:'translate3d(0,'+o+'px,0)',offset:.32,easing:'cubic-bezier(.2,.8,.2,1)'},{transform:'translate3d(0,0,0)'}],{duration:620,easing:'cubic-bezier(.3,0,.2,1)'});
+    a.onfinish=a.oncancel=function(){bouncing=false;};
+  },{passive:true});
 })();
 /* start */
 paintAll();renderAmount();renderDesign();show('landing');
