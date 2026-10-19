@@ -1,4 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<script>/* photos are AVIF; a browser that cannot show AVIF gets the JPG of the same name */document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="IMG"&&/\.avif$/.test(t.src))t.src=t.src.replace(/\.avif$/,".jpg");},true);</script>
 <title>AMA Gift Card</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#F7EEE0">
@@ -495,7 +496,7 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
     <!-- A2 what it buys (pinned, scroll-driven) -->
     <section class="scene buys bleed" id="buys" aria-label="What each amount covers">
       <div class="scene-pin">
-        <div class="photo"><img id="buysImg" src="img/a-pilates.jpg" alt="" draggable="false"><div class="card-on-edge"><div data-card="buys" data-amp=".8"></div></div></div>
+        <div class="photo"><img id="buysImg" src="img/a-pilates.avif" alt="" draggable="false"><div class="card-on-edge"><div data-card="buys" data-amp=".8"></div></div></div>
         <div class="meta">
           <div class="dial" id="dial" role="listbox" aria-label="Amount" tabindex="0"></div>
           <p class="what" id="buysWhat" aria-live="polite"></p>
@@ -1029,14 +1030,14 @@ var BUYS=[
   {a:150,img:'a-womens',   d:'night', t:'A women’s health consultation, 60\u00A0min'},
   {a:250,img:'a-sleep',    d:'night', t:'A sleep enhancement session, 60\u00A0min'}
 ];
-BUYS.forEach(function(b){var i=new Image();i.src='img/'+b.img+'.jpg';}); // preload: cuts stay instant
+BUYS.forEach(function(b){var i=new Image();i.src='img/'+b.img+'.avif';}); // preload: cuts stay instant
 var buys=$('#buys'), buysIdx=-1;
 var dialEl=$('#dial');
 dialEl.innerHTML=BUYS.map(function(b,i){return '<button type="button" role="option" tabindex="-1" data-i="'+i+'">'+money(b.a)+'</button>';}).join('');
 var dItems=$$('#dial button');
 function setBuys(i){
   if(i===buysIdx)return;buysIdx=i;var b=BUYS[i];
-  $('#buysImg').src='img/'+b.img+'.jpg'; // hard cut, no fade
+  $('#buysImg').src='img/'+b.img+'.avif'; // hard cut, no fade
   swapText($('#buysWhat'),b.t);
   paintCard(C.buys,designById(b.d),b.a);C.buys.el.classList.remove('no-amt'); // the card shows the same amount as the dial
   dItems.forEach(function(x,k){x.setAttribute('aria-selected',k===i);});
@@ -1265,7 +1266,7 @@ var PILLARS=[
   {n:'Sleep',      s:'Sleep coaching and enhancement',          img:'p-sleep'}
 ];
 $('#plist').innerHTML=PILLARS.map(function(p,i){
-  return '<figure class="pslide"><img src="img/'+p.img+'.jpg" alt="" loading="lazy"><figcaption class="ptext"><div><b>'+p.n+'</b><small>'+p.s+'</small></div><span class="pnum">'+(i+1)+' / '+PILLARS.length+'</span></figcaption></figure>';
+  return '<figure class="pslide"><img src="img/'+p.img+'.avif" alt="" loading="lazy"><figcaption class="ptext"><div><b>'+p.n+'</b><small>'+p.s+'</small></div><span class="pnum">'+(i+1)+' / '+PILLARS.length+'</span></figcaption></figure>';
 }).join('');
 
 /* scroll driver for the pinned amounts scene */

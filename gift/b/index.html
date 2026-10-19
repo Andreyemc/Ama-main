@@ -449,6 +449,7 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
 .sec.chat-section{padding-top:72px;display:block}
 .sec .chat-section,.sec .phone{flex:none}
 </style>
+<script>/* photos are AVIF; a browser that cannot show AVIF gets the JPG of the same name */document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="IMG"&&/\.avif$/.test(t.src))t.src=t.src.replace(/\.avif$/,".jpg");},true);</script>
 </head><body>
 <header class="site-header" id="siteHeader">
   <div class="left">
@@ -481,9 +482,9 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
       <div class="col">
         <h2 class="h2 rv">One card,<br>any session</h2>
         <div class="gal" id="gal">
-          <figure class="gtile"><img src="../img/a-pilates.jpg" alt="" loading="lazy"><figcaption>Any session. <span>Pilates, therapy, nutrition, sleep. They choose what feels right.</span></figcaption></figure>
+          <figure class="gtile"><img src="../img/a-pilates.avif" alt="" loading="lazy"><figcaption>Any session. <span>Pilates, therapy, nutrition, sleep. They choose what feels right.</span></figcaption></figure>
           <figure class="gtile"><img src="../img/calm.jpg" alt="" loading="lazy"><figcaption>Calm, delivered. <span>The card lands as a message in two minutes, or on the day you pick.</span></figcaption></figure>
-          <figure class="gtile"><img src="../img/a-soundbath.jpg" alt="" loading="lazy"><figcaption>Six moods. <span>Pick the design that feels like them.</span></figcaption></figure>
+          <figure class="gtile"><img src="../img/a-soundbath.avif" alt="" loading="lazy"><figcaption>Six moods. <span>Pick the design that feels like them.</span></figcaption></figure>
         </div>
         <div class="dots" id="galDots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
       </div>
