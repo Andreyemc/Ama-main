@@ -911,9 +911,25 @@ function pressAnim(el,down){
   el._pa=down?el.animate([{transform:'scale(1)'},{transform:'scale(.96)'}],{duration:90,easing:'ease-out',fill:'forwards'})
              :el.animate([{transform:'scale(.96)'},{transform:'scale(1.015)',offset:.5},{transform:'scale(1)'}],{duration:320,easing:'cubic-bezier(.2,.8,.2,1)'});
 }
+var pressUp=null;
 document.addEventListener('pointerdown',function(e){var el=e.target.closest&&e.target.closest(PRESS);if(!el||el.disabled)return;el._pressed=true;pressAnim(el,true);
-  function up(){if(!el._pressed)return;el._pressed=false;pressAnim(el,false);document.removeEventListener('pointerup',up,true);document.removeEventListener('pointercancel',up,true);}
-  document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);},true);
+  function up(){if(!el._pressed)return;el._pressed=false;pressAnim(el,false);pressUp=null;document.removeEventListener('pointerup',up,true);document.removeEventListener('pointercancel',up,true);}
+  pressUp=up;document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);},true);
+/* a finger that scrolls is not a tap: if it moved or the page scrolled while it was down, the press lets go
+   and the click that iOS still sends at the end (the haptic switches send one too) is dropped, so nothing gets chosen by accident */
+(function(){
+  var sx=0,sy=0,sScroll=0,moved=false,down=false;
+  document.addEventListener('touchstart',function(e){var t=e.touches[0];sx=t.clientX;sy=t.clientY;sScroll=window.scrollY;moved=false;down=true;},{passive:true,capture:true});
+  document.addEventListener('touchmove',function(e){if(!down||moved)return;var t=e.touches[0];
+    if(Math.abs(t.clientX-sx)>8||Math.abs(t.clientY-sy)>8){moved=true;if(pressUp)pressUp();}},{passive:true,capture:true});
+  window.addEventListener('scroll',function(){if(down&&Math.abs(window.scrollY-sScroll)>4){moved=true;if(pressUp)pressUp();}},{passive:true});
+  document.addEventListener('touchend',function(){down=false;if(Math.abs(window.scrollY-sScroll)>4)moved=true;},{passive:true,capture:true});
+  document.addEventListener('click',function(e){
+    if(!moved)return;var t=e.target;
+    if(t.closest&&t.closest('.hx,.radio,.chip,.seg button,.phrase,.tile,.thumb')){e.preventDefault();e.stopImmediatePropagation();if(t.classList&&t.classList.contains('hx'))t.checked=!t.checked;}
+    moved=false;
+  },true);
+})();
 document.addEventListener('touchstart',function(){},{passive:true}); // lets :active work on iOS
 /* the amount on the card rolls to the new value */
 function rollAmt(c,from,to){
