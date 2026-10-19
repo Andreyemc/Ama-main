@@ -380,6 +380,7 @@ a.btn{text-decoration:none}
 .seg button{height:42px;border-radius:26px;font-size:15px;color:var(--mute);transition:color .2s}
 .seg button[aria-pressed="true"]{color:var(--ink)}
 .radios{display:flex;flex-direction:column;gap:8px}
+.radio,.chip,.seg button,.phrase,.tile,.thumb,.sum-row button{-webkit-tap-highlight-color:transparent} /* the press is the feedback; no grey iOS flash that reads as a choice */
 .radio{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;border-radius:14px;padding:14px 16px;box-shadow:inset 0 0 0 1px var(--line);background:var(--paper);transition:box-shadow .18s}
 .radio b{display:block;font-weight:400;font-size:16px}
 .radio span{display:block;font-size:13px;color:var(--mute);margin-top:2px}
@@ -911,26 +912,41 @@ function pressAnim(el,down){
   el._pa=down?el.animate([{transform:'scale(1)'},{transform:'scale(.96)'}],{duration:90,easing:'ease-out',fill:'forwards'})
              :el.animate([{transform:'scale(.96)'},{transform:'scale(1.015)',offset:.5},{transform:'scale(1)'}],{duration:320,easing:'cubic-bezier(.2,.8,.2,1)'});
 }
+/* An option is chosen only by a deliberate tap. While someone scrolls with short swipes, a swipe that barely moves
+   is a tap to iOS (seen on the 19 Oct recording: a 75 ms touch 0.44 s after a drag picked Apple Pay). So the page has
+   to be calm first: no scroll, no drag and no Safari bar change in the last 700 ms, and not past an edge. Then the finger
+   must stay within 8 px, the page must not move while it is down, and the touch must end within 700 ms.
+   Any other click on an option is dropped, and such a touch gets no press either, so nothing looks chosen. */
+var OPT='.radio,.chip,.seg button,.phrase,.tile,.thumb,.sum-row button,[data-when],[data-pay],[data-mode]';
+var CALM=700,lastMove=-1e9;
+function pageCalm(){return performance.now()-lastMove>CALM;}
 var pressUp=null;
-document.addEventListener('pointerdown',function(e){var el=e.target.closest&&e.target.closest(PRESS);if(!el||el.disabled)return;el._pressed=true;pressAnim(el,true);
-  function up(){if(!el._pressed)return;el._pressed=false;pressAnim(el,false);pressUp=null;document.removeEventListener('pointerup',up,true);document.removeEventListener('pointercancel',up,true);}
-  pressUp=up;document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);},true);
-/* An option is chosen only by a real tap. iOS also sends a click when a finger lands while the page is still
-   gliding or springing back from the edge (the rubber band), and after a short drag. So a touch counts as a tap only if:
-   the page was at rest when it began (no scroll in the last 300 ms and not past an edge), the finger moved less than 8 px,
-   the page did not scroll while it was down, and it lasted under 700 ms. Any other click on an option is dropped. */
+document.addEventListener('pointerdown',function(e){var el=e.target.closest&&e.target.closest(PRESS);if(!el||el.disabled)return;
+  var opt=e.pointerType==='touch'&&el.closest(OPT);
+  if(opt&&!pageCalm())return; // a finger landing mid-scroll: no press (and its click is dropped below)
+  var x0=e.clientX,y0=e.clientY,shown=false,tm=0;
+  function show(){shown=true;el._pressed=true;pressAnim(el,true);}
+  if(opt)tm=setTimeout(show,80);else show(); // in the page, the press waits a beat as in iOS lists, so a swipe that starts on an option does not flash it
+  function done(ev){clearTimeout(tm);pressUp=null;document.removeEventListener('pointerup',done,true);document.removeEventListener('pointercancel',done,true);
+    if(shown){el._pressed=false;pressAnim(el,false);}
+    else if(ev&&ev.type==='pointerup'&&Math.abs(ev.clientX-x0)<8&&Math.abs(ev.clientY-y0)<8&&pageCalm())pressAnim(el,false);} // quick tap: just the spring
+  pressUp=done;document.addEventListener('pointerup',done,true);document.addEventListener('pointercancel',done,true);},true);
 (function(){
-  var OPT='.radio,.chip,.seg button,.phrase,.tile,.thumb,.sum-row button,[data-when],[data-pay],[data-mode]';
-  var sx=0,sy=0,s0=0,t0=0,maxd=0,lastScroll=-1e9,tapOK=true,lastEnd=-1e9,down=false;
+  var sx=0,sy=0,s0=0,t0=0,maxd=0,tapOK=true,lastEnd=-1e9,down=false;
   function maxY(){return document.documentElement.scrollHeight-window.innerHeight;}
-  window.addEventListener('scroll',function(){lastScroll=performance.now();if(down&&Math.abs(window.scrollY-s0)>3&&pressUp)pressUp();},{passive:true});
+  function moved(){lastMove=performance.now();}
+  window.addEventListener('scroll',function(){moved();if(down&&Math.abs(window.scrollY-s0)>3&&pressUp)pressUp();},{passive:true});
+  window.addEventListener('resize',moved,{passive:true});
+  if(window.visualViewport){visualViewport.addEventListener('resize',moved,{passive:true});visualViewport.addEventListener('scroll',moved,{passive:true});}
   document.addEventListener('touchstart',function(e){var t=e.touches[0],y=window.scrollY;sx=t.clientX;sy=t.clientY;s0=y;t0=performance.now();maxd=0;down=true;
-    tapOK=(t0-lastScroll>300)&&y>=0&&y<=maxY()+1;},{passive:true,capture:true});
+    tapOK=e.touches.length===1&&pageCalm()&&y>=0&&y<=maxY()+1;},{passive:true,capture:true});
   document.addEventListener('touchmove',function(e){if(!down)return;var t=e.touches[0];maxd=Math.max(maxd,Math.abs(t.clientX-sx),Math.abs(t.clientY-sy));
-    if(maxd>8){tapOK=false;if(pressUp)pressUp();}},{passive:true,capture:true});
-  document.addEventListener('touchend',function(){down=false;lastEnd=performance.now();
-    if(Math.abs(window.scrollY-s0)>3||lastEnd-t0>700||lastScroll>t0)tapOK=false;},{passive:true,capture:true});
-  document.addEventListener('touchcancel',function(){down=false;tapOK=false;lastEnd=performance.now();},{passive:true,capture:true});
+    if(maxd>8){tapOK=false;moved();if(pressUp)pressUp();}},{passive:true,capture:true});
+  document.addEventListener('touchend',function(e){down=false;lastEnd=performance.now();var t=e.changedTouches&&e.changedTouches[0];
+    if(t)maxd=Math.max(maxd,Math.abs(t.clientX-sx),Math.abs(t.clientY-sy));
+    if(maxd>8){tapOK=false;moved();} // a drag counts as movement even when the page could not scroll
+    if(Math.abs(window.scrollY-s0)>3||lastEnd-t0>700||lastMove>t0)tapOK=false;},{passive:true,capture:true});
+  document.addEventListener('touchcancel',function(){down=false;tapOK=false;lastEnd=performance.now();moved();},{passive:true,capture:true});
   document.addEventListener('click',function(e){
     var fromTouch=performance.now()-lastEnd<1000;if(!fromTouch||tapOK)return;
     var t=e.target;if(t.closest&&t.closest(OPT)){e.preventDefault();e.stopImmediatePropagation();}
