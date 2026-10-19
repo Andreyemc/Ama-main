@@ -1,0 +1,214 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AMA Gift Card · card material test</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F7EEE0">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300;400;500&display=swap">
+<style>
+/* A separate test bench for the new card material: the textured surface, the raised chrome logo and the embossed lettering.
+   Nothing here touches versions A or B. */
+:root{--cream:#F7EEE0;--paper:#FFFAF3;--sand:#EFE3D1;--ink:#1E1C1A;--body:#4F473F;--mute:#6E6358;--line:rgba(30,28,26,.14);--rust:#B04F13;--light:#FFF3E4;
+  --sans:"Google Sans Flex","Google Sans","Helvetica Neue",Helvetica,Arial,sans-serif;--hdr:58px;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{background:var(--cream);-webkit-text-size-adjust:100%;overscroll-behavior-y:none}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s,color .3s}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--cream)}
+html.dark{--cream:#2B2A28;--paper:#3A3836;--sand:#3A3836;--ink:#FFFFFF;--body:#D9D3CC;--mute:#B5AEA6;--line:rgba(255,255,255,.2)}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0;-webkit-tap-highlight-color:transparent}
+h1,h2{font-weight:400;margin:0}p{margin:0}
+.site-header{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:50;height:var(--hdr);background:var(--cream);color:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:0 max(16px,env(safe-area-inset-left,0px));transition:background .3s}
+.site-header .left{display:flex;align-items:center;gap:14px}.icon-btn{width:40px;height:40px;display:grid;place-items:center;margin:-8px;border-radius:20px}.icon-btn svg{display:block}
+.logo{display:block;width:69px;height:26px}.logo svg{display:block;width:100%;height:100%;fill:var(--ink)}
+main{padding:calc(var(--hdr) + 20px) max(16px,env(safe-area-inset-left,0px)) 60px}
+.col{max-width:520px;margin:0 auto}
+h1{font-size:30px;line-height:1.15;letter-spacing:-.01em}
+.lead{color:var(--mute);font-size:15px;margin-top:8px;max-width:36ch}
+.stage{display:flex;justify-content:center;padding:36px 0 28px;perspective:1100px}
+.note{font-size:13px;color:var(--mute);text-align:center;min-height:1.4em}
+.note button{text-decoration:underline;text-underline-offset:3px;font-size:13px;color:var(--ink)}
+/* swatches: the six surfaces */
+.sw{display:flex;justify-content:center;gap:12px;margin-top:22px}
+.sw button{width:36px;height:36px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);position:relative;transition:transform .2s}
+.sw button[aria-pressed="true"]{box-shadow:inset 0 0 0 1px rgba(0,0,0,.12),0 0 0 2px var(--cream),0 0 0 3.5px var(--ink)}
+.swname{text-align:center;margin-top:12px;font-size:16px}
+/* controls */
+.ctl{margin-top:30px;display:flex;flex-direction:column;gap:14px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;color:var(--body)}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--sand);border-radius:30px;padding:3px;gap:3px;min-width:200px}
+.seg button{height:34px;border-radius:26px;font-size:14px;color:var(--mute);transition:background .2s,color .2s}
+.seg button[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 2px rgba(30,28,26,.12)}
+input[type=range]{width:200px;accent-color:var(--rust)}
+.fine{margin-top:34px;font-size:13px;color:var(--mute);line-height:1.5}
+
+/* ---------- the card ---------- */
+.lc{--rx:0deg;--ry:0deg;--gx:50%;--gy:40%;--bx:50%;--mx:50%;--ex:0px;--ey:0px;--sx:.4px;--sy:.6px;--relief:1;--kind-c:#fff;
+  position:relative;width:min(78vw,330px);aspect-ratio:848/1326;container-type:inline-size;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.lc-tilt{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(var(--rx)) rotateY(var(--ry));will-change:transform}
+.lc-edge{position:absolute;inset:-2px;border:2px solid transparent;background-clip:padding-box;border-radius:calc(5.4cqw + 2px);background-color:var(--edge)}
+.lc-face{position:absolute;inset:-2px;border:2px solid transparent;background-clip:padding-box;border-radius:calc(5.4cqw + 2px);overflow:hidden;transform:translateZ(.5px);background:var(--mid);isolation:isolate}
+.lc-art,.lc-orig{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+/* relief: the grain's own light and shade, offset towards the light and away from it, so the texture stands up and turns with the card */
+.lc-relief{position:absolute;inset:-3px;background:var(--relief-img) center/cover;mix-blend-mode:overlay;pointer-events:none;opacity:calc(.55 * var(--relief))}
+.lc-relief.hi{transform:translate(calc(-1 * var(--ex)),calc(-1 * var(--ey)))}
+.lc-relief.lo{transform:translate(var(--ex),var(--ey));filter:invert(1)}
+/* light: a wide soft band that travels with the tilt, and a glare spot */
+.lc-band{position:absolute;inset:-30%;pointer-events:none;mix-blend-mode:soft-light;opacity:.7;background:radial-gradient(ellipse 48% 44% at var(--bx) var(--gy),rgba(255,255,255,.95),rgba(255,255,255,.35) 40%,rgba(255,255,255,0) 72%)}
+.lc-glare{position:absolute;inset:0;mix-blend-mode:soft-light;pointer-events:none;background:radial-gradient(ellipse 80% 70% at var(--gx) var(--gy),rgba(255,255,255,.28),rgba(255,255,255,0) 70%)}
+.lc-rim{position:absolute;inset:0;border-radius:5.4cqw;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1px 0 rgba(0,0,0,.18)}
+/* the logo: raised chrome. Four copies of the same shape: a soft shadow, a dark edge away from the light, a bright edge towards it, and the metal on top */
+.lc-logo{position:absolute;left:9cqw;top:10.4cqw;width:32.2cqw;height:12.2cqw}
+.lc-logo i{position:absolute;inset:0;-webkit-mask:var(--logo-mask) left center/contain no-repeat;mask:var(--logo-mask) left center/contain no-repeat}
+.lc-logo .shade{background:#000;opacity:.45;filter:blur(1.2px);transform:translate(calc(var(--sx) * 2.6),calc(var(--sy) * 3))}
+.lc-logo .dark{background:rgba(0,0,0,.55);transform:translate(calc(var(--sx) * 1.4),calc(var(--sy) * 1.5))}
+.lc-logo .lite{background:rgba(255,255,255,.95);transform:translate(calc(-1 * var(--sx)),calc(-1 * var(--sy)))}
+.lc-logo .metal{background-image:var(--metal);background-size:320% 100%;background-position:var(--mx) 50%}
+/* lettering: embossed in a pale tint of the surface */
+.lc-kind,.lc-amt{position:absolute;font-size:6.1cqw;line-height:1;letter-spacing:.005em;color:var(--kind-c);
+  text-shadow:calc(-1 * var(--sx)) calc(-1 * var(--sy)) 0 rgba(255,255,255,.45),var(--sx) var(--sy) 0 rgba(0,0,0,.38),calc(var(--sx) * 2.4) calc(var(--sy) * 2.8) 2px rgba(0,0,0,.22)}
+.lc-kind{left:9cqw;bottom:9.9cqw}
+.lc-amt{right:9cqw;bottom:9.9cqw;font-variant-numeric:tabular-nums}
+.lc.no-amt .lc-amt{display:none}
+.lc.orig .lc-art,.lc.orig .lc-relief,.lc.orig .lc-logo,.lc.orig .lc-kind,.lc.orig .lc-amt{display:none}
+.lc:not(.orig) .lc-orig{display:none}
+@media (prefers-reduced-motion:reduce){.lc-tilt{transition:none}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="ama-logo" viewBox="0 0 69 26">
+      <path id="lgA" d="M68.6223 7.19211C68.6223 7.76903 68.4692 8.26903 68.2395 8.88441C66.7085 13.1152 63.5698 21.1921 63.1488 22.7305C63.187 22.8074 63.3019 22.8844 63.3784 22.8844C64.1057 22.8844 65.8281 21.1921 67.5506 19.1921L68.163 19.9998C66.1726 22.9228 63.0722 25.9997 61.5794 25.9997C60.6225 25.9997 59.7039 25.4613 59.7039 24.4228C59.7039 24.1151 59.9718 23.3459 60.3546 22.3074L61.656 18.9613L61.4646 18.8844C59.0149 22.3459 55.1107 25.9997 53.3882 25.9997C51.6275 25.769 50.7089 24.1921 50.7089 22.1921C50.7089 16.1921 56.8331 6.84596 62.7277 6.84596C63.6463 6.84596 64.7946 7.11519 65.5602 7.57673C65.7898 6.92288 65.9812 6.38442 66.1343 5.88442C66.4023 5.84596 66.5171 5.84596 66.7085 5.84596C67.8568 5.84596 68.6223 6.42288 68.6223 7.19211ZM54.9958 22.8459C56.4886 22.8459 60.3163 19.8075 63.1488 14.1152L64.6798 10.1152C63.6846 9.34595 62.4215 8.76903 60.6225 8.76903C57.3307 8.76903 54.0389 16.8844 54.0389 20.7305C54.0389 21.9613 54.4982 22.8459 54.9958 22.8459Z"/>
+      <path id="lgM" d="M51.3376 19.1925L51.9501 20.0002C49.9597 22.731 47.242 25.9233 44.9072 25.9233C43.7206 25.9233 43.4527 25.231 43.4527 24.5387C43.4527 23.4233 48.2755 11.1541 48.3903 10.308C48.2372 9.65411 47.8927 9.23104 47.3186 9.23104C46.0937 9.23104 42.3809 12.5772 37.7877 22.3079L36.4863 25.6156C36.2567 25.6541 36.1418 25.6541 36.1036 25.6541C34.7639 25.6541 34.228 25.1541 34.228 24.2695C34.228 23.8079 34.3811 23.3079 34.7639 22.2695C35.7208 19.6156 39.204 10.808 39.204 10.308C39.0126 9.57719 38.6681 9.23104 38.1322 9.23104C36.4863 9.2695 32.3907 14.0003 28.3334 22.8848C27.9506 23.8848 27.5679 24.8464 27.2999 25.6156C27.1851 25.6541 26.9937 25.6541 26.9172 25.6541C25.5392 25.6541 25.0416 25.1156 25.0416 24.231C25.0416 23.8079 25.1565 23.3848 25.3478 22.7695C26.7258 18.7695 29.6731 11.0387 29.941 9.88488C29.7114 9.57719 29.52 9.46181 29.1755 9.46181C28.5248 9.46181 27.6062 10.6926 26.8789 11.9233L26.0751 11.3849C27.4913 8.19258 28.9076 7.0772 30.3238 7.0772C31.4338 7.0772 32.3142 7.65412 33.118 9.15411L30.0941 16.6926L30.3621 16.8079C33.9983 10.0772 37.0987 6.80797 39.4336 6.80797C41.2326 6.80797 42.1513 8.19258 42.1513 9.38488C42.1513 10.0772 39.8929 15.3079 39.2805 16.6926L39.5485 16.8079C43.7206 9.07719 46.7444 6.80797 48.5817 6.80797C50.3042 6.80797 51.3759 8.07719 51.3759 9.46181C51.3759 10.7695 47.931 19.6156 46.9358 22.6925C46.9741 22.7695 47.0889 22.8464 47.2038 22.8464C47.8927 22.8464 49.8449 21.0002 51.3376 19.1925Z"/>
+      <path id="lgB" d="M27.7888 1.46153L26.3343 5.49998L20.8225 23.1922C21.2052 23.5768 21.4349 23.7307 22.277 23.9615L23.3487 24.2692L23.0042 25.3845H13.3585L13.703 24.2692L14.8131 23.9999C16.4207 23.6153 16.9565 23.3461 17.6455 21.1153L19.368 15.5384C17.7221 15.6538 15.8465 15.7307 14.392 15.7307C13.8179 15.7307 12.8227 15.7307 12.0571 15.6923C11.904 15.923 11.7509 16.1153 11.5978 16.3076C9.9902 18.3846 7.65533 21.6922 6.69842 23.4615C7.04291 23.7307 7.34912 23.8845 7.92327 23.9999L9.10984 24.2692L8.76535 25.3461L1.52588e-05 25.923L0.344504 24.8076C2.56455 23.9999 4.17216 22.6922 6.2391 20.2692C8.8419 17.1538 14.1241 10.5384 17.2628 6.96152C22.1239 1.42307 24.1908 0 25.3774 0C26.4874 0 27.2912 0.230767 27.7888 1.46153ZM19.8273 14.1923L23.4636 2.49999C21.1287 4.57691 17.4159 8.88459 13.1289 14.3846C14.8513 14.2692 16.9565 14.1923 19.8273 14.1923Z"/>
+    </symbol></svg>
+<header class="site-header" id="siteHeader">
+  <div class="left">
+    <button class="icon-btn" id="menuBtn" aria-label="Open menu">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none"><path d="M.75 8.3h24M.75 15.7h24" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+    </button>
+    <a class="logo" href="#top" id="logoLink" aria-label="AMA home"><svg viewBox="0 0 69 26" aria-hidden="true"><use href="#ama-logo"/></svg></a>
+  </div>
+  <button class="icon-btn" aria-label="Search">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM15 15l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+  </button>
+</header>
+<main><div class="col">
+  <h1>Card material</h1>
+  <p class="lead">A test of the new surface: textured matte, a raised chrome logo and embossed lettering. Tilt the phone, or drag the card.</p>
+  <div class="stage"><div class="lc no-amt" id="card" role="img" aria-label="AMA gift card">
+    <div class="lc-tilt">
+      <i class="lc-edge" style="transform:translateZ(-.45px)"></i><i class="lc-edge" style="transform:translateZ(-.9px)"></i><i class="lc-edge" style="transform:translateZ(-1.35px)"></i><i class="lc-edge" style="transform:translateZ(-1.8px)"></i><i class="lc-edge" style="transform:translateZ(-2.25px)"></i><i class="lc-edge" style="transform:translateZ(-2.7px)"></i><i class="lc-edge" style="transform:translateZ(-3.15px)"></i>
+      <div class="lc-face">
+        <img class="lc-art" id="art" alt="" draggable="false">
+        <img class="lc-orig" id="orig" alt="" draggable="false">
+        <div class="lc-relief hi"></div><div class="lc-relief lo"></div>
+        <div class="lc-band"></div><div class="lc-glare"></div>
+        <div class="lc-logo"><i class="shade"></i><i class="dark"></i><i class="lite"></i><i class="metal"></i></div>
+        <span class="lc-kind">Gift card</span><span class="lc-amt">£75</span>
+        <div class="lc-rim"></div>
+      </div>
+    </div>
+  </div></div>
+  <p class="note" id="note"></p>
+  <div class="sw" id="sw" role="radiogroup" aria-label="Design"></div>
+  <p class="swname" id="swname">Sand</p>
+  <div class="ctl">
+    <div class="row"><span>Logo and lettering</span><div class="seg" id="segMode"><button type="button" aria-pressed="true" data-v="live">Live</button><button type="button" aria-pressed="false" data-v="orig">Original render</button></div></div>
+    <div class="row"><span>Relief of the grain</span><input type="range" id="relief" min="0" max="2" step="0.1" value="1" aria-label="Relief strength"></div>
+    <div class="row"><span>Amount on the card</span><div class="seg" id="segAmt"><button type="button" aria-pressed="true" data-v="off">Off</button><button type="button" aria-pressed="false" data-v="on">£75</button></div></div>
+    <div class="row"><span>Background</span><div class="seg" id="segBg"><button type="button" aria-pressed="true" data-v="cream">Cream</button><button type="button" aria-pressed="false" data-v="dark">Dark</button></div></div>
+  </div>
+  <p class="fine">Live: the surface is the render with the print lifted off, the logo and the lettering are drawn on top and catch the light as the card turns. Original render: the picture as delivered, with the print baked in. The relief slider raises or flattens the grain.</p>
+</div></main>
+<script>
+(function(){
+'use strict';
+function $(s){return document.querySelector(s);}function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches;
+var LOGO_PATHS=['lgA','lgM','lgB'].map(function(id){return document.getElementById(id).getAttribute('d');});
+document.documentElement.style.setProperty('--logo-mask','url("data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 69 26">'+LOGO_PATHS.map(function(d){return '<path d="'+d+'"/>';}).join('')+'</svg>')+'")');
+var METAL='linear-gradient(105deg,#C6C2BD 0%,#FFFFFF 20%,#F6F3EE 30%,#DAD6D0 42%,#B8B4AE 50%,#DAD6D0 58%,#F6F3EE 70%,#FFFFFF 80%,#C6C2BD 100%)'; // warm white chrome, as in the render; no rainbow
+var DESIGNS=[
+  {id:'sand',name:'Sand',top:'#EEDDC8',mid:'#DAC5AC',bot:'#BEA68C'},
+  {id:'night',name:'Night',top:'#58514D',mid:'#423C39',bot:'#2F2A27'},
+  {id:'forest',name:'Forest',top:'#A1A584',mid:'#888C6B',bot:'#676C4D'},
+  {id:'bloom',name:'Bloom',top:'#F5CFC4',mid:'#E9BBAF',bot:'#D29F95'},
+  {id:'ember',name:'Ember',top:'#593F33',mid:'#3D251B',bot:'#29150D'},
+  {id:'sunrise',name:'Sunrise',top:'#F0AB7A',mid:'#D7824F',bot:'#B1531F'}
+];
+function mix(a,b,t){function h(c){return [parseInt(c.substr(1,2),16),parseInt(c.substr(3,2),16),parseInt(c.substr(5,2),16)];}var p=h(a),q=h(b);return 'rgb('+p.map(function(v,i){return Math.round(v+(q[i]-v)*t);}).join(',')+')';}
+var card=$('#card'), art=$('#art'), orig=$('#orig'), cur=null;
+var avifOK=null;(function(){var i=new Image();i.onload=function(){avifOK=i.width>0;};i.onerror=function(){avifOK=false;};i.src='data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADybWV0YQAAAAAAAAAoaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAGxpYmF2aWYAAAAADnBpdG0AAAAAAAEAAAAeaWxvYwAAAABEAAABAAEAAAABAAABGgAAAB0AAAAoaWluZgAAAAAAAQAAABppbmZlAgAAAAABAABhdjAxQ29sb3IAAAAAamlwcnAAAABLaXBjbwAAABRpc3BlAAAAAAAAAAIAAAACAAAAEHBpeGkAAAAAAwgICAAAAAxhdjFDgQ0MAAAAABNjb2xybmNseAACAAIAAYAAAAAXaXBtYQAAAAAAAAABAAEEAQKDBAAAACVtZGF0EgAKCBgANogQEAwgMg8f8D///8WfhwB8+ErK42A=';})();
+function paint(d){
+  cur=d;var s=card.style;
+  art.src='img/'+d.id+(avifOK===false?'.jpg':'.avif');art.onerror=function(){art.onerror=null;art.src='img/'+d.id+'.jpg';};
+  orig.src='img/'+d.id+'-orig.jpg';
+  var rel='img/'+d.id+'-relief';
+  s.setProperty('--relief-img',(window.CSS&&CSS.supports('background-image','image-set(url("a.avif") type("image/avif"))'))?'image-set(url("'+rel+'.avif") type("image/avif"),url("'+rel+'.jpg") type("image/jpeg"))':'url("'+rel+'.jpg")');
+  s.setProperty('--mid',d.mid);s.setProperty('--edge',mix(d.bot,'#000000',.35));s.setProperty('--metal',METAL);
+  s.setProperty('--kind-c',mix(d.mid,'#FFF3E4',.62)); // the lettering: a pale tint of the surface
+  card.setAttribute('aria-label',d.name+' AMA gift card');
+  $$('#sw button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.id===d.id);});
+  $('#swname').textContent=d.name;
+}
+var sw=$('#sw');DESIGNS.forEach(function(d){var b=document.createElement('button');b.type='button';b.setAttribute('role','radio');b.dataset.id=d.id;b.style.setProperty('--c',d.mid);b.setAttribute('aria-label',d.name);b.addEventListener('click',function(){paint(d);});sw.appendChild(b);});
+function seg(id,fn){$$('#'+id+' button').forEach(function(b){b.addEventListener('click',function(){$$('#'+id+' button').forEach(function(x){x.setAttribute('aria-pressed',x===b);});fn(b.dataset.v);});});}
+seg('segMode',function(v){card.classList.toggle('orig',v==='orig');});
+seg('segAmt',function(v){card.classList.toggle('no-amt',v==='off');});
+seg('segBg',function(v){document.documentElement.classList.toggle('dark',v==='dark');document.querySelector('meta[name=theme-color]').content=v==='dark'?'#2B2A28':'#F7EEE0';});
+$('#relief').addEventListener('input',function(e){card.style.setProperty('--relief',e.target.value);});
+
+/* ---------- tilt: the same spring as the prototype, one card ---------- */
+var MAXX=20,MAXY=24,K=reduce?220:110,DAMP=reduce?30:15;
+function soft(v,m){return m*Math.tanh(v/m);}function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+var c={rx:0,ry:0,vx:0,vy:0,tx:0,ty:0,lx:null,ly:null,drag:null,hover:false,idle:1,phase:Math.random()*6.28,amp:1};
+var gyro={on:false,got:false,b0:null,g0:null,x:0,y:0,rx:null,ry:null};
+card.addEventListener('pointerdown',function(e){c.drag={x0:e.clientX,y0:e.clientY,bx:c.rx,by:c.ry};try{card.setPointerCapture(e.pointerId);}catch(_){}});
+card.addEventListener('pointermove',function(e){
+  if(c.drag){var dx=e.clientX-c.drag.x0,dy=e.clientY-c.drag.y0;c.tx=soft(c.drag.bx-dy*0.16,MAXX);c.ty=soft(c.drag.by+dx*0.2,MAXY);}
+  else if(e.pointerType==='mouse'){var r=card.getBoundingClientRect();var px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;c.hover=true;c.tx=(0.5-py)*18;c.ty=(px-0.5)*22;}
+});
+function end(){if(!c.drag)return;c.drag=null;c.idle=0;}
+card.addEventListener('pointerup',end);card.addEventListener('pointercancel',end);card.addEventListener('pointerleave',function(){c.hover=false;c.idle=0;});
+var last=performance.now();
+function frame(now){
+  var dt=Math.min((now-last)/1000,1/30);last=now;var t=now/1000;
+  if(gyro.rx!=null){var lp=Math.min(1,dt*6.5);gyro.x+=(gyro.rx-gyro.x)*lp;gyro.y+=(gyro.ry-gyro.y)*lp;}
+  var tx,ty;
+  if(c.drag||c.hover){tx=c.tx;ty=c.ty;}
+  else{c.idle=Math.min(1,c.idle+dt*0.6);var sx=reduce?0:Math.sin(t*0.6+c.phase)*4*c.idle,sy=reduce?0:Math.sin(t*0.45+c.phase*1.3)*6*c.idle;
+    if(gyro.on&&gyro.got){tx=gyro.x+sx*0.3;ty=gyro.y+sy*0.3;}else{tx=sx;ty=sy;}}
+  var dmp=(!c.drag&&!c.hover&&gyro.on&&gyro.got)?2*Math.sqrt(K):DAMP;
+  var ax=K*(tx-c.rx)-dmp*c.vx,ay=K*(ty-c.ry)-dmp*c.vy;c.vx+=ax*dt;c.vy+=ay*dt;c.rx+=c.vx*dt;c.ry+=c.vy*dt;
+  var lg=(gyro.on&&gyro.got&&!c.drag&&!c.hover)?1.3:1;
+  c.ly=(c.ly==null?c.ry:c.ly)+(c.ry*lg-(c.ly==null?c.ry:c.ly))*Math.min(1,dt*8);
+  c.lx=(c.lx==null?c.rx:c.lx)+(c.rx*lg-(c.lx==null?c.rx:c.lx))*Math.min(1,dt*8);
+  var s=card.style;
+  s.setProperty('--rx',c.rx.toFixed(2)+'deg');s.setProperty('--ry',c.ry.toFixed(2)+'deg');
+  var gx=clamp(50+c.ly*2.4,-20,120),gy=clamp(40-c.lx*2.6,-20,120);
+  s.setProperty('--gx',gx.toFixed(1)+'%');s.setProperty('--gy',gy.toFixed(1)+'%');
+  s.setProperty('--bx',clamp(50+c.ly*2.4-c.lx*0.8,-10,110).toFixed(1)+'%');
+  s.setProperty('--mx',clamp(50+c.ly*4.2-c.lx*1.6,0,100).toFixed(1)+'%');
+  /* where the light comes from decides which way the relief and the bevels face: the lit edge turns towards it, the shade falls away from it */
+  var dx=gx-50-12,dy=gy-50-18,len=Math.max(1,Math.hypot(dx,dy));dx/=len;dy/=len;
+  s.setProperty('--ex',(dx*0.9).toFixed(2)+'px');s.setProperty('--ey',(dy*0.9).toFixed(2)+'px');
+  s.setProperty('--sx',(-dx*0.5).toFixed(2)+'px');s.setProperty('--sy',(-dy*0.6).toFixed(2)+'px');
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+/* gyroscope, as in the prototype: baseline is how the phone is held; iOS asks on the first tap */
+function screenAngle(){var a=(screen.orientation&&typeof screen.orientation.angle==='number')?screen.orientation.angle:(window.orientation||0);return ((a%360)+360)%360;}
+function onOrient(e){
+  if(e.beta==null||e.gamma==null)return;var b=e.beta,g=e.gamma,a=screenAngle(),fb=b,fg=g;
+  if(a===90){fb=-g;fg=b;}else if(a===270){fb=g;fg=-b;}else if(a===180){fb=-b;fg=-g;}
+  if(!gyro.got){gyro.got=true;gyro.b0=fb;gyro.g0=fg;hint();}
+  if(Math.abs(fb-gyro.b0)>60||Math.abs(fg-gyro.g0)>60){gyro.b0=fb;gyro.g0=fg;}
+  gyro.b0+=(fb-gyro.b0)*0.0016;gyro.g0+=(fg-gyro.g0)*0.0016;
+  gyro.rx=soft(-(fb-gyro.b0)*0.5,8);gyro.ry=soft((fg-gyro.g0)*0.5,10);
+}
+var needsPerm=typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function',permState='unknown';
+function startGyro(){if(gyro.on)return;gyro.on=true;gyro.got=false;window.addEventListener('deviceorientation',onOrient);}
+function askGyro(){if(!needsPerm||permState!=='unknown')return;try{DeviceOrientationEvent.requestPermission().then(function(r){permState=r==='granted'?'granted':'denied';if(r==='granted')startGyro();hint();}).catch(function(){hint();});}catch(_){}}
+if(needsPerm){document.addEventListener('touchend',askGyro,{passive:true});document.addEventListener('click',askGyro);}else if('DeviceOrientationEvent' in window){startGyro();}
+function hint(){var n=$('#note');if(gyro.on&&gyro.got){n.textContent='';return;}if(needsPerm&&permState==='unknown'){n.innerHTML='Drag the card or <button type="button">turn on tilt</button>';return;}n.textContent=finePointer?'Move the cursor over the card':'Drag the card';}
+hint();
+paint(DESIGNS[0]);
+})();
+</script>
+</body></html>
