@@ -915,19 +915,25 @@ var pressUp=null;
 document.addEventListener('pointerdown',function(e){var el=e.target.closest&&e.target.closest(PRESS);if(!el||el.disabled)return;el._pressed=true;pressAnim(el,true);
   function up(){if(!el._pressed)return;el._pressed=false;pressAnim(el,false);pressUp=null;document.removeEventListener('pointerup',up,true);document.removeEventListener('pointercancel',up,true);}
   pressUp=up;document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);},true);
-/* a finger that scrolls is not a tap: if it moved or the page scrolled while it was down, the press lets go
-   and the click that iOS still sends at the end (the haptic switches send one too) is dropped, so nothing gets chosen by accident */
+/* An option is chosen only by a real tap. iOS also sends a click when a finger lands while the page is still
+   gliding or springing back from the edge (the rubber band), and after a short drag. So a touch counts as a tap only if:
+   the page was at rest when it began (no scroll in the last 300 ms and not past an edge), the finger moved less than 8 px,
+   the page did not scroll while it was down, and it lasted under 700 ms. Any other click on an option is dropped. */
 (function(){
-  var sx=0,sy=0,sScroll=0,moved=false,down=false;
-  document.addEventListener('touchstart',function(e){var t=e.touches[0];sx=t.clientX;sy=t.clientY;sScroll=window.scrollY;moved=false;down=true;},{passive:true,capture:true});
-  document.addEventListener('touchmove',function(e){if(!down||moved)return;var t=e.touches[0];
-    if(Math.abs(t.clientX-sx)>8||Math.abs(t.clientY-sy)>8){moved=true;if(pressUp)pressUp();}},{passive:true,capture:true});
-  window.addEventListener('scroll',function(){if(down&&Math.abs(window.scrollY-sScroll)>4){moved=true;if(pressUp)pressUp();}},{passive:true});
-  document.addEventListener('touchend',function(){down=false;if(Math.abs(window.scrollY-sScroll)>4)moved=true;},{passive:true,capture:true});
+  var OPT='.radio,.chip,.seg button,.phrase,.tile,.thumb,.sum-row button,[data-when],[data-pay],[data-mode]';
+  var sx=0,sy=0,s0=0,t0=0,maxd=0,lastScroll=-1e9,tapOK=true,lastEnd=-1e9,down=false;
+  function maxY(){return document.documentElement.scrollHeight-window.innerHeight;}
+  window.addEventListener('scroll',function(){lastScroll=performance.now();if(down&&Math.abs(window.scrollY-s0)>3&&pressUp)pressUp();},{passive:true});
+  document.addEventListener('touchstart',function(e){var t=e.touches[0],y=window.scrollY;sx=t.clientX;sy=t.clientY;s0=y;t0=performance.now();maxd=0;down=true;
+    tapOK=(t0-lastScroll>300)&&y>=0&&y<=maxY()+1;},{passive:true,capture:true});
+  document.addEventListener('touchmove',function(e){if(!down)return;var t=e.touches[0];maxd=Math.max(maxd,Math.abs(t.clientX-sx),Math.abs(t.clientY-sy));
+    if(maxd>8){tapOK=false;if(pressUp)pressUp();}},{passive:true,capture:true});
+  document.addEventListener('touchend',function(){down=false;lastEnd=performance.now();
+    if(Math.abs(window.scrollY-s0)>3||lastEnd-t0>700||lastScroll>t0)tapOK=false;},{passive:true,capture:true});
+  document.addEventListener('touchcancel',function(){down=false;tapOK=false;lastEnd=performance.now();},{passive:true,capture:true});
   document.addEventListener('click',function(e){
-    if(!moved)return;var t=e.target;
-    if(t.closest&&t.closest('.hx,.radio,.chip,.seg button,.phrase,.tile,.thumb')){e.preventDefault();e.stopImmediatePropagation();if(t.classList&&t.classList.contains('hx'))t.checked=!t.checked;}
-    moved=false;
+    var fromTouch=performance.now()-lastEnd<1000;if(!fromTouch||tapOK)return;
+    var t=e.target;if(t.closest&&t.closest(OPT)){e.preventDefault();e.stopImmediatePropagation();}
   },true);
 })();
 document.addEventListener('touchstart',function(){},{passive:true}); // lets :active work on iOS
