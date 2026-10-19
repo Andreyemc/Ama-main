@@ -149,7 +149,7 @@ a.btn{text-decoration:none}
 .landing .col{display:flex;flex-direction:column}
 .bleed{margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
 /* hero */
-.hero{display:flex;flex-direction:column;padding-top:20px;min-height:calc(100svh - var(--hdr) - 84px)} /* the photo of the next section peeks at the bottom */
+.hero{display:flex;flex-direction:column;padding-top:20px;padding-bottom:20px;min-height:calc(100svh - var(--hdr) - 84px)} /* the photo of the next section peeks at the bottom */
 .hero h1{font-size:clamp(48px,14.6vw,68px);line-height:.96;letter-spacing:-.03em}
 .hero-card{perspective:1100px;padding:20px 0 32px;display:flex;justify-content:center}
 .hero-card .tilted{width:100%} /* the card is as wide as the button; straight, present from the first frame */
@@ -393,8 +393,9 @@ select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
 .done.arrive .gc.enter{animation:doneTurn 1.15s cubic-bezier(.45,0,.2,1) .2s both} /* T5–T7: upright and large in the middle of the screen, then a quarter turn into its place; no opacity on a 3D card (Safari flicker) */
 @keyframes doneTurn{0%,26%{transform:translateY(var(--dy,0px)) rotate(90deg) scale(1.22)}100%{transform:none}}
 .done.arrive .col>:not(.gc){animation:doneUp .5s cubic-bezier(.2,.8,.2,1) both}
-.done.arrive .col>:nth-child(2){animation-delay:.78s}.done.arrive .col>:nth-child(3){animation-delay:.86s}.done.arrive .col>:nth-child(4){animation-delay:.94s}
-.done.arrive .col>:nth-child(5),.done.arrive .col>:nth-child(6),.done.arrive .col>:nth-child(7){animation-delay:1.02s}
+.done.arrive .col>:nth-child(2){animation-delay:1.2s}.done.arrive .col>:nth-child(3){animation-delay:1.28s}.done.arrive .col>:nth-child(4){animation-delay:1.36s}
+.done.arrive .col>:nth-child(5),.done.arrive .col>:nth-child(6),.done.arrive .col>:nth-child(7){animation-delay:1.44s} /* the text waits until the card has landed */
+.done .gc{position:relative;z-index:2} /* and the card always passes over it, never under */
 @keyframes doneUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .done .btn.again{max-width:none;margin-top:26px} /* P6: Buy another gift card is an outlined button under the links */
 .done h1{font-size:30px;line-height:1.15}
@@ -1591,7 +1592,7 @@ function pay(){
         vd.classList.add('arrive');haptic('success');
         requestAnimationFrame(function(){w.className='wave out';});
         setTimeout(function(){w.className='wave';},460);
-        setTimeout(function(){vd.classList.remove('arrive');},1900);
+        setTimeout(function(){vd.classList.remove('arrive');},2300);
       },300);
     },1000);
   },1500);
