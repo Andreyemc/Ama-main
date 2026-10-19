@@ -417,7 +417,10 @@ html.no-tr *,html.no-tr *::before,html.no-tr *::after{transition:none!important}
 .sheet-bar .col{height:48px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .sheet-bar .icon-btn{margin:0 -8px 0 0}
 .sheet-body{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.sheet-body .col{padding-block:48px 140px;display:flex;flex-direction:column;gap:24px}
+.sheet-body .col{padding-block:48px 140px;display:flex;flex-direction:column;gap:24px;text-align:center} /* what the recipient sees: centred, on the colour of the card */
+.sheet{color:var(--ink);transition:background-color .3s}
+.sheet .hint{color:var(--mute)}
+.sheet-bar{--ink:#1E1C1A;--light:#FFF3E4}
 .sheet-body h2{font-size:30px;line-height:1.15}
 .quote{font-size:19px;font-weight:300;line-height:1.45}
 .sheet .dock{z-index:71}
@@ -1568,6 +1571,10 @@ function openPreview(){
   var exp=new Date();exp.setMonth(exp.getMonth()+24);
   $('#pvMeta').textContent=money(S.amount)+' to spend on any session at AMA. Valid until '+exp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'.';
   paintCard(C.preview,design(),S.amount);
+  /* the page takes the colour of the card, as in Six moods: background, text, secondary text and the button */
+  var m=MOOD[design().id],pv=$('#preview').style,tx=lab2rgb(lab(m.text));
+  pv.setProperty('--sand',m.bg);pv.setProperty('--ink',m.text);pv.setProperty('--body',m.mute);pv.setProperty('--mute',m.mute);
+  pv.setProperty('--line','rgba('+tx.join(',')+',.2)');pv.setProperty('--rust',m.btn);pv.setProperty('--rust-press',m.btn);pv.setProperty('--light',m.btnText);
   $('#preview').hidden=false;document.body.style.overflow='hidden';$('#pvClose').focus();
 }
 function closePreview(){if($('#preview').hidden)return;$('#preview').hidden=true;document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
