@@ -1,0 +1,1389 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AMA Gift Card</title>
+<meta name="theme-color" content="#F7EEE0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300;400;500&display=swap">
+<style>
+/* Version B: one long landing in blocks that alternate light and brown, and one buy page with every choice on it.
+   Shared with version A: header, 3D card and tilt, haptics, messenger, wallet, success transition and Done. */
+:root{
+  --cream:#F7EEE0; --paper:#FFFAF3; --sand:#EFE3D1; --sand-2:#E5D5BF;
+  --ink:#1E1C1A; --body:#4F473F; --mute:#6E6358; --line:rgba(30,28,26,.14);
+  --rust:#B04F13; --rust-press:#A2460D; --light:#FFF3E4; --brown:#461A0F; --brown-2:#783206; --err:#B3261E;
+  --sans:"Google Sans Flex","Google Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --hdr:58px; --chat-bg:#ECE4D7; --bubble-in:#FFFFFF; --bubble-out:#DDEFCF; --stepbar:56px; --dock:94px;
+  --col:520px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0}
+[hidden]{display:none!important}
+html{background:var(--cream);-webkit-text-size-adjust:100%;overscroll-behavior-y:none} /* no rubber-band or pull-to-refresh: the fixed header and button never move with a swipe */
+body{overscroll-behavior-y:none;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--cream)}
+/* purchase steps sit on white with the same forms; the done screens sit on dark grey */
+html.t-flow{--cream:#FFFFFF;--paper:#F4F4F4;--sand:#F4F4F4;--sand-2:#E4E4E4;--mute:#686868;--line:rgba(0,0,0,.12)}
+html.t-done{--cream:#2B2A28;--paper:#3A3836;--sand:#3A3836;--ink:#FFFFFF;--body:#D9D3CC;--mute:#B5AEA6;--line:rgba(255,255,255,.2)}
+html.t-done .btn.ghost:hover{background:rgba(255,255,255,.08)}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--rust);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-weight:400;margin:0;text-wrap:balance}
+p{margin:0}
+.small{font-size:13px;letter-spacing:0}
+.rule{height:1px;background:var(--line);border:0;margin:0}
+html.t-buy{--cream:#FFFAF3}
+html.t-done{--cream:#461A0F;--paper:#5A2614;--sand:#5A2614;--ink:#FFF3E4;--body:#EBD9C6;--mute:#D9C3AB;--line:rgba(255,243,228,.2)}
+html.t-done .btn.ghost:hover{background:rgba(255,243,228,.08)}
+/* ---------- site header (shared with amaforyou.com) ---------- */
+.site-header{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:50;height:var(--hdr);background:var(--cream);
+  display:flex;align-items:center;justify-content:space-between;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.site-header{color:var(--ink)}
+.site-header .left{display:flex;align-items:center;gap:14px}
+.icon-btn{width:40px;height:40px;display:grid;place-items:center;margin:-8px;border-radius:20px}
+.icon-btn svg{display:block}
+.logo{display:block;width:69px;height:26px}
+.logo svg{display:block;width:100%;height:100%}
+/* ---------- views ---------- */
+main{padding-top:var(--hdr)}
+.view{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.col{max-width:var(--col);margin:0 auto}
+.view[hidden]{display:none!important}
+/* ---------- buttons ---------- */
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:46px;border-radius:30px;padding:0 24px;
+  font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;background:var(--rust);color:var(--light);transition:background .2s,transform .15s,opacity .2s}
+a.btn{text-decoration:none}
+.cta-l{display:inline-block} /* label slides on change */
+/* text that changes in place: fade with a light blur */
+.tx{transition:opacity .17s ease,filter .17s ease,transform .17s cubic-bezier(.2,.8,.2,1)}
+.tx.tx-out{opacity:0;filter:blur(4px);transform:translateY(-3px);transition-duration:.1s}
+.btn.static{pointer-events:none}
+.btn:hover{background:var(--rust-press)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.btn.ghost:hover{background:rgba(30,28,26,.05)}
+.btn.dark{background:var(--ink);color:var(--light)}
+.btn[aria-busy="true"]{pointer-events:none;opacity:.85}
+.spin{width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.link{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;font-size:15px}
+/* B: buttons keep the AMA shape and colour, the label is set in the main typeface */
+.btn{font-family:var(--sans);font-size:16px;letter-spacing:0;text-transform:none}
+.btn.on-dark{background:transparent;color:var(--light);box-shadow:inset 0 0 0 1px var(--light)}
+.btn.on-dark:hover{background:rgba(255,243,228,.08)}
+/* ---------- dock (fixed bottom CTA) ---------- */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:48;pointer-events:none;
+  padding-bottom:calc(22px + env(safe-area-inset-bottom,0px));padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px));
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s}
+/* the button floats on a liquid-glass capsule: clear, lightly frosted, bright upper rim, soft shadow; content stays visible underneath */
+.dock .col{pointer-events:auto;display:flex;flex-direction:column;gap:8px;max-width:calc(var(--col) + 16px);padding:8px;border-radius:31px;
+  background:linear-gradient(to bottom,rgba(255,255,255,.5),rgba(255,255,255,.22));
+  -webkit-backdrop-filter:blur(14px) saturate(1.8);backdrop-filter:blur(14px) saturate(1.8);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),inset 0 0 0 1px rgba(255,255,255,.38),inset 0 -2px 6px rgba(0,0,0,.06),0 10px 26px -6px rgba(0,0,0,.16)}
+.dock .dock-note{padding-bottom:2px}
+.dock.off{transform:translateY(110%);opacity:0;pointer-events:none}
+.dock-note{font-size:12px;color:var(--mute);text-align:center}
+.dock-note:empty{display:none}
+.gc{--r:3.8cqw}
+/* ---------- 3D gift card ---------- */
+.gc{--rx:0deg;--ry:0deg;--gx:30%;--gy:20%;--bx:50%;--fx:50%;--fy:50%;position:relative;width:100%;aspect-ratio:85.6/53.98;max-width:100%;container-type:inline-size;perspective:1100px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.gc.nodrag{touch-action:auto}
+.gc-tilt{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(var(--rx)) rotateY(var(--ry));will-change:transform}
+.gc-edge{position:absolute;inset:-2px;border:2px solid transparent;background-clip:padding-box;border-radius:calc(var(--r) + 2px);background-color:var(--edge,#8E3F10)}
+/* a 2px transparent border keeps the visible edge inside each 3D layer, so the GPU smooths it instead of drawing a stair-stepped outline when the card turns */
+.gc-face{position:absolute;inset:-2px;border:2px solid transparent;background-clip:padding-box;border-radius:calc(var(--r) + 2px);overflow:hidden;transform:translateZ(.5px);background-color:var(--c2);isolation:isolate}
+.gc-art{position:absolute;inset:0;background:var(--art);background-size:cover;background-position:center}
+.gc-art::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 22% 18%,rgba(255,255,255,.30),rgba(255,255,255,0) 55%)}
+.gc-foil{position:absolute;inset:-2px;mix-blend-mode:soft-light;opacity:.55;pointer-events:none;
+  background:
+    repeating-linear-gradient(118deg,rgba(255,255,255,0) 0 6px,rgba(255,255,255,.07) 6px 7px),
+    linear-gradient(115deg,transparent 22%,rgba(255,214,180,.9) 36%,rgba(214,246,226,.9) 46%,rgba(206,216,255,.9) 56%,rgba(250,214,255,.9) 66%,transparent 80%);
+  background-size:100% 100%,300% 300%;background-position:0 0,var(--fx) var(--fy)}
+.gc-band{position:absolute;inset:-30%;pointer-events:none;mix-blend-mode:soft-light;opacity:.75;
+  background:radial-gradient(ellipse 42% 52% at var(--bx) 42%,rgba(255,255,255,.95),rgba(255,255,255,.35) 40%,rgba(255,255,255,0) 72%)} /* wide, soft, blurred light that follows the tilt */
+.gc-tex{position:absolute;inset:0;pointer-events:none;opacity:.2;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")} /* matte grain */
+.gc-glare{position:absolute;inset:0;mix-blend-mode:soft-light;pointer-events:none;background:radial-gradient(ellipse 70% 85% at var(--gx) var(--gy),rgba(255,255,255,.3),rgba(255,255,255,0) 70%)}
+.gc-foil{display:none} /* no sharp rainbow streak: the shimmer lives in the metal print */
+.gc-rim{position:absolute;inset:0;border-radius:var(--r);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),inset 0 1px 0 rgba(255,255,255,.35);pointer-events:none}
+.gc-logo{position:absolute;left:5.6cqw;top:5.4cqw;width:18cqw;height:6.8cqw;color:var(--ink-c)}
+.gc-logo svg{width:100%;height:100%;display:block;fill:currentColor;visibility:hidden}
+/* metal silk-screen: logo, kind and amount are printed in metal; the bright band runs through them with the light */
+.gc{--metal:linear-gradient(var(--ink-c),var(--ink-c))}
+.gc-logo,.gc-kind,.gc-amt{background-image:var(--metal);background-size:320% 100%;background-position:var(--mx,50%) 50%;filter:drop-shadow(0 .5px 0 rgba(0,0,0,.22))}
+.gc-logo{-webkit-mask:var(--logo-mask) left center/contain no-repeat;mask:var(--logo-mask) left center/contain no-repeat}
+.gc-kind,.gc-amt{color:transparent!important;-webkit-background-clip:text;background-clip:text}
+.logo svg{fill:var(--ink)}
+.gc-kind{position:absolute;right:5.6cqw;top:6.4cqw;font-size:3.1cqw;color:var(--ink-c);opacity:.86}
+.gc-amt{position:absolute;left:5.4cqw;bottom:4.6cqw;font-size:10cqw;line-height:1;letter-spacing:-.01em;color:var(--ink-c);font-variant-numeric:tabular-nums}
+.gc.no-amt .gc-amt{visibility:hidden}
+.gc.swap .gc-tilt{animation:swap .42s cubic-bezier(.2,.8,.2,1)}
+@keyframes swap{0%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(.97)}100%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(1)}} /* no opacity: fading a 3D card makes Safari flatten and redraw it, which flickers */
+.gc.glint .gc-face::after{content:"";position:absolute;inset:-20%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-80%);animation:glint 1.3s .55s ease-out forwards;mix-blend-mode:soft-light}
+@keyframes glint{to{transform:translateX(80%)}}
+/* portrait card: logo upright at the top, kind at the bottom, the amount above it once it has been chosen */
+.gc.v{aspect-ratio:53.98/85.6;--r:5.9cqw}
+.gc.v .gc-logo{left:8cqw;top:8.5cqw;width:30cqw;height:11.3cqw}
+.gc.v .gc-kind{left:8cqw;right:auto;top:auto;bottom:8cqw;font-size:5.2cqw}
+.gc.v .gc-amt{left:7.6cqw;bottom:15.5cqw;font-size:17cqw}
+
+/* ---------- landing ---------- */
+main{padding-top:var(--hdr)}
+.sec{padding:72px max(16px,env(safe-area-inset-left,0px)) 80px}
+.sec.cream{background:#F7EEE0}.sec.paper{background:#FFFAF3}
+.sec.brown{background:var(--brown);color:var(--light)}
+.sec .col{display:flex;flex-direction:column}
+.h2{font-size:clamp(40px,11.2vw,48px);line-height:1;letter-spacing:-.025em}
+.sec .lead{margin-top:16px;font-size:16px;line-height:1.4;color:var(--body);max-width:36ch}
+.sec.brown .lead{color:#E9D6C0}
+/* hero: the card turns in from edge-on while a soft light breathes in behind it */
+.bhero{background:var(--brown);color:var(--light);padding:32px max(16px,env(safe-area-inset-left,0px)) 36px;overflow:hidden}
+.bhero h1{font-size:clamp(44px,12.4vw,54px);line-height:.98;letter-spacing:-.03em}
+.bhero .lead{margin-top:14px;font-size:16px;line-height:1.4;color:#E9D6C0;max-width:34ch}
+.stage{position:relative;height:clamp(360px,56svh,470px);display:grid;place-items:center;perspective:900px;margin:8px 0 12px}
+.glow{position:absolute;left:50%;top:50%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%) scale(.35);opacity:0;pointer-events:none;will-change:transform,opacity}
+.glow i{position:absolute;left:50%;top:50%;border-radius:50%;transform:translate(-50%,-50%)}
+.glow .g1{width:72%;height:66%;background:radial-gradient(closest-side,rgba(176,79,19,.95),rgba(176,79,19,.5) 55%,rgba(176,79,19,0));filter:blur(28px)}
+.glow .g2{width:50%;height:58%;background:radial-gradient(closest-side,rgba(224,120,44,.85),rgba(224,120,44,.35) 60%,rgba(224,120,44,0));filter:blur(22px)}
+.glow .g3{width:26%;height:34%;background:radial-gradient(closest-side,rgba(244,181,122,.7),rgba(244,181,122,0));filter:blur(18px)}
+/* fine monotone grain on the light, so the gradient never shows bands; it fades out with the light itself */
+.glow .gn{inset:0;left:0;top:0;transform:none;border-radius:0;opacity:.22;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 .95 0 0 0 0 .88 0 0 0 .7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  -webkit-mask:radial-gradient(closest-side,#000 30%,transparent 72%);mask:radial-gradient(closest-side,#000 30%,transparent 72%)}
+.turn{position:relative;width:min(56vw,230px);transform:rotateY(88deg);will-change:transform}
+.strip{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;border-radius:1px;background:#FFE7CC;box-shadow:0 0 12px 3px rgba(255,214,170,.75);opacity:0;pointer-events:none}
+.bhero.go .turn{animation:turnIn 1.1s cubic-bezier(.5,0,.15,1) forwards}
+.bhero.go .strip{animation:stripOut .6s ease-in forwards}
+.bhero.go .glow{animation:glowIn 1.2s .15s cubic-bezier(.3,.6,.3,1) forwards}
+.bhero.rest .turn{animation:none;transform:none}.bhero.rest .glow{animation:none;opacity:1;transform:translate(-50%,-50%)}.bhero.rest .strip{display:none}
+@keyframes turnIn{0%{transform:rotateY(88deg)}80%{transform:rotateY(-1.5deg)}100%{transform:rotateY(0)}}
+@keyframes stripOut{0%{opacity:1}60%{opacity:.8}100%{opacity:0}}
+@keyframes glowIn{to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.bhero .btn{margin-top:4px}
+.info-btn{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:14px;color:var(--mute);align-self:flex-start;padding:4px 0}
+.info-btn svg{width:16px;height:16px;flex:none}
+.bhero .info-btn{color:#E9D6C0}
+/* gallery */
+.gal{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;margin:28px calc(-1 * max(16px,env(safe-area-inset-left,0px))) 0;padding:0 max(16px,env(safe-area-inset-left,0px));scroll-padding-left:max(16px,env(safe-area-inset-left,0px))}
+.gal::-webkit-scrollbar{display:none}
+.gal::after{content:"";flex:0 0 6px}
+.gtile{position:relative;flex:0 0 min(calc(100% - 40px),440px);aspect-ratio:4/5;border-radius:16px;overflow:hidden;scroll-snap-align:start;background:var(--sand);margin:0}
+.gtile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.gtile::before{content:"";position:absolute;inset:0 0 45%;background:linear-gradient(to bottom,rgba(30,28,26,.55),rgba(30,28,26,0));z-index:1}
+.gtile figcaption{position:absolute;left:20px;right:20px;top:20px;z-index:2;color:#FFF3E4;font-size:20px;line-height:1.25}
+.gtile figcaption span{opacity:.82}
+.dots{display:flex;gap:8px;justify-content:center;margin-top:18px}
+.dots i{width:8px;height:8px;border-radius:50%;background:#D8C9B6;transition:background .2s,width .25s}
+.dots i.on{background:var(--ink)}
+/* moods */
+.viewer{margin-top:28px;background:#F7EEE0;border-radius:16px;padding:44px 28px;display:flex;justify-content:center}
+.viewer .gc{max-width:300px}
+.swatches{display:flex;gap:14px;margin-top:22px;flex-wrap:wrap}
+.sw{position:relative;width:32px;height:32px;border-radius:50%;background:var(--sw);box-shadow:inset 0 0 0 1px rgba(30,28,26,.12);flex:none}
+.sw::after{content:"";position:absolute;inset:-5px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--ink);opacity:0;transform:scale(.85);transition:opacity .2s,transform .25s cubic-bezier(.2,.8,.2,1)}
+.sw[aria-pressed="true"]::after{opacity:1;transform:none}
+.sw-name{margin-top:14px;font-size:16px}
+/* what each amount buys */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px}
+.stat{background:#5A2614;border-radius:16px;padding:20px 16px 18px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between}
+.stat b{font-weight:400;font-size:40px;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{font-size:15px;line-height:1.3;color:#E9D6C0}
+.sec.brown .btn.on-dark{margin-top:24px}
+/* message */
+.chat-section .phone{margin-top:32px}
+.sec .chat-foot{margin-top:24px}
+/* why */
+.why{display:flex;flex-direction:column;gap:10px;margin-top:28px}
+.why div{background:#F7EEE0;border-radius:16px;padding:20px 18px}
+.why b{display:block;font-weight:400;font-size:20px}
+.why span{display:block;font-size:15px;color:var(--mute);margin-top:4px}
+.closing .btn{margin-top:28px}
+.closing .note{margin-top:14px;font-size:14px;color:#D9C3AB}
+@media (min-width:760px){.stats{grid-template-columns:repeat(4,1fr)}}
+
+/* ---------- buy page ---------- */
+.buy{padding-bottom:0}
+.buy .col{display:flex;flex-direction:column}
+.bhead{padding:24px 0 20px}
+.bhead h1{font-size:36px;line-height:1.05;letter-spacing:-.02em}
+.bhead p{margin-top:8px;color:var(--mute)}
+.bgal{background:#F7EEE0;border-radius:16px;aspect-ratio:1/1;display:grid;place-items:center;perspective:1100px}
+.bgal .gc{width:min(48vw,214px)}
+.bsec{padding:40px 0 4px;display:flex;flex-direction:column;gap:14px}
+.bsec h2{font-size:28px;line-height:1.1;letter-spacing:-.02em}
+.help-link{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font-size:14px;color:var(--mute);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;padding:2px 0}
+.help-link svg{width:16px;height:16px;flex:none}
+.tiles{display:flex;flex-direction:column;gap:10px}
+.tile{position:relative;display:block;width:100%;text-align:left;border-radius:14px;padding:15px 16px;background:#FFFAF3;box-shadow:inset 0 0 0 1px #D8C9B6;transition:box-shadow .18s}
+.tile b{display:block;font-weight:400;font-size:18px;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;color:var(--mute);margin-top:2px}
+.tile[aria-checked="true"]{box-shadow:inset 0 0 0 1.5px var(--rust)}
+.input{background:#FFFAF3;box-shadow:inset 0 0 0 1px #D8C9B6}
+.label{font-size:14px}
+.band{margin:44px calc(-1 * max(16px,env(safe-area-inset-left,0px))) 0;padding:36px max(16px,env(safe-area-inset-left,0px)) calc(48px + env(safe-area-inset-bottom,0px));background:#F7EEE0}
+.band .col{gap:16px}
+.band h2{font-size:28px;line-height:1.1;letter-spacing:-.02em}
+.gift-row{display:flex;gap:14px;align-items:center}
+.mini{position:relative;flex:none;width:48px;aspect-ratio:53.98/85.6;border-radius:4px;background:var(--art);overflow:hidden;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.3)}
+.mini::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 22% 18%,rgba(255,255,255,.3),rgba(255,255,255,0) 55%)}
+.mini svg{position:absolute;left:5px;top:6px;width:16px;height:6px;fill:var(--ink-c)}
+.gift-row b{display:block;font-weight:400;font-size:18px}
+.gift-row span{display:block;font-size:14px;color:var(--mute);margin-top:2px}
+.pay-btns{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.proto{font-size:12px;color:var(--mute);text-align:center}
+.info-rows{margin-top:6px}
+.info-rows div{padding:14px 0;border-top:1px solid #E5D5BF}
+.info-rows div:first-child{border-top:0}
+.info-rows b{display:block;font-weight:400;font-size:15px}
+.info-rows span{display:block;font-size:13px;color:var(--mute);margin-top:2px;line-height:1.4}
+/* sticky bar: total on the left, Continue on the right; it steps aside once the summary is on screen */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:48;background:rgba(255,250,243,.9);-webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6);
+  box-shadow:inset 0 1px 0 #E5D5BF;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.bar .col{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bar b{display:block;font-weight:400;font-size:18px;font-variant-numeric:tabular-nums}
+.bar span{display:block;font-size:12px;color:var(--mute)}
+.bar .btn{width:auto;padding:0 26px}
+.bar.off{transform:translateY(110%);visibility:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),visibility 0s .35s}
+/* messenger: the real WhatsApp screen inside a photo of an iPhone (frame 528x1074, screen hole 466x1014 at 30,30). Screen drawn in a 393pt grid: 1u = 1pt */
+.chat-section{padding-top:96px;display:flex;flex-direction:column;gap:28px}
+.phone{position:relative;width:min(100%,326px);margin:0 auto;aspect-ratio:528/1074;container-type:inline-size}
+.ph-frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.ph-screen{position:absolute;left:5.682%;top:2.793%;width:88.258%;height:94.413%;border-radius:11.74cqw;overflow:hidden;background:#EFEAE2}
+.wa{--u:calc(88.258cqw / 393);position:absolute;inset:0;display:flex;flex-direction:column;font-family:-apple-system,"SF Pro Text",system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;color:#111B21;font-size:calc(16*var(--u));line-height:1.3;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+.wa svg{display:block;flex:none}
+.wa-status{position:relative;height:calc(54*var(--u));background:#F7F7F7;flex:none}
+.wa-status svg{position:absolute;left:0;top:0;width:100%;height:auto}
+.wa-nav{display:flex;align-items:center;height:calc(52*var(--u));padding:0 calc(19*var(--u)) 0 calc(10*var(--u));background:rgba(247,247,247,.96);box-shadow:inset 0 calc(-.5*var(--u)) 0 #C6C6C8;flex:none}
+.wa-nav .back{width:calc(12*var(--u));height:calc(20*var(--u))}
+.wa-badge{margin-left:calc(5*var(--u));min-width:calc(26*var(--u));height:calc(20*var(--u));border-radius:calc(10*var(--u));background:#1DAA61;color:#fff;font-size:calc(13*var(--u));font-weight:600;display:grid;place-items:center;padding:0 calc(6*var(--u))}
+.wa-av{width:calc(36*var(--u));height:calc(36*var(--u));border-radius:50%;margin-left:calc(9*var(--u));object-fit:cover;background:#ddd}
+.wa-who{margin-left:calc(8*var(--u));flex:1;min-width:0;line-height:1.2}
+.wa-who b{display:block;font-weight:600;font-size:calc(16.5*var(--u))}
+.wa-who span{display:block;font-size:calc(12*var(--u));color:#8A8A8E;transition:opacity .2s}
+.wa-nav .video{width:calc(26*var(--u));height:calc(18*var(--u))}
+.wa-nav .call{width:calc(20*var(--u));height:calc(20*var(--u));margin-left:calc(19*var(--u))}
+.wa-body{flex:1;min-height:0;display:flex;flex-direction:column;align-items:flex-start;padding:calc(20*var(--u)) calc(8*var(--u)) 0 calc(11*var(--u));gap:calc(10*var(--u))}
+.wa-date{align-self:center;background:#fff;border-radius:calc(8*var(--u));padding:calc(4*var(--u)) calc(10*var(--u));font-size:calc(12*var(--u));font-weight:500;color:#54656F;box-shadow:0 calc(.5*var(--u)) calc(1*var(--u)) rgba(11,20,26,.13);margin-bottom:calc(5*var(--u))}
+.wa-b{position:relative;max-width:calc(300*var(--u));background:#fff;border-radius:calc(16*var(--u));padding:calc(10*var(--u)) calc(12*var(--u)) calc(8*var(--u)) calc(15*var(--u));box-shadow:0 calc(.5*var(--u)) calc(1*var(--u)) rgba(11,20,26,.13);display:flex;align-items:flex-end;gap:calc(10*var(--u))}
+.wa-b time{font-size:calc(11*var(--u));color:#667781;white-space:nowrap;display:flex;align-items:center;gap:calc(4*var(--u));line-height:1;padding-bottom:calc(1*var(--u))}
+.wa-b.out{align-self:flex-end;background:#D9FDD3;width:calc(300*var(--u));padding:calc(4*var(--u)) calc(4*var(--u)) calc(7*var(--u));flex-direction:column;align-items:stretch;gap:0}
+.wa-lp{background:#CFEFC6;border-radius:calc(12*var(--u));overflow:hidden}
+.wa-lp img{display:block;width:100%;aspect-ratio:292/153;object-fit:cover;background:#F7EEE0}
+.wa-lp div{padding:calc(8*var(--u)) calc(10*var(--u)) calc(9*var(--u))}
+.wa-lp b{display:block;font-weight:600;font-size:calc(14*var(--u))}
+.wa-lp p{font-size:calc(13*var(--u));color:#5E6C74;margin-top:calc(3*var(--u));line-height:1.3}
+.wa-lp small{display:block;font-size:calc(12*var(--u));color:#8696A0;margin-top:calc(3*var(--u))}
+.wa-txt{padding:calc(8*var(--u)) calc(11*var(--u)) 0}
+.wa-txt a{color:#027EB5;text-decoration:none}
+.wa-b.out time{align-self:flex-end;padding:calc(3*var(--u)) calc(6*var(--u)) 0 0}
+.wa-ticks{width:calc(16*var(--u));height:calc(11*var(--u))}
+.wa-react{position:absolute;left:calc(16*var(--u));bottom:calc(-17*var(--u));width:calc(30*var(--u));height:calc(24*var(--u));border-radius:calc(12*var(--u));background:#fff;display:grid;place-items:center;box-shadow:0 0 0 calc(2*var(--u)) #EFEAE2,0 calc(1*var(--u)) calc(2*var(--u)) rgba(11,20,26,.15);transform:scale(0);transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.wa-react svg{width:calc(14*var(--u));height:calc(13*var(--u))}
+.wa-react.on{transform:none}
+.wa-input{flex:none;height:calc(90*var(--u));background:#F7F7F7;box-shadow:inset 0 calc(.5*var(--u)) 0 #C6C6C8;position:relative}
+.wa-input .plus{position:absolute;left:calc(12*var(--u));top:calc(13*var(--u));width:calc(22*var(--u));height:calc(22*var(--u))}
+.wa-field{position:absolute;left:calc(44*var(--u));top:calc(7*var(--u));width:calc(244*var(--u));height:calc(34*var(--u));border-radius:calc(17*var(--u));background:#fff;box-shadow:inset 0 0 0 calc(.5*var(--u)) #D1D1D6}
+.wa-field svg{position:absolute;right:calc(8*var(--u));top:calc(7*var(--u));width:calc(20*var(--u));height:calc(20*var(--u))}
+.wa-input .cam{position:absolute;left:calc(300*var(--u));top:calc(14*var(--u));width:calc(24*var(--u));height:calc(20*var(--u))}
+.wa-input .mic{position:absolute;left:calc(354*var(--u));top:calc(12*var(--u));width:calc(16*var(--u));height:calc(24*var(--u))}
+.wa-home{position:absolute;left:50%;bottom:calc(8*var(--u));width:calc(134*var(--u));height:calc(5*var(--u));margin-left:calc(-67*var(--u));border-radius:calc(3*var(--u));background:#000}
+.phone .wa-b{opacity:0;transform:translateY(calc(12*var(--u))) scale(.98);transform-origin:left bottom;transition:opacity .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.phone .wa-b.out{transform-origin:right bottom}
+.phone .wa-b.in-view{opacity:1;transform:none}
+.chat-foot{font-size:14px;color:var(--mute);text-align:center}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label,.label{font-size:12px;color:var(--mute)}
+.input{position:relative;display:flex;align-items:center;gap:8px;min-height:48px;border-radius:12px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);padding:0 14px;transition:box-shadow .2s}
+.input:focus-within{box-shadow:inset 0 0 0 1px rgba(30,28,26,.38)}
+/* focus: a line grows from the left along the bottom of the field */
+.input::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:1.5px;border-radius:1px;background:var(--ink);transform:scaleX(0);transform-origin:left center;transition:transform .2s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.input:focus-within::after{transform:none}
+.field.invalid .input::after{background:var(--err)}
+.input input,.input textarea,.input select{flex:1;min-width:0;border:0;background:transparent;outline:none;font-size:16px;padding:12px 0}
+.input textarea{resize:none;line-height:1.4;min-height:112px}
+.input .pre{font-size:16px;color:var(--mute)}
+.field.invalid .input{box-shadow:inset 0 0 0 1.5px var(--err)}
+.err{font-size:12px;color:var(--err);display:none}
+.field.invalid .err{display:block}
+.help{font-size:12px;color:var(--mute);display:flex;justify-content:space-between}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg{--i:0;position:relative;display:grid;grid-template-columns:1fr 1fr;background:var(--sand);border-radius:30px;padding:4px;gap:4px;isolation:isolate}
+/* the selected tab is a pill that slides between the two options */
+.seg::before{content:"";position:absolute;z-index:-1;top:4px;bottom:4px;left:4px;width:calc(50% - 6px);border-radius:26px;background:var(--paper);box-shadow:0 1px 2px rgba(30,28,26,.12),0 2px 8px rgba(30,28,26,.06);
+  transform:translateX(calc(var(--i) * (100% + 4px)));transition:transform .38s cubic-bezier(.3,1.25,.5,1)}
+.seg button{height:42px;border-radius:26px;font-size:15px;color:var(--mute);transition:color .2s}
+.seg button[aria-pressed="true"]{color:var(--ink)}
+/* wallet button in the dock: Apple draws it (apple-pay-button); elsewhere a plain black capsule stands in */
+.wallet-btn{display:flex}
+/* iOS haptics: a transparent system switch sits over each control, so the finger itself toggles it and iOS plays its tick */
+.hx{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:.011;-webkit-appearance:none;appearance:none;background:transparent;border:0;border-radius:inherit;cursor:pointer;z-index:2;-webkit-tap-highlight-color:transparent}
+.btn,.chip,.seg button,.radio,.phrase,.stepbar .icon-btn{position:relative}
+.hx-row{z-index:20;border-radius:0;touch-action:pan-y}
+.wallet-btn[hidden]{display:none}
+.radio[hidden],.field[hidden],.card-fields[hidden],.two[hidden]{display:none}
+.wallet-btn apple-pay-button{--apple-pay-button-width:100%;--apple-pay-button-height:46px;--apple-pay-button-border-radius:23px;--apple-pay-button-padding:0;--apple-pay-button-box-sizing:border-box;width:100%;display:block}
+.wallet-btn .wb{width:100%;min-height:46px;border-radius:23px;background:#000;color:#fff;font-size:17px;font-weight:500;letter-spacing:-.01em;display:flex;align-items:center;justify-content:center;gap:10px}
+.wallet-btn.busy{opacity:.6;pointer-events:none}
+select{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
+.card-fields{display:flex;flex-direction:column;gap:10px}
+.fine{font-size:12px;color:var(--mute);line-height:1.45}
+.pay-error{display:none;font-size:13px;color:var(--err);text-align:center}
+/* ---------- done ---------- */
+.done .col{padding-block:calc(env(safe-area-inset-top,0px) + 28px) calc(env(safe-area-inset-bottom,0px) + 40px);display:flex;flex-direction:column;gap:22px;align-items:center;text-align:center}
+.done .gc{max-width:340px;margin-bottom:14px}
+.done .gc.enter .gc-tilt{animation:enter 1.1s cubic-bezier(.16,1,.3,1) both}
+@keyframes enter{from{transform:rotateY(-110deg) rotateX(18deg) translateZ(-120px);opacity:0}60%{opacity:1}to{transform:rotateX(var(--rx)) rotateY(var(--ry))}}
+.done h1{font-size:30px;line-height:1.15}
+.done .lead{text-align:center;margin-inline:auto}
+.share{display:flex;flex-direction:column;gap:10px;width:100%}
+.share-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
+.share-row .btn{padding:0 10px}
+.linkbox{display:flex;align-items:center;gap:10px;background:var(--sand);border-radius:12px;padding:12px 14px;text-align:left}
+.linkbox code{font-family:var(--sans);font-size:14px;flex:1;min-width:0;overflow-wrap:anywhere;user-select:all}
+.details-list{width:100%;text-align:left}
+.done .gc.v{max-width:min(58vw,236px)}
+/* ---------- preview sheet ---------- */
+.sheet{position:fixed;inset:0;z-index:70;background:var(--sand);overflow-y:auto;animation:sheetUp .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes sheetUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet-bar{position:sticky;top:0;z-index:2;background:var(--ink);color:var(--light);padding-top:env(safe-area-inset-top,0px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sheet-bar .col{height:48px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sheet-bar .icon-btn{margin:0 -8px 0 0}
+.sheet-body{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sheet-body .col{padding-block:48px 140px;display:flex;flex-direction:column;gap:24px}
+.sheet-body h2{font-size:30px;line-height:1.15}
+.quote{font-size:19px;font-weight:300;line-height:1.45}
+.sheet .dock{z-index:71}
+.sheet .gc.v{max-width:240px;align-self:center}
+/* ---------- gift card terms: modal like the booking modal ---------- */
+.m-scrim{position:fixed;inset:0;z-index:82;background:rgba(0,0,0,.8);animation:fade .2s}
+.modal{position:fixed;left:0;right:0;bottom:0;top:env(safe-area-inset-top,0px);z-index:83;background:#FFFFFF;color:#000;overflow-y:auto;
+  padding:0 max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 32px) max(16px,env(safe-area-inset-left,0px));animation:modalUp .5s cubic-bezier(.16,1,.3,1)} /* rises with a soft spring, no bounce past the top */
+.modal.closing{animation:modalDown .26s ease-in forwards}
+@keyframes modalUp{from{transform:translateY(100%)}}
+@keyframes modalDown{to{transform:translateY(100%)}}
+.modal .col{display:flex;flex-direction:column}
+.modal-head{height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#FFFFFF}
+.modal-head h2{font-size:24px;font-weight:400}
+.round-x{width:32px;height:32px;border-radius:50%;box-shadow:inset 0 0 0 1px #000;display:grid;place-items:center;margin-right:0}
+.terms{margin:8px 0 0}
+.terms div{padding:14px 0;border-bottom:1px solid #E4E4E4}
+.terms dt{font-size:12px;font-weight:300;color:#686868}
+.terms dd{margin:2px 0 0;font-size:16px}
+.modal .fine{color:#686868;margin-top:16px}
+/* B help sheets and the card payment sheet share the AMA modal */
+.modal .lead{color:#4F473F;font-size:16px;line-height:1.4;margin-top:4px}
+.mlist{margin:12px 0 0}
+.mlist div{display:flex;gap:16px;align-items:baseline;padding:14px 0;border-bottom:1px solid #E4E4E4}
+.mlist dt{flex:none;width:72px;font-size:22px}
+.mlist dd{margin:0;font-size:16px}
+.mlist .dot{flex:none;width:22px;height:22px;border-radius:50%;background:var(--sw);align-self:center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}
+.mlist .nm{flex:none;width:72px;font-size:18px}
+.mnote{margin-top:20px;background:#EFE3D1;border-radius:16px;padding:16px;font-size:14px;line-height:1.45}
+.modal:focus{outline:none}
+.paysheet .col{gap:14px}
+.paysheet .modal-head{margin-bottom:-4px}
+.pay-total{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0 6px}
+.pay-total b{font-weight:400;font-size:28px;font-variant-numeric:tabular-nums}
+.paysheet .input{background:#F4F4F4;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+/* ---------- menu & dialog ---------- */
+.scrim{position:fixed;inset:0;z-index:80;background:rgba(30,28,26,.45);animation:fade .25s}
+@keyframes fade{from{opacity:0}}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:min(78vw,320px);z-index:81;background:var(--cream);display:flex;flex-direction:column;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 16px calc(env(safe-area-inset-bottom,0px) + 24px) max(16px,env(safe-area-inset-left,0px));animation:slideIn .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes slideIn{from{transform:translateX(-100%)}}
+.drawer nav{display:flex;flex-direction:column;gap:20px;margin-top:28px}
+.drawer nav a{font-size:20px;text-decoration:none}
+.drawer nav a[aria-current="page"]{color:var(--rust)}
+.dialog{position:fixed;left:0;right:0;bottom:0;z-index:81;background:var(--cream);border-radius:20px 20px 0 0;padding:28px max(16px,env(safe-area-inset-left,0px)) calc(env(safe-area-inset-bottom,0px) + 18px);animation:sheetUp .35s cubic-bezier(.2,.8,.2,1)}
+.dialog .col{display:flex;flex-direction:column;gap:12px}
+.dialog h2{font-size:24px}
+.dialog p{color:var(--body);font-weight:300;margin-bottom:10px}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 112px);transform:translate(-50%,20px);z-index:90;background:var(--ink);color:var(--light);font-size:14px;padding:10px 16px;border-radius:24px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+/* landing blocks fade up once when they first enter the screen */
+.rv{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+.wave{display:none;position:fixed;left:0;right:0;top:0;height:calc(160vh);height:calc(160lvh);z-index:95;pointer-events:none;will-change:transform;
+  /* M5, as the new Siri: a dark frosted glass rolls up from the bottom. Under it the page stays visible, blurred and dimmed;
+     its top edge is a tall soft fade (60% of the screen) with a faint warm light, so there is never a hard line */
+  background:linear-gradient(to bottom,rgba(43,42,40,0) 0,rgba(43,42,40,.45) 30lvh,rgba(43,42,40,.74) 60lvh);
+  -webkit-backdrop-filter:blur(26px) saturate(1.15);backdrop-filter:blur(26px) saturate(1.15);
+  -webkit-mask:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.35) 22lvh,#000 60lvh);mask:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.35) 22lvh,#000 60lvh);
+  transform:translateY(100lvh)}
+.wave::before{content:"";position:absolute;left:-15%;right:-15%;top:14lvh;height:30lvh;filter:blur(40px);opacity:.55;
+  background:linear-gradient(90deg,rgba(255,170,110,0),rgba(255,176,120,.6) 25%,rgba(255,222,186,.7) 50%,rgba(238,156,146,.55) 75%,rgba(255,170,110,0))}
+.wave::after{content:"";position:absolute;inset:0;background:#2B2A28;opacity:0;transition:opacity .28s ease} /* settles into the solid grey of the Done screen */
+.wave.go{display:block;animation:waveUp 1s cubic-bezier(.3,.05,.2,1) forwards}
+.wave.solid{display:block;transform:translateY(-60lvh)}
+.wave.solid::after{opacity:1}
+.wave.out{display:block;transform:translateY(-60lvh);opacity:0;transition:opacity .42s ease}
+.wave.out::after{opacity:1}
+@keyframes waveUp{from{transform:translateY(100lvh)}to{transform:translateY(-60lvh)}}
+/* Done after paying: card turns in, then title and text fade up one after another */
+.done.arrive .col>*:not(.gc){animation:arriveUp .55s cubic-bezier(.2,.8,.2,1) both}
+.done.arrive .col>:nth-child(2){animation-delay:.12s}.done.arrive .col>:nth-child(3){animation-delay:.2s}.done.arrive .col>:nth-child(4){animation-delay:.28s}
+.done.arrive .col>:nth-child(5){animation-delay:.36s}.done.arrive .col>:nth-child(6){animation-delay:.44s}.done.arrive .col>:nth-child(n+7){animation-delay:.5s}
+@keyframes arriveUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* B: the success glass is brown, like the brand's dark blocks */
+.wave{background:linear-gradient(to bottom,rgba(70,26,15,0) 0,rgba(70,26,15,.45) 30lvh,rgba(70,26,15,.78) 60lvh)}
+.wave::after{background:#461A0F}
+.rv{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}
+}
+.sec.chat-section{padding-top:72px;display:block}
+.sec .chat-section,.sec .phone{flex:none}
+</style>
+</head><body>
+<header class="site-header" id="siteHeader">
+  <div class="left">
+    <button class="icon-btn" id="menuBtn" aria-label="Open menu">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none"><path d="M.75 8.3h24M.75 15.7h24" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+    </button>
+    <a class="logo" href="#top" id="logoLink" aria-label="AMA home"><svg viewBox="0 0 69 26" aria-hidden="true"><use href="#ama-logo"/></svg></a>
+  </div>
+  <button class="icon-btn" aria-label="Search">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM15 15l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+  </button>
+</header>
+
+<main id="top">
+  <!-- ================= LANDING ================= -->
+  <div class="view-b" id="vLanding">
+    <section class="bhero" id="hero">
+      <div class="col">
+        <h1>Give time<br>to feel well</h1>
+        <p class="lead">A gift card for any session on AMA: nutrition, activity, mindfulness, sleep.</p>
+        <div class="stage" aria-hidden="true">
+          <div class="glow" id="glow"><i class="g1"></i><i class="g2"></i><i class="g3"></i><i class="gn"></i></div>
+          <div class="turn"><span class="strip"></span><div data-card="hero" data-v data-design="night" data-amp="1"></div></div>
+        </div>
+        <button class="btn" data-buy>Choose a gift card</button>
+        <button type="button" class="info-btn" id="infoBtn" aria-haspopup="dialog"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.1"/><path d="M8 7.2v4.3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="8" cy="4.9" r=".8" fill="currentColor"/></svg>Gift card terms</button>
+      </div>
+    </section>
+
+    <section class="sec cream" aria-label="What they can book">
+      <div class="col">
+        <h2 class="h2 rv">One card,<br>any session</h2>
+        <div class="gal" id="gal">
+          <figure class="gtile"><img src="../img/a-pilates.jpg" alt="" loading="lazy"><figcaption>Any session. <span>Pilates, therapy, nutrition, sleep. They choose what feels right.</span></figcaption></figure>
+          <figure class="gtile"><img src="../img/calm.jpg" alt="" loading="lazy"><figcaption>Calm, delivered. <span>The card lands as a message in two minutes, or on the day you pick.</span></figcaption></figure>
+          <figure class="gtile"><img src="../img/a-soundbath.jpg" alt="" loading="lazy"><figcaption>Six moods. <span>Pick the design that feels like them.</span></figcaption></figure>
+        </div>
+        <div class="dots" id="galDots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+      </div>
+    </section>
+
+    <section class="sec paper" aria-label="Designs">
+      <div class="col">
+        <h2 class="h2 rv">Six moods.<br>One gift</h2>
+        <p class="lead rv">Warm stone, deep night, fresh moss, soft petals, slow fire and first light. Each one printed in metal that catches the light.</p>
+        <div class="viewer"><div data-card="mood" data-amp=".8"></div></div>
+        <div class="swatches" id="moodSw" role="group" aria-label="Designs"></div>
+        <p class="sw-name" id="moodName" aria-live="polite">Night</p>
+      </div>
+    </section>
+
+    <section class="sec brown" aria-label="What each amount covers">
+      <div class="col">
+        <h2 class="h2 rv">Spend it on<br>what feels right</h2>
+        <p class="lead rv">Every amount turns into real time on AMA, booked with a practitioner they choose.</p>
+        <div class="stats" id="stats"></div>
+        <button class="btn on-dark" data-buy="amount">Choose an amount</button>
+      </div>
+    </section>
+
+    <section class="sec cream chat-section" aria-label="How it arrives">
+      <div class="col">
+        <h2 class="h2 rv">It arrives<br>like a message</h2>
+        <p class="lead rv">Send it yourself in WhatsApp, or we email it on the day and time you choose.</p>
+        <div class="phone" id="chat" role="img" aria-label="Example: the gift arrives as a WhatsApp message with a link and a cover picture">
+          <div class="ph-screen" aria-hidden="true"><div class="wa">
+            <div class="wa-status"><svg class="sb" viewBox="0 0 288 46" fill="#000" aria-hidden="true"><path d="M216.8 19c-.4 0-.7.3-.7.7v7.6c0 .4.3.7.7.7h1c.4 0 .7-.3.7-.7v-7.6c0-.4-.3-.7-.7-.7h-1zM212.2 21.7c0-.4.3-.7.7-.7h1c.4 0 .7.3.7.7v5.6c0 .4-.3.7-.7.7h-1c-.4 0-.7-.3-.7-.7v-5.6zM209 22.9c-.4 0-.7.3-.7.7v3.7c0 .4.3.7.7.7h1c.4 0 .7-.3.7-.7v-3.7c0-.4-.3-.7-.7-.7h-1zM205.1 24.6c-.4 0-.7.3-.7.7v2c0 .4.3.7.7.7h1c.4 0 .7-.3.7-.7v-2c0-.4-.3-.7-.7-.7h-1z"/><path fill-rule="evenodd" d="M230.1 20.9c1.8 0 3.6.7 4.9 2 .1.1.3.1.4 0l.9-1c.1 0 .1-.1.1-.2s0-.1-.1-.2c-3.4-3.3-8.9-3.3-12.3 0-.1.1-.1.1-.1.2s0 .1.1.2l.9 1c.1.1.3.1.4 0 1.3-1.3 3.1-2 4.8-2zm0 3.1c1 0 2 .4 2.7 1 .1.1.3.1.4 0l.9-1c.1 0 .1-.1.1-.2s0-.1-.1-.2c-2.2-2.1-5.7-2.1-8 0-.1.1-.1.1-.1.2s0 .1.1.2l.9 1c.1.1.3.1.4 0 .7-.6 1.7-1 2.7-1zm1.9 2.1c0 .1 0 .1-.1.2l-1.6 1.7c0 .1-.1.1-.2.1s-.1 0-.2-.1l-1.6-1.7c-.1-.1-.1-.1-.1-.2s0-.1.1-.2c1-.9 2.6-.9 3.6 0 .1.1.1.1.1.2z"/><rect x="243.2" y="20.1" width="15.4" height="6.6" rx="2"/><path opacity=".4" fill-rule="evenodd" d="M255.3 18.6h-8.8c-.7 0-1.2 0-1.6 0-.4 0-.8.1-1.1.2-.8.3-1.5 1-1.8 1.8-.1.3-.2.7-.2 1.1v3.3c0 .4.1.8.2 1.1.3.8 1 1.5 1.8 1.8.3.1.7.2 1.1.2.4 0 .9 0 1.6 0h8.8c.7 0 1.2 0 1.6 0 .4 0 .8-.1 1.1-.2.8-.3 1.5-1 1.8-1.8.1-.3.2-.7.2-1.1v-3.3c0-.4-.1-.8-.2-1.1-.3-.8-1-1.5-1.8-1.8-.3-.1-.7-.2-1.1-.2-.4 0-.9 0-1.6 0zm-11.3.9c.2-.1.5-.1.9-.2h10.4c.4 0 .7.1.9.2.6.3 1.1.8 1.4 1.4.1.2.1.5.2.9v4.9c0 .4-.1.7-.2.9-.3.6-.8 1.1-1.4 1.4-.2.1-.5.1-.9.2h-10.4c-.4 0-.7-.1-.9-.2-.6-.3-1.1-.8-1.4-1.4-.1-.2-.1-.5-.2-.9v-4.9c0-.4.1-.7.2-.9.3-.6.8-1.1 1.4-1.4zM260.8 21.9c.6.2 1 .8 1 1.5s-.4 1.2-1 1.5v-3z"/><path d="M48 19.3c2.1 0 3.7 1.5 3.7 4.7 0 3-1.4 4.8-3.7 4.8-1.7 0-3-1-3.3-2.4v-.1h1.8c.2.6.7 1 1.5 1 1.3 0 1.9-1.3 1.9-2.9v-.2h-.1c-.3.7-1.1 1.3-2.3 1.3-1.8 0-2.9-1.3-2.9-3 0-1.8 1.4-3.2 3.4-3.2zm0 4.8c.9 0 1.7-.7 1.7-1.6 0-1-.7-1.7-1.6-1.7-.9 0-1.6.7-1.6 1.6 0 1 .7 1.7 1.5 1.7zm6.3-1.2c-.6 0-1.1-.5-1.1-1.1 0-.6.5-1.1 1.1-1.1s1.1.5 1.1 1.1c0 .6-.5 1.1-1.1 1.1zm0 4.5c-.6 0-1.1-.5-1.1-1.1 0-.6.5-1.1 1.1-1.1s1.1.5 1.1 1.1c0 .6-.5 1.1-1.1 1.1zm7.1 1.2v-1.7h-4.4v-1.5c1.1-2 2.4-4 3.6-5.9h2.6v5.9h1.2v1.5h-1.2v1.7h-1.8zm-2.8-3.1h2.8V21h-.1c-.9 1.3-1.8 2.9-2.7 4.4v.1zm9.1 3.1v-7.2h-.1l-2.2 1.5v-1.7l2.3-1.6h1.9v9h-1.9z"/></svg></div>
+            <div class="wa-nav">
+              <svg class="back" viewBox="0 0 9 15" fill="none"><path d="M7.3 1.5L1.5 7.3l5.8 5.9" stroke="#1DAA61" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="wa-badge">12</span>
+              <img class="wa-av" src="../img/wa-avatar.jpg" alt="" width="36" height="36" loading="lazy" decoding="async">
+              <div class="wa-who"><b>Anna</b><span id="waState">online</span></div>
+              <svg class="video" viewBox="0 0 20 14" fill="none"><path d="M9.5 1.5H3.7C2 1.5.7 2.8.7 4.4v4.4c0 1.6 1.3 2.9 3 2.9h5.8c1.6 0 2.9-1.3 2.9-2.9V4.4c0-1.6-1.3-2.9-2.9-2.9z" stroke="#1DAA61" stroke-width="1.3"/><path d="M13.2 5.3l4.5-2.7v7.9l-4.5-2.6V5.3z" stroke="#1DAA61" stroke-width="1.3" stroke-linejoin="round"/></svg>
+              <svg class="call" viewBox="0 0 15 15" fill="none"><path d="M3.8 1.2c.4 0 .7.2 1 .6l1 2.3c.2.4.1.9-.2 1.2l-1 1c.7 1.5 2.1 2.9 3.7 3.7l1-1c.4-.4.8-.4 1.2-.2l2.3 1c.4.2.7.6.7 1v1.6c0 .7-.5 1.2-1.2 1.2C6.3 13.6 1.1 8.4 1.1 2.3c0-.6.5-1.1 1.2-1.1h1.5z" stroke="#1DAA61" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="wa-body">
+              <span class="wa-date">Today</span>
+              <div class="wa-b">how was the retreat?<time>18:41</time></div>
+              <div class="wa-b out">
+                <div class="wa-lp"><img src="../img/wa-cover.jpg" alt="" width="292" height="153" loading="lazy" decoding="async"><div><b>AMA Gift Card</b><p>Give time to feel well. An AMA gift card for any session, plan or bundle.</p><small>amaforyou.com</small></div></div>
+                <p class="wa-txt">Anna, happy birthday! A little time just for you, on any session at AMA<br><a>amaforyou.com/gift/7KQ2-M9XA</a></p>
+                <time>18:42<svg class="wa-ticks" viewBox="0 0 12 9" fill="none"><path d="M.7 4.3l2.1 2.1 4.5-5.1M4.7 6.3l.7.7 5.3-5.8" stroke="#53BDEB" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg></time>
+              </div>
+              <div class="wa-b" id="reply">omg, thank you!!<time>18:43</time><span class="wa-react" id="waReact"><svg viewBox="0 0 11 10"><path d="M5.1 8.9S.6 6.2.6 3.1C.6 1.6 1.7.6 2.9.6c1 0 1.8.5 2.2 1.3C5.6 1.1 6.4.6 7.3.6c1.3 0 2.4 1 2.4 2.5 0 3.1-4.6 5.8-4.6 5.8z" fill="#E8344E"/></svg></span></div>
+            </div>
+            <div class="wa-input">
+              <svg class="plus" viewBox="0 0 17 17" fill="none"><path d="M8.1 1.5v13.2M1.5 8.1h13.2" stroke="#1DAA61" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="wa-field"><svg viewBox="0 0 15 15" fill="none"><path d="M7.3 13.6a6.2 6.2 0 116.2-6.2c0 .6-.3 1.2-.8 1.7l-3.6 3.6c-.4.5-1.1.9-1.8.9z" stroke="#1DAA61" stroke-width="1.25"/><path d="M13.2 8.4h-2.6a1.8 1.8 0 00-1.8 1.9v2.9" stroke="#1DAA61" stroke-width="1.25"/></svg></span>
+              <svg class="cam" viewBox="0 0 18 15" fill="none"><path d="M2.2 3.7h2.6l1.3-1.9h5.4l1.3 1.9h2.6c.6 0 1.1.5 1.1 1.1v7.3c0 .6-.5 1.1-1.1 1.1H2.2c-.6 0-1.1-.5-1.1-1.1V4.8c0-.6.5-1.1 1.1-1.1z" stroke="#1DAA61" stroke-width="1.25"/><circle cx="8.8" cy="8.1" r="2.8" stroke="#1DAA61" stroke-width="1.25"/></svg>
+              <svg class="mic" viewBox="0 0 12 18" fill="none"><path d="M8.4 3.7a2.6 2.6 0 00-5.1 0v4.4a2.6 2.6 0 005.1 0V3.7z" stroke="#1DAA61" stroke-width="1.25"/><path d="M10.6 8.1a4.8 4.8 0 01-9.5 0M5.9 12.8v3.3" stroke="#1DAA61" stroke-width="1.25" stroke-linecap="round"/></svg>
+              <span class="wa-home"></span>
+            </div>
+          </div></div>
+          <img class="ph-frame" src="../img/iphone.webp" alt="" width="528" height="1074" loading="lazy" decoding="async" draggable="false">
+        </div>
+      </div>
+    </section>
+
+    <section class="sec paper" aria-label="Why gift with AMA">
+      <div class="col">
+        <h2 class="h2 rv">Why gift<br>with AMA</h2>
+        <div class="why">
+          <div><b>Delivered in 2 minutes</b><span>By email or in any messenger.</span></div>
+          <div><b>Right on the day</b><span>Schedule it for a birthday morning.</span></div>
+          <div><b>Valid for 24 months</b><span>No rush to book.</span></div>
+          <div><b>Any session</b><span>Sessions, plans and bundles.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec brown closing">
+      <div class="col">
+        <h2 class="h2 rv">Give time<br>to feel well</h2>
+        <button class="btn" data-buy>Choose a gift card</button>
+        <p class="note">From £10. Valid for 24 months.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= BUY ================= -->
+  <section class="view buy" id="vBuy" hidden>
+    <div class="col">
+      <div class="bhead"><h1>Choose a gift card</h1><p>From £10. Valid for 24 months.</p></div>
+      <div class="bgal"><div data-card="flow" data-v data-amp="1" id="flowCard"></div></div>
+
+      <div class="bsec" id="secMood">
+        <h2>Choose a mood</h2>
+        <button type="button" class="help-link" data-modal="designHelp"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.1"/><path d="M8 7.2v4.3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="8" cy="4.9" r=".8" fill="currentColor"/></svg>Help choosing a design</button>
+        <p class="sw-name" id="buyMoodName" aria-live="polite" style="margin-top:4px">Night</p>
+        <div class="swatches" id="buySw" role="group" aria-label="Design" style="margin-top:2px"></div>
+      </div>
+
+      <div class="bsec" id="secAmount">
+        <h2>Choose an amount</h2>
+        <button type="button" class="help-link" data-modal="amountHelp"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.1"/><path d="M8 7.2v4.3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="8" cy="4.9" r=".8" fill="currentColor"/></svg>What each amount covers</button>
+        <div class="tiles" id="amtTiles" role="radiogroup" aria-label="Amount"></div>
+        <div class="field" id="fAmount" hidden>
+          <label for="amountInput">Your amount</label>
+          <div class="input"><span class="pre">£</span><input id="amountInput" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="120"></div>
+          <span class="err">Enter an amount from £10 to £500</span>
+          <span class="help"><span>From £10 to £500</span></span>
+        </div>
+      </div>
+
+      <div class="bsec" id="secMsg">
+        <h2>Add a message</h2>
+        <div class="two">
+          <div class="field" id="fTo"><label for="toInput">To</label><div class="input"><input id="toInput" maxlength="30" autocomplete="off" placeholder="Their name"></div><span class="err">Add their name</span></div>
+          <div class="field" id="fFrom"><label for="fromInput">From</label><div class="input"><input id="fromInput" maxlength="30" autocomplete="given-name" placeholder="Your name"></div><span class="err">Add your name</span></div>
+        </div>
+        <div class="field" id="fMsg">
+          <label for="msgInput">Message</label>
+          <div class="input"><textarea id="msgInput" maxlength="300" rows="4" placeholder="A few words from you"></textarea></div>
+          <span class="help"><span>Optional</span><span id="msgCount">0 / 300</span></span>
+        </div>
+        <button class="link" id="previewBtn" style="align-self:flex-start">Preview what they’ll see</button>
+      </div>
+
+      <div class="bsec" id="secDelivery">
+        <h2>How it arrives</h2>
+        <div class="tiles" role="radiogroup" aria-label="Delivery">
+          <button type="button" class="tile" role="radio" data-mode="self" aria-checked="true"><b>Send it yourself</b><span>Share a link in WhatsApp or any messenger</span></button>
+          <button type="button" class="tile" role="radio" data-mode="email" aria-checked="false"><b>We email it</b><span>To their inbox, from AMA</span></button>
+        </div>
+        <div id="modeEmail" style="display:flex;flex-direction:column;gap:14px">
+          <div class="field" id="fEmail"><label for="emailInput" id="emailLabel">Their email</label><div class="input"><input id="emailInput" type="email" inputmode="email" autocomplete="off" placeholder="name@example.com"></div><span class="err">Enter an email like name@example.com</span></div>
+          <span class="label">When</span>
+          <div class="seg" role="group" aria-label="When">
+            <button type="button" data-when="now" aria-pressed="true">Now</button>
+            <button type="button" data-when="later" aria-pressed="false">On a date</button>
+          </div>
+          <div class="two" id="whenFields" hidden>
+            <div class="field" id="fDate"><label for="dateInput">Date</label><div class="input"><input id="dateInput" type="date"></div><span class="err">Choose a time from now on</span></div>
+            <div class="field" id="fTime"><label for="timeInput">Time</label><div class="input"><input id="timeInput" type="time" value="09:00"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="band" id="summary">
+        <div class="col">
+          <h2>Your gift</h2>
+          <div class="gift-row"><span class="mini" id="mini" aria-hidden="true"><svg viewBox="0 0 69 26"><use href="#ama-logo"/></svg></span><div><b id="sumTitle">AMA Gift Card · Night</b><span id="sumSub">£75 · Send now</span></div></div>
+          <p class="pay-error" id="payError" role="alert"></p>
+          <div class="pay-btns">
+            <div class="wallet-btn" id="walletBtn" hidden></div>
+            <button class="btn" id="cardBtn">Pay with card</button>
+          </div>
+          <p class="proto">Prototype: no payment is taken</p>
+          <div class="info-rows">
+            <div><b>Arrives in 2 minutes</b><span>Or on the day and time you choose.</span></div>
+            <div><b>Any session, plan or bundle</b><span>They choose the practitioner and the time.</span></div>
+            <div><b>Secure payment by Stripe</b><span>Card details go straight to Stripe. AMA never sees them.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DONE ================= -->
+  <section class="view done" id="vDone" hidden>
+    <div class="col">
+      <div data-card="done" data-v data-amp="1.1" id="doneCard"></div>
+      <h1 id="doneTitle">Your gift is ready</h1>
+      <p class="lead" id="doneLead"></p>
+      <div class="share" id="shareBlock">
+        <a class="btn" id="waBtn" href="#" target="_blank" rel="noopener">Send on WhatsApp</a>
+        <div class="share-row">
+          <button class="btn ghost" id="copyBtn">Copy link</button>
+          <button class="btn ghost" id="imgBtn" hidden>Save image</button>
+          <button class="btn ghost" id="nativeShareBtn" hidden>Share</button>
+        </div>
+        <div class="linkbox"><code id="giftLink">amaforyou.com/gift/7KQ2-M9XA</code></div>
+      </div>
+      <button class="link" id="alsoShare" hidden>Share it myself too</button>
+      <button class="link" id="againBtn">Buy another gift card</button>
+    </div>
+  </section>
+</main>
+
+<div class="bar off" id="bar">
+  <div class="col">
+    <div><b id="barTotal">£75</b><span id="barSub">Night</span></div>
+    <button class="btn" id="barCta">Continue</button>
+  </div>
+</div>
+<div class="wave" id="wave" aria-hidden="true"></div>
+<!-- recipient preview -->
+<div class="sheet" id="preview" hidden role="dialog" aria-modal="true" aria-labelledby="pvTitle">
+  <div class="sheet-bar"><div class="col"><span class="small" id="pvBar">Preview · what they will see</span><button class="icon-btn" id="pvClose" aria-label="Close preview"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#FFF3E4" stroke-width="1.25" stroke-linecap="round"/></svg></button></div></div>
+  <div class="sheet-body"><div class="col">
+    <h2 id="pvTitle">Anna, here’s a gift from Andrey</h2>
+    <div data-card="preview" data-v data-amp="1.1"></div>
+    <p class="quote" id="pvMsg"></p>
+    <p class="hint" id="pvMeta"></p>
+    <div class="btn static" aria-hidden="true">Open my gift</div>
+    <p class="hint" id="pvTap" style="text-align:center;margin-top:-10px">They tap this to open the gift</p>
+  </div></div>
+  <div class="dock"><div class="col"><button class="btn ghost" id="pvBack" style="background:var(--sand)">Back to message</button></div></div>
+</div>
+<div id="menuLayer" hidden>
+  <div class="scrim" data-close-menu></div>
+  <aside class="drawer" aria-label="Menu">
+    <div>
+      <button class="icon-btn" data-close-menu aria-label="Close menu" style="margin:0 0 0 -8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#1E1C1A" stroke-width="1.25" stroke-linecap="round"/></svg></button>
+      <nav>
+        <a href="https://www.amaforyou.com/" target="_blank" rel="noopener">Discover</a>
+        <a href="https://www.amaforyou.com/" target="_blank" rel="noopener">Professionals</a>
+        <a href="https://www.amaforyou.com/" target="_blank" rel="noopener">For Experts</a>
+        <a href="https://www.amaforyou.com/" target="_blank" rel="noopener">For Business</a>
+        <a href="#top" aria-current="page" data-close-menu>Gift cards</a>
+      </nav>
+    </div>
+    <a class="btn" href="https://www.amaforyou.com/" target="_blank" rel="noopener">Sign up</a>
+  </aside>
+</div>
+<div id="termsLayer" hidden>
+  <div class="m-scrim" data-close></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="termsTitle"><div class="col">
+    <div class="modal-head"><h2 id="termsTitle">Gift card terms</h2>
+      <button type="button" class="round-x" data-close aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="#000" stroke-linecap="round"/></svg></button></div>
+    <dl class="terms">
+      <div><dt>Amount</dt><dd>From £10 to £500</dd></div>
+      <div><dt>Valid</dt><dd>24 months from purchase</dd></div>
+      <div><dt>Delivery</dt><dd>In 2 minutes or on a date you choose</dd></div>
+      <div><dt>Spend on</dt><dd>Any session, plan or bundle on AMA</dd></div>
+    </dl>
+    <p class="fine">Not exchangeable for cash. Full terms at amaforyou.com/gift-terms.</p>
+  </div></div>
+</div>
+
+<div class="modal-layer" id="designHelp" hidden>
+  <div class="m-scrim" data-close></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="dhTitle"><div class="col">
+    <div class="modal-head"><h2 id="dhTitle">Choosing a design</h2><button type="button" class="round-x" data-close aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="#000" stroke-linecap="round"/></svg></button></div>
+    <p class="lead">Pick the mood that feels like them. The design is all they see first; the amount is inside.</p>
+    <dl class="mlist" id="dhList"></dl>
+  </div></div>
+</div>
+
+<div class="modal-layer" id="amountHelp" hidden>
+  <div class="m-scrim" data-close></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ahTitle"><div class="col">
+    <div class="modal-head"><h2 id="ahTitle">What each amount covers</h2><button type="button" class="round-x" data-close aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="#000" stroke-linecap="round"/></svg></button></div>
+    <p class="lead">Every amount turns into real time on AMA, booked with a practitioner they choose. Here is what each one usually covers.</p>
+    <dl class="mlist" id="ahList"></dl>
+    <p class="mnote">Not sure? Choose Other amount and pick any number from £10.</p>
+  </div></div>
+</div>
+
+<div class="modal-layer" id="payLayer" hidden>
+  <div class="m-scrim" data-close></div>
+  <div class="modal paysheet" role="dialog" aria-modal="true" aria-labelledby="payTitle"><div class="col">
+    <div class="modal-head"><h2 id="payTitle">Pay with card</h2><button type="button" class="round-x" data-close aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="#000" stroke-linecap="round"/></svg></button></div>
+    <div class="pay-total"><span id="payWhat">AMA Gift Card · Night</span><b id="payAmt">£75</b></div>
+    <div class="field" id="fBuyer"><label for="buyerInput">Your email for the receipt</label><div class="input"><input id="buyerInput" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></div><span class="err">Enter an email like name@example.com</span></div>
+    <div class="card-fields" id="cardFields">
+      <div class="field" id="fCardNo"><label for="cardNo">Card number</label><div class="input"><input id="cardNo" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="19"></div><span class="err">Check the card number</span></div>
+      <div class="two">
+        <div class="field" id="fExp"><label for="cardExp">Expiry</label><div class="input"><input id="cardExp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="7"></div><span class="err">Use MM / YY</span></div>
+        <div class="field" id="fCvc"><label for="cardCvc">CVC</label><div class="input"><input id="cardCvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4"></div><span class="err">3 or 4 digits</span></div>
+      </div>
+      <div class="two">
+        <div class="field"><label for="cardCountry">Country</label><div class="input"><select id="cardCountry" autocomplete="country"><option>United Kingdom</option><option>Ireland</option><option>United States</option><option>Other</option></select></div></div>
+        <div class="field" id="fPost"><label for="cardPost">Postcode</label><div class="input"><input id="cardPost" autocomplete="postal-code" placeholder="SW1A 1AA" maxlength="10"></div></div>
+      </div>
+      <p class="fine">Card details go straight to Stripe. AMA never sees them.</p>
+    </div>
+    <button class="btn" id="payBtn">Pay £75</button>
+    <p class="proto">Prototype: no payment is taken</p>
+    <p class="fine">Valid for 24 months. Spend on any session, plan or bundle at AMA. Not exchangeable for cash. By paying you agree to the gift card terms.</p>
+  </div></div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="ama-logo" viewBox="0 0 69 26">
+      <path id="lgA" d="M68.6223 7.19211C68.6223 7.76903 68.4692 8.26903 68.2395 8.88441C66.7085 13.1152 63.5698 21.1921 63.1488 22.7305C63.187 22.8074 63.3019 22.8844 63.3784 22.8844C64.1057 22.8844 65.8281 21.1921 67.5506 19.1921L68.163 19.9998C66.1726 22.9228 63.0722 25.9997 61.5794 25.9997C60.6225 25.9997 59.7039 25.4613 59.7039 24.4228C59.7039 24.1151 59.9718 23.3459 60.3546 22.3074L61.656 18.9613L61.4646 18.8844C59.0149 22.3459 55.1107 25.9997 53.3882 25.9997C51.6275 25.769 50.7089 24.1921 50.7089 22.1921C50.7089 16.1921 56.8331 6.84596 62.7277 6.84596C63.6463 6.84596 64.7946 7.11519 65.5602 7.57673C65.7898 6.92288 65.9812 6.38442 66.1343 5.88442C66.4023 5.84596 66.5171 5.84596 66.7085 5.84596C67.8568 5.84596 68.6223 6.42288 68.6223 7.19211ZM54.9958 22.8459C56.4886 22.8459 60.3163 19.8075 63.1488 14.1152L64.6798 10.1152C63.6846 9.34595 62.4215 8.76903 60.6225 8.76903C57.3307 8.76903 54.0389 16.8844 54.0389 20.7305C54.0389 21.9613 54.4982 22.8459 54.9958 22.8459Z"/>
+      <path id="lgM" d="M51.3376 19.1925L51.9501 20.0002C49.9597 22.731 47.242 25.9233 44.9072 25.9233C43.7206 25.9233 43.4527 25.231 43.4527 24.5387C43.4527 23.4233 48.2755 11.1541 48.3903 10.308C48.2372 9.65411 47.8927 9.23104 47.3186 9.23104C46.0937 9.23104 42.3809 12.5772 37.7877 22.3079L36.4863 25.6156C36.2567 25.6541 36.1418 25.6541 36.1036 25.6541C34.7639 25.6541 34.228 25.1541 34.228 24.2695C34.228 23.8079 34.3811 23.3079 34.7639 22.2695C35.7208 19.6156 39.204 10.808 39.204 10.308C39.0126 9.57719 38.6681 9.23104 38.1322 9.23104C36.4863 9.2695 32.3907 14.0003 28.3334 22.8848C27.9506 23.8848 27.5679 24.8464 27.2999 25.6156C27.1851 25.6541 26.9937 25.6541 26.9172 25.6541C25.5392 25.6541 25.0416 25.1156 25.0416 24.231C25.0416 23.8079 25.1565 23.3848 25.3478 22.7695C26.7258 18.7695 29.6731 11.0387 29.941 9.88488C29.7114 9.57719 29.52 9.46181 29.1755 9.46181C28.5248 9.46181 27.6062 10.6926 26.8789 11.9233L26.0751 11.3849C27.4913 8.19258 28.9076 7.0772 30.3238 7.0772C31.4338 7.0772 32.3142 7.65412 33.118 9.15411L30.0941 16.6926L30.3621 16.8079C33.9983 10.0772 37.0987 6.80797 39.4336 6.80797C41.2326 6.80797 42.1513 8.19258 42.1513 9.38488C42.1513 10.0772 39.8929 15.3079 39.2805 16.6926L39.5485 16.8079C43.7206 9.07719 46.7444 6.80797 48.5817 6.80797C50.3042 6.80797 51.3759 8.07719 51.3759 9.46181C51.3759 10.7695 47.931 19.6156 46.9358 22.6925C46.9741 22.7695 47.0889 22.8464 47.2038 22.8464C47.8927 22.8464 49.8449 21.0002 51.3376 19.1925Z"/>
+      <path id="lgB" d="M27.7888 1.46153L26.3343 5.49998L20.8225 23.1922C21.2052 23.5768 21.4349 23.7307 22.277 23.9615L23.3487 24.2692L23.0042 25.3845H13.3585L13.703 24.2692L14.8131 23.9999C16.4207 23.6153 16.9565 23.3461 17.6455 21.1153L19.368 15.5384C17.7221 15.6538 15.8465 15.7307 14.392 15.7307C13.8179 15.7307 12.8227 15.7307 12.0571 15.6923C11.904 15.923 11.7509 16.1153 11.5978 16.3076C9.9902 18.3846 7.65533 21.6922 6.69842 23.4615C7.04291 23.7307 7.34912 23.8845 7.92327 23.9999L9.10984 24.2692L8.76535 25.3461L1.52588e-05 25.923L0.344504 24.8076C2.56455 23.9999 4.17216 22.6922 6.2391 20.2692C8.8419 17.1538 14.1241 10.5384 17.2628 6.96152C22.1239 1.42307 24.1908 0 25.3774 0C26.4874 0 27.2912 0.230767 27.7888 1.46153ZM19.8273 14.1923L23.4636 2.49999C21.1287 4.57691 17.4159 8.88459 13.1289 14.3846C14.8513 14.2692 16.9565 14.1923 19.8273 14.1923Z"/>
+    </symbol>
+    <symbol id="p-nutrition" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20.14" fill="none" stroke="#B04F13" stroke-width="1.5"/><path fill="#B04F13" d="M16.3887 9.63833C18.0466 7.93437 20.6341 6.98733 22.876 7.77407C25.1179 8.56017 26.584 11.3803 25.5049 13.4997C25.0797 14.335 24.3496 14.9677 23.7793 15.7116C22.5486 17.3175 22.1011 19.426 22.21 21.4479C22.3189 23.4698 22.9431 25.4282 23.6768 27.3151C24.0987 28.3998 24.7461 29.6216 25.8965 29.7838C26.702 29.8972 27.4834 29.4203 28.04 28.8258C28.596 28.2313 29.0039 27.5105 29.5586 26.9147C30.7324 25.6547 32.4663 25.0621 34.1709 24.8297C35.8003 24.6084 37.5602 24.7025 38.9355 25.6061V25.6032C40.3101 26.5061 41.1212 28.4019 40.3936 29.8786C39.6379 31.4111 37.6931 31.8788 35.9893 31.9762C33.8932 32.0963 31.7391 31.9306 29.7402 32.5739C26.3104 33.6774 24.64 36.8802 24.2783 40.2965C24.2686 40.3899 24.2555 40.4921 24.1875 40.5563C24.1156 40.6235 24.0075 40.6266 23.9092 40.6266C23.3848 40.6247 22.8603 40.6217 22.3359 40.6198C21.8362 40.6178 21.3288 40.654 20.835 40.569C20.8019 40.5632 20.7675 40.5562 20.7441 40.5329C20.7125 40.501 20.7129 40.4497 20.7148 40.4049C20.7479 39.7234 20.7557 39.0392 20.6475 38.361C20.5541 37.7762 20.4422 37.2475 20.124 36.7418C19.6237 35.9477 18.838 35.4225 17.9678 35.1071C16.1556 34.4502 14.18 34.5975 12.292 34.4254C10.3388 34.2482 8.16419 33.4323 7.50879 31.5807C7.15491 30.5798 7.16415 29.1712 7.8291 28.2975C7.90169 28.2021 7.98084 28.1114 8.06055 28.0211C8.17851 27.8874 8.29708 27.7535 8.41504 27.6198C8.46234 27.5666 8.51138 27.5126 8.57422 27.4801C11.321 26.0808 15.0727 26.9846 17.1836 29.1403C17.3585 29.3194 17.5239 29.5081 17.6787 29.7047C18.6898 30.9919 19.2778 32.5907 20.4004 33.7819C20.7679 34.1713 21.2423 34.5295 21.7764 34.5075C22.9219 34.4597 23.249 32.8673 22.9522 31.7575C21.9851 28.1419 18.4237 25.9416 16.2031 22.9303C14.7733 20.9914 13.8837 18.6247 13.8584 16.2145C13.8339 13.8045 14.7095 11.3649 16.3887 9.63833ZM33.2598 12.0465C34.7362 11.8993 36.7404 12.3396 37.9199 13.2399C39.3022 14.2948 39.9376 16.2368 39.4482 17.9069C38.9588 19.5769 37.3759 20.866 35.6436 21.0055C34.6462 21.0859 33.6436 20.8147 32.7441 20.3747H32.7432C31.8435 19.9345 31.0147 19.311 30.4541 18.4801C29.8936 17.6493 29.6232 16.5972 29.8447 15.6198C30.1694 14.1904 31.712 12.201 33.2598 12.0465Z"/></symbol>
+    <symbol id="p-activity" viewBox="0 0 48 48"><path fill="#B04F13" d="M11.2142 13.7979C13.1947 13.7816 15.1178 14.6097 16.6869 15.8203C18.2559 17.0309 19.5059 18.6071 20.6234 20.2451C21.339 21.2941 22.0132 22.3872 22.4291 23.5869C23.1375 25.6302 23.1717 28.0893 24.7865 29.5254C25.5111 30.1696 26.4623 30.5011 27.4115 30.6953C28.6628 30.9511 29.9577 30.9943 31.223 30.8223C33.411 30.5244 35.8031 29.6293 37.6927 30.7725C38.8103 31.4484 39.4398 32.6884 40.0004 33.8691C31.0753 34.493 22.0734 33.748 13.1244 33.374C12.1435 33.3328 11.1207 33.2809 10.265 32.7988C9.27183 32.2388 8.70441 31.1985 8.42322 30.125C8.3464 29.8309 8.31037 29.5299 8.24353 29.2344C8.15811 28.8582 8.09047 28.4935 8.15955 28.1074C8.24318 27.6384 8.52133 27.1911 8.97205 27.0068C9.44306 26.814 9.99535 26.8346 10.4623 27.0293C10.5933 27.0841 10.72 27.1519 10.8275 27.2451C10.983 27.3795 11.0893 27.5609 11.1937 27.7383C11.5047 28.2676 11.8231 28.797 12.2133 29.2715C12.4889 29.6068 12.8022 29.9151 13.1595 30.1631C13.4696 30.3781 13.928 30.7412 14.3217 30.5391C14.4867 30.4548 14.5912 30.2872 14.6713 30.1201C15.1753 29.0679 14.9787 27.7187 14.1967 26.8535C13.4874 26.0689 12.425 25.7254 11.4115 25.4248C10.3981 25.1242 9.33352 24.8058 8.59216 24.0518C7.85077 23.297 7.59115 21.9531 8.33435 21.2002C8.76599 20.7629 9.41781 20.627 10.0316 20.6084C11.8706 20.5527 13.7153 21.4128 14.8558 22.8584C16.0497 24.3714 16.433 26.353 17.2484 28.0996C17.6413 28.9413 18.192 29.7315 18.8959 30.3418C19.5143 30.8774 20.5341 31.5305 21.3695 31.0791C21.9097 30.7871 21.8248 30.1242 21.8334 29.5859C21.8433 28.9704 21.777 28.3549 21.6469 27.7539C21.3824 26.5338 20.8566 25.3741 20.1478 24.3496C19.878 23.9598 19.581 23.5884 19.2592 23.2402C17.2786 21.1005 14.5351 19.8073 11.7318 19.0127C10.8938 18.775 10.0275 18.5693 9.29529 18.0967C8.56342 17.624 7.97829 16.8101 8.05017 15.9404C8.16604 14.5435 9.81433 13.8093 11.2142 13.7979ZM27.4554 21.5547C28.2539 20.3265 30.2819 19.4505 31.7406 19.8154C33.1925 20.1792 34.4776 22.067 34.7474 23.4551C35.0538 25.0337 34.2576 26.8604 32.7484 27.4102C32.2982 27.574 31.814 27.6215 31.3353 27.6387C30.4669 27.6699 29.5777 27.5994 28.7748 27.2666C27.9721 26.9338 27.2602 26.3109 26.9681 25.4912C26.8054 25.0344 26.7778 24.5396 26.7914 24.0547C26.8163 23.1819 26.9795 22.2863 27.4554 21.5547Z"/><circle cx="24" cy="24" r="20.14" fill="none" stroke="#B04F13" stroke-width="1.5"/></symbol>
+    <symbol id="p-mindfulness" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20.14" fill="none" stroke="#B04F13" stroke-width="1.5"/><path fill="#B04F13" d="M24.175 18.4403C21.9987 18.4551 19.7731 18.4776 17.7266 19.2198C17.4359 19.3252 17.1156 19.4821 17.0329 19.7805C16.8884 20.3023 17.553 20.6605 18.0863 20.7499C20.434 21.1427 22.901 20.5519 25.1912 21.2009C25.7234 21.3518 26.3338 21.7144 26.284 22.2663C26.2293 22.872 25.4606 23.0821 24.855 23.1232C19.2558 23.5029 13.4764 22.5368 8.11469 24.198C7.32246 24.4437 6.44044 24.8612 6.25483 25.671C6.08401 26.416 6.63151 27.178 7.32355 27.5001C8.01559 27.8221 8.81166 27.8062 9.57323 27.7596C15.3822 27.4052 21.1556 25.6628 26.9323 26.3727C27.5088 26.4434 28.1707 26.602 28.4149 27.1297C28.653 27.6438 28.3393 28.2807 27.8619 28.5852C27.3845 28.8897 26.7932 28.9402 26.2276 28.9632C25.1178 29.0077 24.0048 28.9753 22.8994 28.8667C20.2407 28.605 17.38 27.9379 15.028 29.2068C14.4903 29.497 13.9494 30.0023 14.0304 30.6085C14.1366 31.4062 15.1512 31.6547 15.9521 31.7145C17.4008 31.8226 18.8501 31.9307 20.2987 32.0387C20.7515 32.0728 21.3111 32.1902 21.4233 32.6312C21.5509 33.1305 20.9804 33.5129 20.4898 33.6687C17.6751 34.564 14.5692 33.7532 11.6948 34.4323C10.9371 34.6112 10.0884 35.027 9.97674 35.7989C9.89078 36.3931 10.3134 36.968 10.844 37.2467C11.3751 37.5254 11.9932 37.5704 12.5916 37.6006C14.9464 37.7196 17.385 37.4102 19.7014 37.6999C20.9443 37.8551 22.2922 37.7312 23.5432 37.7202C24.8282 37.7092 26.1132 37.6812 27.3971 37.6357C28.1159 37.6105 28.7938 37.3658 29.4841 37.3394C30.3213 37.3082 31.1469 37.3016 31.8773 36.8237C32.7527 36.2515 33.131 34.8295 32.3262 34.1613C31.9074 33.8135 31.321 33.7746 30.7773 33.7521C29.2044 33.6857 27.5947 33.52 26.036 33.5266C25.8827 33.5271 25.6675 33.5079 25.5575 33.3916C25.4381 33.2654 25.3894 33.0142 25.3763 32.8485C25.3741 32.8233 25.373 32.7969 25.3785 32.7722C25.3834 32.7492 25.3938 32.7278 25.4058 32.707C25.4699 32.595 25.5772 32.5094 25.6998 32.4716C25.7677 32.4507 25.8389 32.4442 25.9095 32.4376C27.2799 32.3109 28.6476 32.3301 30.0202 32.2571C31.5307 32.177 33.3577 32.1753 34.8026 31.6926C35.7634 31.5154 36.9477 31.0276 36.9219 30.0489C36.8978 29.1338 35.7881 28.6648 34.8748 28.667C33.9616 28.6692 32.9805 28.8957 32.18 28.4552C31.7787 28.0564 31.9857 27.3185 32.4428 26.9849C32.8995 26.6514 33.4995 26.6097 34.064 26.58C36.052 26.4753 38.0394 26.3705 40.0274 26.2651C40.7917 26.2245 41.5921 26.1741 42.2458 25.7741C42.8995 25.3742 43.3348 24.5046 42.9921 23.8183C42.5606 22.9537 41.3496 22.9641 40.3903 23.064C38.663 23.2439 36.9236 23.3043 35.1875 23.2456C33.7678 23.1973 32.3777 23.0991 30.9744 22.8758C30.6876 22.8303 30.3908 22.7809 30.1483 22.6207C29.9057 22.4605 29.7311 22.1577 29.8127 21.8784C29.8981 21.5844 30.2162 21.4302 30.508 21.3397C32.721 20.6523 35.1918 21.7215 37.3227 20.7505C37.5308 20.6556 37.7503 20.5124 37.7914 20.2869C37.8379 20.0318 37.6342 19.8025 37.4327 19.6395C35.9266 18.42 33.8193 18.3761 31.8827 18.3892C29.3133 18.4062 26.7439 18.4238 24.175 18.4408V18.4403Z"/><path fill="#B04F13" d="M25.086 9.42581C24.8237 9.61783 24.6086 9.86854 24.4224 10.1352C22.5631 12.7937 23.732 15.516 26.6491 16.5177C27.708 16.8815 28.93 16.7306 29.8695 16.1205C30.809 15.5105 31.4457 14.455 31.5476 13.3374C31.6089 12.6621 31.4852 11.9818 31.2903 11.3322C31.1391 10.8297 30.9393 10.3294 30.5944 9.93438C29.8224 9.05056 28.5243 8.88543 27.3526 8.88872C26.5631 8.89091 25.7244 8.95949 25.086 9.42581Z"/></symbol>
+    <symbol id="p-sleep" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20.14" fill="none" stroke="#B04F13" stroke-width="1.5"/><path fill="#B04F13" d="M16.0645 33.4507C15.1011 33.5005 14.2191 33.9286 13.4598 34.4966C12.6597 35.0951 12.0782 35.8838 11.3467 36.5403C11.0161 36.24 10.6643 35.9253 10.3649 35.5945C10.0917 35.2931 9.7483 35.0801 9.41267 34.8434C9.37587 34.8174 9.33628 34.7859 9.3335 34.7416C9.33015 34.693 9.37308 34.6548 9.41155 34.6244C9.68251 34.4081 9.90608 34.1609 10.1224 33.8937C10.3354 33.631 10.6035 33.4059 10.8327 33.152C11.3423 32.5862 11.9293 32.094 12.4735 31.5613C13.2094 30.8406 13.5373 29.9247 13.5133 28.9148C13.4821 27.5857 12.4127 26.5508 11.5976 25.4955C10.2233 23.7162 9.43664 21.4977 9.38479 19.2572C9.35803 18.1106 9.57212 16.8578 10.4318 16.0912C10.8985 15.6753 11.5034 15.4513 12.0927 15.2372C12.866 14.9557 13.7937 14.6919 14.4594 15.1736C14.7845 15.4087 14.9762 15.7832 15.1145 16.1576C16.0484 18.6786 15.09 21.7079 16.4359 24.0381C17.3218 23.4137 17.3201 22.1321 17.2275 21.058C17.0865 19.4159 16.9454 17.7737 16.8044 16.1316C16.6851 14.7455 16.7648 13.0011 18.0454 12.4342C19.1789 11.9325 20.5454 12.8562 20.929 14.0276C21.3126 15.1991 20.9825 16.4751 20.5699 17.6366C20.1573 18.7981 19.6545 19.9718 19.6946 21.2029C19.7041 21.4889 19.7699 21.8163 20.0224 21.9557C20.294 22.105 20.6351 21.9552 20.8754 21.761C22.1973 20.6941 22.0496 18.7079 22.1645 17.021C22.2787 15.3374 22.78 13.6803 23.6185 12.2118C24.1638 11.2566 24.8863 10.3517 25.8809 9.87111C26.8756 9.38991 28.1846 9.43029 28.9797 10.1936C29.6677 10.8534 29.8405 11.9137 29.6348 12.8407C29.5266 13.3285 29.3521 13.7992 29.1258 14.2444C28.9083 14.6709 28.5576 14.995 28.4378 15.4729C28.4238 15.5293 28.4127 15.5912 28.4383 15.6432C28.4595 15.6864 28.503 15.7146 28.5465 15.7356C28.7193 15.8174 28.9256 15.8075 29.1074 15.7467C29.2891 15.6858 29.4502 15.5774 29.6058 15.4657C30.107 15.1045 30.5686 14.6902 30.9812 14.2323C31.3598 13.8119 31.8582 13.5077 32.3092 13.1598C33.5213 12.2256 34.9904 11.3468 36.4974 11.6349C38.2999 11.9795 39.4239 14.2406 38.6021 15.8689C38.03 17.0022 36.7912 17.6537 35.5607 17.9933C34.3303 18.3329 33.0374 18.4358 31.8298 18.8495C31.1964 19.0669 30.4783 19.6111 30.6963 20.24C31.8688 20.6216 33.1154 20.0282 34.3459 19.9303C35.4911 19.839 36.6206 20.1825 37.7167 20.5221C38.5195 20.7704 39.4278 21.1167 39.7015 21.9048C40.0929 23.0304 38.9048 24.0702 37.7948 24.5226C36.5364 25.0354 35.1632 25.3163 33.8068 25.396C32.4436 25.4756 31.0927 25.6332 29.7212 25.4363C29.0483 25.3396 28.3725 25.1819 27.6962 25.2538C27.02 25.3257 26.3219 25.6886 26.0889 26.3218C26.0309 26.4795 26.0064 26.6637 26.09 26.8097C26.1547 26.9231 26.2734 26.9939 26.39 27.0536C27.2558 27.4944 28.2677 27.5497 29.2395 27.4999C30.2113 27.4502 31.183 27.3053 32.1531 27.3799C32.7932 27.4291 33.4221 27.5741 34.0476 27.7179C34.5215 27.8268 35.0032 27.9391 35.4242 28.1808C36.0129 28.5187 36.8431 29.5232 36.2906 30.1991C36.1517 30.3683 35.9516 30.4739 35.7542 30.5702C32.4386 32.1869 28.4149 32.303 25.0101 30.8805C24.5228 30.6769 24.016 30.4385 23.4914 30.5022C22.9667 30.5658 22.4633 31.0912 22.6484 31.5823C22.7855 31.9463 23.207 32.1056 23.5828 32.2145C26.1184 32.9513 28.7544 33.3489 31.396 33.3937C31.5794 33.3971 31.7684 33.3993 31.9363 33.4734C32.2384 33.6061 32.4018 33.9463 32.4274 34.2732C32.5072 35.3019 31.5159 36.0857 30.567 36.5088C27.8367 37.7261 24.5312 37.5879 21.9141 36.1459C20.0018 35.0923 18.2489 33.3373 16.0645 33.4502V33.4507Z"/></symbol>
+  </defs>
+</svg>
+
+<script>
+(function(){
+'use strict';
+/* =========================================================
+   DATA
+   Card designs are TEMPORARY. Final art: replace `art` with
+   "url('cards/sunrise.jpg')" (1712×1080). Logo and amount stay live layers.
+   ========================================================= */
+var DESIGNS=[
+  {id:'sand',   metal:'bronze', name:'Sand',   desc:'Warm stone in soft daylight',   c1:'#F3E6D2',c2:'#C9A57E',ink:'#1E1C1A',edge:'#AE8962'},
+  {id:'night',  metal:'silver', name:'Night',  desc:'Calm, deep and quiet',  c1:'#4A3B33',c2:'#141210',ink:'#FFF3E4',edge:'#100E0C'},
+  {id:'forest', metal:'silver', name:'Forest', desc:'Moss, shade and fresh air', c1:'#A3A47C',c2:'#3B402A',ink:'#FFF3E4',edge:'#30351F'},
+  {id:'bloom',  metal:'bronze', name:'Bloom',  desc:'A gentle blush of petals',  c1:'#F6DCD0',c2:'#D99A86',ink:'#1E1C1A',edge:'#B97C69'},
+  {id:'ember',  metal:'silver', name:'Ember',  desc:'The glow of a slow evening fire',  c1:'#783206',c2:'#2A0F08',ink:'#FFF3E4',edge:'#2A0F08'},
+  {id:'sunrise',metal:'silver', name:'Sunrise',desc:'First light, warm and bright',c1:'#F4B98C',c2:'#B04F13',ink:'#FFF3E4',edge:'#8E3F10'}
+];
+DESIGNS.forEach(function(d){d.art='linear-gradient(140deg,'+d.c1+' 0%,'+d.c2+' 100%)';});
+/* metal inks: dark band at rest in the middle, bright iridescent bands either side, so any tilt sends light across the print */
+var METAL={
+  silver:'linear-gradient(105deg,#B9B9BE 0%,#F7F7F9 20%,#E7DDFF 24%,#D6F1EA 28%,#F2F2F4 32%,#A3A3A9 42%,#8E8E94 50%,#A3A3A9 58%,#F2F2F4 68%,#E7DDFF 72%,#D6F1EA 76%,#F7F7F9 80%,#B9B9BE 100%)',
+  bronze:'linear-gradient(105deg,#6E5232 0%,#C9A169 20%,#B49BC4 24%,#93BBA8 28%,#C49D64 32%,#6E5232 42%,#4E3B23 50%,#6E5232 58%,#C49D64 68%,#B49BC4 72%,#93BBA8 76%,#C9A169 80%,#6E5232 100%)'};
+var PRESETS=[25,50,75,100,150,250];
+/* Prices from the current AMA catalogue (sample listings). In production: load live services. */
+var ITEMS=[
+  {a:'a discovery call',p:5,pil:'mindfulness'},
+  {a:'a 15-minute consultation',p:10,pil:'nutrition'},
+  {a:'a Pilates matwork session',p:15,pil:'activity'},
+  {a:'a 60-minute soundbath',p:45,pil:'mindfulness'},
+  {a:'a hypnotherapy session',p:70,pil:'mindfulness'},
+  {a:'an online therapy session',p:75,pil:'mindfulness'},
+  {a:'a 1-month wellness plan',p:80,pil:'nutrition'},
+  {a:'a 4-session sleep bundle',p:85,pil:'sleep'},
+  {a:'a women’s health consultation',p:130,pil:'nutrition'},
+  {a:'a sleep enhancement session',p:250,pil:'sleep'}
+];
+var PRESET_COVERS={25:[2,1],50:[3],75:[5],100:[6,2],150:[8,1],250:[9]};
+var PHRASES=[
+  ['Merry Christmas','Merry Christmas. Here’s some time just for you this winter.'],
+  ['Happy birthday','Happy birthday. Take an hour for yourself, it’s on me.'],
+  ['Time for you','You look after everyone. This one is just for you.'],
+  ['Thank you','Thank you for everything. I hope this brings you a calm moment.']
+];
+var STEP_TITLES=['Choose a design','Amount','Your message','Delivery','Review and pay'];
+var LOGO_PATHS=['lgA','lgM','lgB'].map(function(id){return document.getElementById(id).getAttribute('d');});
+document.documentElement.style.setProperty('--logo-mask','url("data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 69 26">'+LOGO_PATHS.map(function(d){return '<path d="'+d+'"/>';}).join('')+'</svg>')+'")');
+
+/* =========================================================
+   STATE (+ draft in this browser)
+   ========================================================= */
+var DEF={design:'night',amount:75,custom:false,to:'',from:'',msg:'',mode:'self',email:'',when:'now',date:'',time:'09:00',buyer:'',pay:'wallet'};
+var S=Object.assign({},DEF);
+try{var saved=JSON.parse(localStorage.getItem('ama-gift-draft-b')||'null');if(saved&&typeof saved==='object')Object.keys(DEF).forEach(function(k){if(k in saved)S[k]=saved[k];});}catch(e){}
+function persist(){try{localStorage.setItem('ama-gift-draft-b',JSON.stringify(S));}catch(e){}}
+function design(){return DESIGNS.find(function(d){return d.id===S.design;})||DESIGNS[0];}
+function money(n){return '£'+n;}
+var $=function(s,r){return (r||document).querySelector(s);};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+
+/* =========================================================
+   3D CARD
+   ========================================================= */
+var cards=[];
+var GYRO_CARDS=['hero','flow','preview','done','dsg'];
+var LOGO_SVG='<svg viewBox="0 0 69 26" aria-hidden="true"><use href="#ama-logo"/></svg>';
+function buildCard(host){
+  var amp=parseFloat(host.getAttribute('data-amp')||'1');
+  var el=document.createElement('div');el.className='gc';el.setAttribute('role','img');
+  if(host.hasAttribute('data-nodrag'))el.classList.add('nodrag');if(host.hasAttribute('data-v'))el.classList.add('v');
+  var edges='';for(var i=1;i<=7;i++)edges+='<i class="gc-edge" style="transform:translateZ('+(-i*0.45)+'px)"></i>';
+  el.innerHTML='<div class="gc-tilt">'+edges+'<div class="gc-face"><div class="gc-art"></div><div class="gc-foil"></div><div class="gc-tex"></div><div class="gc-band"></div><div class="gc-glare"></div><div class="gc-rim"></div><div class="gc-logo">'+LOGO_SVG+'</div><span class="gc-kind">Gift card</span><span class="gc-amt"></span></div></div>';
+  host.replaceWith(el);if(host.id)el.id=host.id;
+  var c={el:el,amp:amp,rx:0,ry:0,vx:0,vy:0,tx:0,ty:0,phase:Math.random()*6.28,visible:true,drag:null,hover:false,idle:1,
+    key:host.getAttribute('data-card'),fixedDesign:host.getAttribute('data-design'),nodrag:el.classList.contains('nodrag')};
+  c.gyro=GYRO_CARDS.indexOf(c.key)>=0; // phone tilt drives only the hero card and the purchase cards
+  cards.push(c);
+  attachPointer(c);
+  return c;
+}
+function designById(id){return DESIGNS.find(function(d){return d.id===id;})||DESIGNS[0];}
+function paintCard(c,d,amount){
+  c.el.style.setProperty('--art',d.art);c.el.style.setProperty('--c2',d.c2);
+  c.el.style.setProperty('--ink-c',d.ink);c.el.style.setProperty('--edge',d.edge);
+  c.el.style.setProperty('--metal',METAL[d.metal]||'linear-gradient('+d.ink+','+d.ink+')');
+  
+  c.el.querySelector('.gc-amt').textContent=money(amount);
+  c.el.setAttribute('aria-label',d.name+' AMA gift card, '+money(amount));
+}
+function bump(c){c.el.classList.remove('swap');void c.el.offsetWidth;c.el.classList.add('swap');}
+
+/* ---------- micro-interactions ---------- */
+/* text swap: the old text fades out with a light blur, the new one fades in */
+function swapText(el,t){
+  if(!el)return; if(el._to===undefined&&el.textContent===t)return; if(el._to===t)return;
+  if(reduce){el.textContent=t;return;}
+  el._to=t;el.classList.add('tx','tx-out');clearTimeout(el._tt);
+  el._tt=setTimeout(function(){el.textContent=el._to;el._to=undefined;el.classList.remove('tx-out');},110);
+}
+/* button label: old text slides up and fades, new one comes from below */
+function setCta(t){
+  if(cta.dataset.label===t)return; var first=!cta.dataset.label; cta.dataset.label=t; clearTimeout(cta._t);
+  var sp=cta.querySelector('.cta-l');
+  function put(anim){var n=document.createElement('span');n.className='cta-l';n.textContent=cta.dataset.label;var hx=cta.querySelector('.hx');cta.replaceChildren(n);if(hx)cta.appendChild(hx);
+    if(anim&&n.animate)n.animate([{transform:'translateY(7px)',opacity:0},{transform:'none',opacity:1}],{duration:170,easing:'cubic-bezier(.2,.8,.2,1)'});}
+  if(first||reduce||!sp||!sp.animate||cta.offsetParent===null||dock.classList.contains('off')){put(false);return;}
+  sp.animate([{transform:'none',opacity:1},{transform:'translateY(-7px)',opacity:0}],{duration:100,easing:'ease-in',fill:'forwards'});
+  cta._t=setTimeout(function(){put(true);},100);
+}
+/* press: shrinks to 97 % at once, springs back on release */
+var PRESS='.btn,.sw,.tile,.seg button,.icon-btn,.round-x,.link,.help-link,.info-btn';
+function pressAnim(el,down){
+  if(reduce||!el.animate)return; if(el._pa)el._pa.cancel();
+  el._pa=down?el.animate([{transform:'scale(1)'},{transform:'scale(.96)'}],{duration:90,easing:'ease-out',fill:'forwards'})
+             :el.animate([{transform:'scale(.96)'},{transform:'scale(1.015)',offset:.5},{transform:'scale(1)'}],{duration:320,easing:'cubic-bezier(.2,.8,.2,1)'});
+}
+document.addEventListener('pointerdown',function(e){var el=e.target.closest&&e.target.closest(PRESS);if(!el||el.disabled)return;el._pressed=true;pressAnim(el,true);
+  function up(){if(!el._pressed)return;el._pressed=false;pressAnim(el,false);document.removeEventListener('pointerup',up,true);document.removeEventListener('pointercancel',up,true);}
+  document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);},true);
+document.addEventListener('touchstart',function(){},{passive:true}); // lets :active work on iOS
+/* the amount on the card rolls to the new value */
+function rollAmt(c,from,to){
+  var el=c.el.querySelector('.gc-amt');cancelAnimationFrame(c._roll);
+  if(reduce||from===to||from==null){el.textContent=money(to);return;}
+  var t0=performance.now(),D=380;
+  (function f(now){var t=Math.min(1,(now-t0)/D),e=1-Math.pow(1-t,3);el.textContent=money(Math.round(from+(to-from)*e));if(t<1)c._roll=requestAnimationFrame(f);})(t0);
+}
+/* haptics: Android vibrates; iPhone (iOS 18+) gets a light tick from a hidden system switch; elsewhere nothing happens */
+var isIOS=/iP(hone|ad|od)/.test(navigator.platform)||(navigator.userAgent.indexOf('Mac')>-1&&'ontouchend' in document);
+function haptic(kind){
+  try{
+    if(navigator.vibrate&&!isIOS){navigator.vibrate(kind==='success'?[14,70,22]:kind==='medium'?20:9);return;}
+    if(!isIOS)return;
+    tick(); if(kind==='success')setTimeout(tick,110);
+    function tick(){var l=document.createElement('label');l.setAttribute('aria-hidden','true');l.style.display='none';
+      var i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');l.appendChild(i);document.head.appendChild(l);l.click();document.head.removeChild(l);}
+  }catch(e){}
+}
+
+/* ---------- tilt physics ----------
+   Every card is a damped spring towards a target angle.
+   Target = finger offset from where the touch started (no jump on touch),
+   or cursor position (desktop), or phone tilt (gyroscope), or a slow idle sway. */
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches;
+var gyro={on:false,got:false,b0:null,g0:null,x:0,y:0};
+var MAXX=20, MAXY=24;
+function soft(v,m){return m*Math.tanh(v/m);} // rubber band: never hits a hard stop
+function attachPointer(c){
+  var el=c.el;
+  el.addEventListener('pointerdown',function(e){
+    maybeAskGyro();
+    if(c.nodrag&&e.pointerType!=='mouse')return;
+    c.drag={x0:e.clientX,y0:e.clientY,bx:c.rx/c.amp,by:c.ry/c.amp};
+    try{el.setPointerCapture(e.pointerId);}catch(_){}
+  });
+  el.addEventListener('pointermove',function(e){
+    if(c.drag){
+      var dx=e.clientX-c.drag.x0, dy=e.clientY-c.drag.y0;
+      c.tx=soft(c.drag.bx-dy*0.16,MAXX);c.ty=soft(c.drag.by+dx*0.2,MAXY);
+    }else if(e.pointerType==='mouse'){
+      var r=el.getBoundingClientRect();var px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+      c.hover=true;c.tx=(0.5-py)*18;c.ty=(px-0.5)*22;
+    }
+  });
+  function end(e){
+    if(!c.drag)return;var d=c.drag;c.drag=null;c.idle=0;
+    var dx=e.clientX-d.x0, dy=e.clientY-d.y0;
+    if(c.onSwipe&&Math.abs(dx)>56&&Math.abs(dx)>Math.abs(dy)*1.3)c.onSwipe(dx<0?1:-1);
+  }
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+  el.addEventListener('pointerleave',function(){c.hover=false;c.idle=0;});
+}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+var io=new IntersectionObserver(function(es){es.forEach(function(en){var c=cards.find(function(k){return k.el===en.target;});if(c)c.visible=en.isIntersecting;});},{rootMargin:'120px'});
+function observe(c){io.observe(c.el);}
+var last=performance.now();
+var K=reduce?220:110, DAMP=reduce?30:15; // stiffness / damping: soft, slightly underdamped
+function frame(now){
+  var dt=Math.min((now-last)/1000,1/30);last=now;var t=now/1000;
+  /* raw sensor readings are jittery: follow them through a ~150 ms low-pass, once per frame */
+  if(gyro.rx!=null){var lp=Math.min(1,dt*6.5);gyro.x+=(gyro.rx-gyro.x)*lp;gyro.y+=(gyro.ry-gyro.y)*lp;}
+  for(var i=0;i<cards.length;i++){
+    var c=cards[i];if(!c.visible||c.hidden||!c.el.isConnected||c.el.offsetParent===null)continue;
+    if(c.still&&!c.drag&&!c.hover&&c.rested)continue; // a still neighbour at rest costs nothing per frame
+    var tx,ty;
+    if(c.drag||c.hover){tx=c.tx;ty=c.ty;}
+    else{
+      c.idle=Math.min(1,c.idle+dt*0.6); // sway fades back in slowly after a touch
+      var sx=reduce?0:Math.sin(t*0.6+c.phase)*4*c.idle, sy=reduce?0:Math.sin(t*0.45+c.phase*1.3)*6*c.idle;
+      if(c.gyro&&gyro.on&&gyro.got){tx=gyro.x+sx*0.3;ty=gyro.y+sy*0.3;}else{tx=sx;ty=sy;}
+      if(c.still){tx=0;ty=0;} // carousel neighbours stay still; only the card in focus animates
+    }
+    if(c.upright&&!c.drag){var t0=tx;tx=ty;ty=-t0;} // local X runs down the screen, local Y runs left
+    var dmp=(!c.drag&&!c.hover&&c.gyro&&gyro.on&&gyro.got)?2*Math.sqrt(K):DAMP; // phone tilt: critically damped, it settles without wobbling
+    var ax=K*(tx*c.amp-c.rx)-dmp*c.vx, ay=K*(ty*c.amp-c.ry)-dmp*c.vy;
+    c.vx+=ax*dt;c.vy+=ay*dt;c.rx+=c.vx*dt;c.ry+=c.vy*dt;
+    /* with the gyroscope the light travels further than the card turns,
+       so a small wrist movement already reads as a shimmer */
+    var lg=(c.gyro&&gyro.on&&gyro.got&&!c.drag&&!c.hover)?1.3:1;
+    c.ly=(c.ly==null?c.ry:c.ly)+(c.ry*lg-(c.ly==null?c.ry:c.ly))*Math.min(1,dt*8);
+    c.lx=(c.lx==null?c.rx:c.lx)+(c.rx*lg-(c.lx==null?c.rx:c.lx))*Math.min(1,dt*8);
+    c.rested=c.still&&Math.abs(c.rx)<0.02&&Math.abs(c.ry)<0.02&&Math.abs(c.vx)<0.05&&Math.abs(c.vy)<0.05;
+    var s=c.el.style;
+    s.setProperty('--rx',c.rx.toFixed(2)+'deg');s.setProperty('--ry',c.ry.toFixed(2)+'deg');
+    s.setProperty('--gx',clamp(50+c.ly*2.4,-20,120).toFixed(1)+'%');s.setProperty('--gy',clamp(40-c.lx*2.6,-20,120).toFixed(1)+'%');
+    s.setProperty('--bx',clamp(50+c.ly*2.4-c.lx*0.8,-10,110).toFixed(1)+'%');
+    s.setProperty('--mx',clamp(50+c.ly*4.2-c.lx*1.6,0,100).toFixed(1)+'%');           // metal print band
+    s.setProperty('--fx',clamp(50+c.ly*2.2,0,100).toFixed(1)+'%');s.setProperty('--fy',clamp(50-c.lx*2.2,0,100).toFixed(1)+'%');
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* gyroscope: baseline = how you hold the phone, drifting back slowly (~10 s),
+   axes corrected for screen rotation */
+function screenAngle(){
+  var a=(screen.orientation&&typeof screen.orientation.angle==='number')?screen.orientation.angle:(window.orientation||0);
+  return ((a%360)+360)%360;
+}
+function onOrient(e){
+  if(e.beta==null||e.gamma==null)return;
+  var b=e.beta,g=e.gamma,a=screenAngle(),fb=b,fg=g;
+  if(a===90){fb=-g;fg=b;}else if(a===270){fb=g;fg=-b;}else if(a===180){fb=-b;fg=-g;}
+  if(!gyro.got){gyro.got=true;gyro.b0=fb;gyro.g0=fg;updateHint();}
+  if(Math.abs(fb-gyro.b0)>60||Math.abs(fg-gyro.g0)>60){gyro.b0=fb;gyro.g0=fg;} // phone flipped: re-centre
+  gyro.b0+=(fb-gyro.b0)*0.0016;gyro.g0+=(fg-gyro.g0)*0.0016;
+  /* small, natural turn: about half the phone's tilt, softly capped at ±8° / ±10°, so shaking never throws the card around */
+  gyro.rx=soft(-(fb-gyro.b0)*0.5,8);
+  gyro.ry=soft((fg-gyro.g0)*0.5,10);
+}
+var needsPerm=typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function';
+var touchDevice=matchMedia('(pointer:coarse)').matches||('ontouchstart' in window);
+var permState='unknown'; // unknown | granted | denied
+function startGyro(){
+  if(gyro.on)return;gyro.on=true;gyro.got=false;
+  window.addEventListener('deviceorientation',onOrient);
+}
+/* iOS only allows the permission prompt inside a real user gesture (touchend / click),
+   not pointerdown, so it is asked on the first tap anywhere and retried if it failed */
+function askGyro(){
+  if(!needsPerm||permState!=='unknown')return;
+  try{
+    DeviceOrientationEvent.requestPermission().then(function(r){
+      permState=r==='granted'?'granted':'denied';
+      if(r==='granted')startGyro();
+      updateHint();
+    }).catch(function(){updateHint();}); // not a valid gesture yet: try again on the next tap
+  }catch(_){}
+}
+function maybeAskGyro(){} // kept for the card pointerdown hook; the real ask happens on tap end
+if(needsPerm){
+  document.addEventListener('touchend',askGyro,{passive:true});
+  document.addEventListener('click',askGyro);
+}else if('DeviceOrientationEvent' in window){
+  startGyro();
+}
+function updateHint(){
+  var n=$('#tiltNote');if(!n)return;
+  n.hidden=false;
+  if(gyro.on&&gyro.got){n.hidden=true;return;} // tilt already works: no caption
+  if(needsPerm&&permState==='unknown'){n.innerHTML='Drag the card or <button type="button" id="tiltAsk">turn on tilt</button>';return;}
+  n.textContent=finePointer?'Move the cursor over the card':'Drag the card';
+}
+updateHint();
+
+/* =========================================================
+   B: CARDS
+   ========================================================= */
+var C={};
+$$('[data-card]').forEach(function(h){var c=buildCard(h);C[c.key]=c;observe(c);});
+var FLOW_CARDS=['flow','preview','done'];
+function paintAll(){var d=design();FLOW_CARDS.forEach(function(k){if(C[k])paintCard(C[k],d,S.amount);});paintMini();}
+paintCard(C.hero,designById('night'),75);C.hero.el.classList.add('no-amt'); // the hero shows no amount: nothing is chosen yet
+paintCard(C.mood,design(),75);C.mood.el.classList.add('no-amt');
+C.preview.el.classList.add('v');
+
+/* hero: the card turns in from edge-on (0.9 s) while the light breathes in behind it; then it follows the phone like in version A */
+(function(){var h=$('#hero');
+  if(reduce){h.classList.add('rest');return;}
+  C.hero.still=true; // no sway while it turns
+  /* starts once the fonts are in (or after 700 ms at most), so the turn is never spent on a page that is still drawing */
+  var started=false;function start(){if(started)return;started=true;requestAnimationFrame(function(){requestAnimationFrame(function(){h.classList.add('go');
+    setTimeout(function(){h.classList.remove('go');h.classList.add('rest');C.hero.still=false;C.hero.idle=0;},1400);});});}
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(start);setTimeout(start,700);
+  /* after rest, the light drifts a few pixels against the card's turn */
+  var g=$('#glow');(function drift(){if(h.classList.contains('rest')&&gyro.on&&gyro.got&&view==='landing'){g.style.translate=(-gyro.y*0.6).toFixed(1)+'px '+(gyro.x*0.6).toFixed(1)+'px';}requestAnimationFrame(drift);})();
+})();
+
+/* gallery dots follow the swipe */
+(function(){var gal=$('#gal'),dots=$$('#galDots i');
+  gal.addEventListener('scroll',function(){var w=gal.firstElementChild.offsetWidth+10;var i=Math.round(gal.scrollLeft/w);dots.forEach(function(d,k){d.classList.toggle('on',k===i);});},{passive:true});})();
+
+/* swatches: on the landing they repaint the card and carry the design into the buy page */
+function swatches(host,onPick){
+  DESIGNS.forEach(function(d){var b=document.createElement('button');b.type='button';b.className='sw';b.style.setProperty('--sw','linear-gradient(140deg,'+d.c1+','+d.c2+')');b.dataset.id=d.id;b.setAttribute('aria-label',d.name);b.setAttribute('aria-pressed',d.id===S.design);
+    b.addEventListener('click',function(){if(S.design===d.id)return;onPick(d.id);});host.appendChild(b);});
+}
+function markSw(){$$('.sw').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.id===S.design);});swapText($('#moodName'),design().name);swapText($('#buyMoodName'),design().name);}
+swatches($('#moodSw'),function(id){S.design=id;persist();paintCard(C.mood,design(),75);bump(C.mood);markSw();paintAll();});
+swatches($('#buySw'),function(id){setDesign(id);});
+
+/* what each amount buys (prices from the AMA catalogue sample, as in version A) */
+var STATS=[[50,'a 60-minute soundbath'],[75,'an online therapy session'],[150,'a women’s health consultation'],[250,'a sleep enhancement session']];
+$('#stats').innerHTML=STATS.map(function(s){return '<div class="stat"><b>'+money(s[0])+'</b><span>'+s[1]+'</span></div>';}).join('');
+$('#ahList').innerHTML=STATS.map(function(s){return '<div><dt>'+money(s[0])+'</dt><dd>'+cap(s[1])+'</dd></div>';}).join('');
+$('#dhList').innerHTML=DESIGNS.map(function(d){return '<div><span class="dot" style="--sw:linear-gradient(140deg,'+d.c1+','+d.c2+')"></span><span class="nm">'+d.name+'</span><dd>'+d.desc+'</dd></div>';}).join('');
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+/* ---------- A5: messenger plays once when it comes into view ---------- */
+var chatPlayed=false;
+var chatMsgs=$$('#chat .wa-b');
+new IntersectionObserver(function(es,obs){
+  if(!es[0].isIntersecting||chatPlayed)return;chatPlayed=true;obs.disconnect();
+  var state=$('#waState'), react=$('#waReact');
+  function say(t){state.style.opacity=0;setTimeout(function(){state.textContent=t;state.style.opacity=1;},180);}
+  if(reduce){chatMsgs.forEach(function(m){m.classList.add('in-view');});react.classList.add('on');return;}
+  setTimeout(function(){chatMsgs[0].classList.add('in-view');},200);
+  setTimeout(function(){chatMsgs[1].classList.add('in-view');},900);
+  setTimeout(function(){say('typing…');},1900);
+  setTimeout(function(){say('online');chatMsgs[2].classList.add('in-view');},3500);
+  setTimeout(function(){react.classList.add('on');},4300);
+},{threshold:0.35}).observe($('#chat'));
+
+/* =========================================================
+   B: BUY PAGE
+   ========================================================= */
+var amtTiles=$('#amtTiles');
+STATS.forEach(function(s){var b=document.createElement('button');b.type='button';b.className='tile';b.setAttribute('role','radio');b.dataset.v=s[0];b.innerHTML='<b>'+money(s[0])+'</b><span>'+cap(s[1])+'</span>';
+  b.addEventListener('click',function(){S.custom=false;setAmount(s[0]);renderAmount();});amtTiles.appendChild(b);});
+var other=document.createElement('button');other.type='button';other.className='tile';other.setAttribute('role','radio');other.innerHTML='<b>Other amount</b><span>Any amount from £10</span>';
+other.addEventListener('click',function(){S.custom=true;renderAmount();var i=$('#amountInput');i.value=STATS.some(function(s){return s[0]===S.amount;})?'':S.amount;setTimeout(function(){i.focus();},50);});amtTiles.appendChild(other);
+
+function setDesign(id){if(S.design===id)return;S.design=id;persist();paintAll();bump(C.flow);markSw();renderSummary();}
+function setAmount(v){var old=S.amount;S.amount=v;persist();paintCard(C.flow,design(),v);rollAmt(C.flow,old,v);renderSummary();}
+function renderAmount(){
+  $$('#amtTiles .tile').forEach(function(b){b.setAttribute('aria-checked',b===other?S.custom:(!S.custom&&+b.dataset.v===S.amount));});
+  $('#fAmount').hidden=!S.custom;
+}
+function renderMsgCount(){$('#msgCount').textContent=$('#msgInput').value.length+' / 300';}
+function renderDelivery(){
+  $$('[data-mode]').forEach(function(b){b.setAttribute('aria-checked',b.dataset.mode===S.mode);});
+  $('#modeEmail').style.display=S.mode==='email'?'flex':'none';
+  $$('[data-when]').forEach(function(b,k){var on=b.dataset.when===S.when;b.setAttribute('aria-pressed',on);if(on)b.parentNode.style.setProperty('--i',k);});
+  $('#whenFields').hidden=S.when!=='later';
+  $('#emailLabel').textContent=(S.to?S.to+'’s':'Their')+' email';
+  renderSummary();
+}
+function fmtDate(iso){try{var d=new Date(iso+'T12:00:00');return d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});}catch(e){return iso;}}
+function paintMini(){var d=design(),m=$('#mini');m.style.setProperty('--art',d.art);m.style.setProperty('--ink-c',d.ink);}
+function renderSummary(){
+  var d=design(),parts=[money(S.amount)];if(S.to)parts.push('For '+S.to);
+  parts.push(S.mode==='self'?'You send it':S.when==='now'?'Email now':('Email '+(S.date?fmtDate(S.date):'on a date')));
+  $('#sumTitle').textContent='AMA Gift Card · '+d.name;$('#sumSub').textContent=parts.join(' · ');
+  $('#barTotal').textContent=money(S.amount);$('#barSub').textContent=d.name+(S.to?' · for '+S.to:'');
+  $('#payWhat').textContent='AMA Gift Card · '+d.name;$('#payAmt').textContent=money(S.amount);$('#payBtn').textContent='Pay '+money(S.amount);
+  paintMini();
+}
+
+/* =========================================================
+   B: NAVIGATION
+   ========================================================= */
+var view='landing';
+var bar=$('#bar'), barCta=$('#barCta');
+function show(v,opts){
+  opts=opts||{};view=v;
+  document.documentElement.className=v==='buy'?'t-buy':v==='done'?'t-done':'';
+  var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.setAttribute('content',v==='buy'?'#FFFAF3':v==='done'?'#461A0F':'#F7EEE0');
+  $('#vLanding').hidden=v!=='landing';$('#vBuy').hidden=v!=='buy';$('#vDone').hidden=v!=='done';
+  if(!opts.keepScroll)window.scrollTo(0,0);
+  updateBar();
+  if(v==='done')requestAnimationFrame(fitDone);
+}
+function startBuy(at){
+  paintAll();renderAmount();renderDelivery();markSw();
+  $('#toInput').value=S.to;$('#fromInput').value=S.from;$('#msgInput').value=S.msg;$('#emailInput').value=S.email;$('#buyerInput').value=S.buyer;$('#timeInput').value=S.time;$('#dateInput').value=S.date;renderMsgCount();
+  if(!history.state||history.state.v!=='buy'){try{history.pushState({v:'buy'},'','#buy');}catch(e){}}
+  show('buy');
+  if(at==='amount')requestAnimationFrame(function(){var el=$('#secAmount');window.scrollTo(0,el.getBoundingClientRect().top+window.scrollY-var_hdr()-8);});
+}
+function var_hdr(){return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr'))||58;}
+window.addEventListener('popstate',function(){if(view!=='landing'){show('landing');}});
+$$('[data-buy]').forEach(function(b){b.addEventListener('click',function(){haptic('medium');startBuy(b.getAttribute('data-buy'));});});
+$('#logoLink').addEventListener('click',function(e){e.preventDefault();if(view!=='landing'){try{history.replaceState(null,'',location.pathname);}catch(_){}show('landing');}else window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});});
+
+/* the bar steps aside while the summary is on screen, and while a field has the keyboard */
+var sumInView=false, typing=false;
+new IntersectionObserver(function(es){sumInView=es[0].isIntersecting;updateBar();},{threshold:0.08}).observe($('#summary'));
+function updateBar(){bar.classList.toggle('off',view!=='buy'||sumInView||typing);}
+/* Continue: the first thing still missing gets the focus; with everything in place it goes to payment */
+barCta.addEventListener('click',function(){
+  haptic('medium');
+  if(!validate())return;
+  var el=$('#summary');window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-var_hdr(),behavior:reduce?'auto':'smooth'});
+});
+
+/* menu */
+$('#menuBtn').addEventListener('click',function(){$('#menuLayer').hidden=false;});
+$$('[data-close-menu]').forEach(function(b){b.addEventListener('click',function(e){if(b.tagName==='A')e.preventDefault();$('#menuLayer').hidden=true;if(b.tagName==='A')show('landing');});});
+
+/* sheets: terms, design help, amount help, card payment; one AMA modal, pull down or tap outside to close */
+var openLayer=null, layerBack=null;
+function openModal(id){var l=document.getElementById(id);if(!l)return;layerBack=document.activeElement;l.hidden=false;openLayer=l;document.body.style.overflow='hidden';setTimeout(function(){var m=l.querySelector('.modal');m.setAttribute('tabindex','-1');m.focus({preventScroll:true});},40);} // focus goes to the sheet itself, so no ring lands on the close button
+function closeModal(cb){var l=openLayer;if(!l)return;var m=l.querySelector('.modal');openLayer=null;if(reduce){done();return;}m.classList.add('closing');setTimeout(done,240);
+  function done(){m.classList.remove('closing');m.style.transform='';l.hidden=true;document.body.style.overflow='';if(layerBack&&!cb)layerBack.focus({preventScroll:true});if(cb)cb();}}
+$('#termsLayer').classList.add('modal-layer');
+$('#infoBtn').addEventListener('click',function(){openModal('termsLayer');});
+$$('[data-modal]').forEach(function(b){b.addEventListener('click',function(){openModal(b.dataset.modal);});});
+$$('.modal-layer').forEach(function(l){l.addEventListener('click',function(e){if(e.target.closest('[data-close]'))closeModal();});
+  var y0=null,m=l.querySelector('.modal');
+  m.addEventListener('touchstart',function(e){y0=m.scrollTop<=0?e.touches[0].clientY:null;},{passive:true});
+  m.addEventListener('touchmove',function(e){if(y0===null)return;var dy=e.touches[0].clientY-y0;m.style.transition='none';if(dy>0)m.style.transform='translateY('+dy+'px)';},{passive:true});
+  m.addEventListener('touchend',function(e){if(y0===null)return;var dy=(e.changedTouches[0].clientY-y0);y0=null;
+    if(dy>90){m.style.transition='';closeModal();return;}
+    m.style.transition='transform .3s cubic-bezier(.2,.8,.2,1)';m.style.transform='';setTimeout(function(){m.style.transition='';},320);});});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(openLayer)closeModal();$('#menuLayer').hidden=true;closePreview();}});
+
+/* =========================================================
+   B: INPUTS
+   ========================================================= */
+$('#amountInput').addEventListener('input',function(e){var v=e.target.value.replace(/\D/g,'').slice(0,3);e.target.value=v;var n=+v;$('#fAmount').classList.remove('invalid');if(n>=10&&n<=500)setAmount(n);});
+$('#toInput').addEventListener('input',function(e){S.to=e.target.value.trim();persist();$('#fTo').classList.remove('invalid');renderDelivery();});
+$('#fromInput').addEventListener('input',function(e){S.from=e.target.value.trim();persist();$('#fFrom').classList.remove('invalid');});
+$('#msgInput').addEventListener('input',function(e){S.msg=e.target.value;persist();renderMsgCount();});
+$$('[data-mode]').forEach(function(b){b.addEventListener('click',function(){S.mode=b.dataset.mode;persist();renderDelivery();});});
+$$('[data-when]').forEach(function(b){b.addEventListener('click',function(){var wasLater=S.when==='later';S.when=b.dataset.when;if(S.when==='later'&&!S.date){var d=new Date();d.setDate(d.getDate()+1);S.date=isoLocal(d);$('#dateInput').value=S.date;}persist();renderDelivery();
+  if(S.when==='later'&&!wasLater){var row=$('#whenFields');requestAnimationFrame(function(){var r=row.getBoundingClientRect(),lim=bar.getBoundingClientRect().top-16;if(r.bottom>lim)window.scrollBy({top:r.bottom-lim,behavior:reduce?'auto':'smooth'});});}});});
+$('#emailInput').addEventListener('input',function(e){S.email=e.target.value.trim();persist();$('#fEmail').classList.remove('invalid');});
+$('#dateInput').addEventListener('input',function(e){S.date=e.target.value;persist();$('#fDate').classList.remove('invalid');renderDelivery();});
+$('#timeInput').addEventListener('input',function(e){S.time=e.target.value||'09:00';persist();renderDelivery();});
+function isoLocal(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');} // the buyer's own calendar day, not UTC
+(function(){$('#dateInput').min=isoLocal(new Date());})();
+/* date and time: open the system picker without iOS scrolling the page to the field */
+['#dateInput','#timeInput'].forEach(function(id){var inp=$(id);inp.addEventListener('touchend',function(e){if(document.activeElement===inp)return;e.preventDefault();try{inp.focus({preventScroll:true});}catch(_){inp.focus();}try{if(inp.showPicker)inp.showPicker();}catch(_){}},{passive:false});});
+$('#buyerInput').addEventListener('input',function(e){S.buyer=e.target.value.trim();persist();$('#fBuyer').classList.remove('invalid');});
+$('#cardNo').addEventListener('input',function(e){var v=e.target.value.replace(/\D/g,'').slice(0,16);e.target.value=v.replace(/(.{4})/g,'$1 ').trim();$('#fCardNo').classList.remove('invalid');});
+$('#cardExp').addEventListener('input',function(e){var v=e.target.value.replace(/\D/g,'').slice(0,4);e.target.value=v.length>2?v.slice(0,2)+' / '+v.slice(2):v;$('#fExp').classList.remove('invalid');});
+$('#cardCvc').addEventListener('input',function(e){e.target.value=e.target.value.replace(/\D/g,'').slice(0,4);$('#fCvc').classList.remove('invalid');});
+
+var EMAIL=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+function fail(ids){
+  ids.forEach(function(id){$(id).classList.add('invalid');});
+  var first=$(ids[0]);if(first){var top=first.getBoundingClientRect().top+window.scrollY-var_hdr()-window.innerHeight*0.25;window.scrollTo({top:Math.max(0,top),behavior:reduce?'auto':'smooth'});var inp=first.querySelector('input,textarea');if(inp)setTimeout(function(){inp.focus({preventScroll:true});},280);}
+  return false;
+}
+/* everything above the summary, in page order */
+function validate(){
+  var bad=[];
+  if(S.custom){var n=+$('#amountInput').value;if(!(n>=10&&n<=500))bad.push('#fAmount');}
+  if(!S.to)bad.push('#fTo');if(!S.from)bad.push('#fFrom');
+  if(S.mode==='email'){if(!EMAIL.test(S.email))bad.push('#fEmail');
+    if(S.when==='later'){var when=new Date(S.date+'T'+(S.time||'09:00'));if(!S.date||isNaN(when)||when<new Date())bad.push('#fDate');}}
+  return bad.length?fail(bad):true;
+}
+function validateCard(){
+  var b=[];if(!EMAIL.test(S.buyer))b.push('#fBuyer');
+  if($('#cardNo').value.replace(/\D/g,'').length<15)b.push('#fCardNo');
+  var ex=$('#cardExp').value.replace(/\D/g,'');if(ex.length!==4||+ex.slice(0,2)<1||+ex.slice(0,2)>12)b.push('#fExp');
+  if($('#cardCvc').value.length<3)b.push('#fCvc');
+  if(b.length){b.forEach(function(id){$(id).classList.add('invalid');});var f=$(b[0]).querySelector('input');if(f)f.focus();return false;}
+  return true;
+}
+
+/* =========================================================
+   PREVIEW (recipient view)
+   ========================================================= */
+var lastFocus=null;
+function openPreview(){
+  lastFocus=document.activeElement;
+  var to=S.to||'Anna', from=S.from||'a friend';
+  $('#pvBar').textContent='Preview · what '+to+' will see';
+  $('#pvTitle').textContent=to+', here’s a gift from '+from;
+  $('#pvTap').textContent=to+' taps this to open the gift';
+  $('#pvMsg').textContent=S.msg?('“'+S.msg+'”'):'';
+  var exp=new Date();exp.setMonth(exp.getMonth()+24);
+  $('#pvMeta').textContent=money(S.amount)+' to spend on any session at AMA. Valid until '+exp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'.';
+  paintCard(C.preview,design(),S.amount);
+  $('#preview').hidden=false;document.body.style.overflow='hidden';$('#pvClose').focus();
+}
+function closePreview(){if($('#preview').hidden)return;$('#preview').hidden=true;document.body.style.overflow='';if(lastFocus)lastFocus.focus({preventScroll:true});}
+$('#previewBtn').addEventListener('click',openPreview);
+$('#pvClose').addEventListener('click',closePreview);$('#pvBack').addEventListener('click',closePreview);
+
+/* =========================================================
+   PAYMENT → DONE
+   Apple Pay on Apple devices, Google Pay on Android, card everywhere (payments by Stripe; branding only in the prototype).
+   In the prototype the wallet button goes straight to Done, without the system sheet.
+   ========================================================= */
+var WALLET=(function(){var ua=navigator.userAgent;
+  var apOK=false;try{apOK=!!(window.ApplePaySession&&(!ApplePaySession.canMakePayments||ApplePaySession.canMakePayments()));}catch(e){apOK=false;}
+  if(apOK)return {kind:'apple',name:'Apple Pay'};
+  if(/Android/.test(ua))return {kind:'google',name:'Google Pay'};
+  return null;})();
+function receiptLine(){return (S.pay==='wallet'&&WALLET)?('A receipt is on its way to your '+WALLET.name+' email.'):('A receipt is on its way to '+S.buyer+'.');}
+var paying=false;
+if(WALLET){
+  var host=$('#walletBtn');host.hidden=false;
+  var fallback=function(){host.innerHTML='<button type="button" class="wb">Buy with '+WALLET.name+'</button>';};
+  if(WALLET.kind==='apple'){
+    host.innerHTML='<apple-pay-button buttonstyle="black" type="buy" locale="en-GB"></apple-pay-button>';
+    if(!window.customElements||!customElements.get('apple-pay-button')){
+      var sc=document.createElement('script');sc.src='https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js';sc.crossOrigin='anonymous';sc.async=true;sc.onerror=fallback;document.head.appendChild(sc);
+      setTimeout(function(){if(!customElements.get('apple-pay-button'))fallback();},3000);
+    }
+  }else fallback();
+  var goWallet=function(){if(view!=='buy'||paying)return;haptic('medium');if(!validate())return;S.pay='wallet';persist();pay($('#walletBtn'));};
+  host.addEventListener('click',goWallet,true);
+  host.addEventListener('touchend',function(e){if(e.target.closest('apple-pay-button')){e.preventDefault();goWallet();}},{passive:false,capture:true});
+}
+$('#cardBtn').addEventListener('click',function(){haptic('medium');if(!validate())return;S.pay='card';persist();renderSummary();openModal('payLayer');});
+$('#payBtn').addEventListener('click',function(){haptic('medium');if(paying||!validateCard())return;var b=this;pay(b);});
+
+function code(){var a='ABCDEFGHJKMNPQRSTUVWXYZ23456789',s='';for(var i=0;i<8;i++){s+=a[Math.floor(Math.random()*a.length)];if(i===3)s+='-';}return s;}
+var giftCode='';
+function pay(btn){
+  paying=true;var isBtn=btn.classList.contains('btn'),label=btn.textContent,hx=btn.querySelector('.hx');btn.setAttribute('aria-busy','true');
+  if(isBtn){btn.innerHTML='<span class="spin" aria-hidden="true"></span>Processing payment';if(hx)btn.appendChild(hx);}else btn.classList.add('busy');
+  setTimeout(function(){
+    btn.removeAttribute('aria-busy');btn.classList.remove('busy');if(isBtn){btn.textContent=label;if(hx)btn.appendChild(hx);}paying=false;
+    giftCode=code();renderDone();
+    var finish=function(){
+      var vd=$('#vDone'),w=$('#wave');
+      try{history.replaceState({v:'done'},'','#done');}catch(_){}
+      if(reduce){show('done');haptic('success');return;}
+      /* M5: frosted brown glass rolls up (1 s) → settles into solid brown (0.28 s) → Done appears under it and the glass fades away */
+      w.className='wave go';
+      setTimeout(function(){w.className='wave solid';
+        setTimeout(function(){
+          show('done');vd.classList.add('arrive');haptic('success');
+          requestAnimationFrame(function(){w.className='wave out';});
+          setTimeout(function(){w.className='wave';},460);
+          setTimeout(function(){vd.classList.remove('arrive');},1400);
+        },300);
+      },1000);
+    };
+    if(openLayer)closeModal(finish);else finish();
+  },1500);
+}
+function renderDone(){
+  var d=design(), to=S.to||'them';
+  paintCard(C.done,d,S.amount);
+  var el=C.done.el;el.classList.remove('enter','glint');void el.offsetWidth;el.classList.add('enter','glint');
+  var link='amaforyou.com/gift/'+giftCode;$('#giftLink').textContent=link;
+  var text=to+', I got you an AMA gift card for any session.'+(S.msg?' “'+S.msg+'”':'')+' Open it here: https://'+link; // greeting yes, amount no: the recipient sees it when they open the gift
+  $('#waBtn').href='https://wa.me/?text='+encodeURIComponent(text);
+  shareText=text;
+  if(S.mode==='self'){
+    $('#doneTitle').textContent='Your gift is ready';
+    $('#doneLead').textContent='Send it to '+to+' in a message. The link opens the card with your note. '+receiptLine();
+    $('#shareBlock').hidden=false;$('#alsoShare').hidden=true;
+  }else{
+    $('#doneTitle').textContent=S.when==='now'?'Your gift is on its way':'Your gift is scheduled';
+    $('#doneLead').textContent=(S.when==='now'?'We’ve emailed it to '+S.email+'.':'We’ll email it to '+S.email+' on '+fmtDate(S.date)+' at '+S.time+'.')+' '+receiptLine();
+    $('#shareBlock').hidden=true;$('#alsoShare').hidden=false;
+  }
+}
+var shareText='';
+$('#alsoShare').addEventListener('click',function(){$('#shareBlock').hidden=false;this.hidden=true;});
+$('#againBtn').addEventListener('click',function(){var keepFrom=S.from,keepBuyer=S.buyer;S=Object.assign({},DEF,{from:keepFrom,buyer:keepBuyer});persist();show('landing');});
+$('#copyBtn').addEventListener('click',function(){
+  var t='https://'+$('#giftLink').textContent;
+  function sel(){var r=document.createRange();r.selectNodeContents($('#giftLink'));var s=getSelection();s.removeAllRanges();s.addRange(r);toast('Link selected. Copy it from the menu');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){toast('Link copied');},sel);}else sel();
+});
+var inFrame=false;try{inFrame=window.self!==window.top;}catch(e){inFrame=true;}
+if(navigator.share&&!inFrame){$('#nativeShareBtn').hidden=false;$('#nativeShareBtn').addEventListener('click',function(){navigator.share({title:'AMA gift card',text:shareText}).catch(function(){});});}
+$('#againBtn').addEventListener('click',function(){try{history.replaceState(null,'',location.pathname);}catch(_){}markSw();paintCard(C.mood,design(),75);renderAmount();renderDelivery();renderSummary();});
+/* Done: no micro-scroll; if the screen overflows by less than 48 px, the bottom padding gives way */
+function fitDone(){var host=$('#vDone .col');host.style.paddingBottom='';var ov=document.documentElement.scrollHeight-window.innerHeight;if(ov>0&&ov<48){var pb=parseFloat(getComputedStyle(host).paddingBottom);host.style.paddingBottom=Math.max(0,pb-ov)+'px';}}
+window.addEventListener('resize',function(){if(view==='done')requestAnimationFrame(fitDone);});
+
+/* card image for messengers: the portrait card, drawn on canvas, without the amount (they see it when they open the gift) */
+function cardPNG(){
+  var d=design(),W=1080,H=1712,cv=document.createElement('canvas');cv.width=W;cv.height=H;var x=cv.getContext('2d');
+  var r=64;x.beginPath();x.moveTo(r,0);x.arcTo(W,0,W,H,r);x.arcTo(W,H,0,H,r);x.arcTo(0,H,0,0,r);x.arcTo(0,0,W,0,r);x.closePath();x.clip();
+  var a=140*Math.PI/180,cx=W/2,cy=H/2,len=Math.abs(W*Math.sin(a))+Math.abs(H*Math.cos(a));
+  var g=x.createLinearGradient(cx-Math.sin(a)*len/2,cy+Math.cos(a)*len/2,cx+Math.sin(a)*len/2,cy-Math.cos(a)*len/2);
+  g.addColorStop(0,d.c1);g.addColorStop(1,d.c2);x.fillStyle=g;x.fillRect(0,0,W,H);
+  var rg=x.createRadialGradient(W*.22,H*.18,0,W*.22,H*.18,W*.9);rg.addColorStop(0,'rgba(255,255,255,.30)');rg.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=rg;x.fillRect(0,0,W,H);
+  x.save();x.translate(86,92);x.scale(4.7,4.7);x.fillStyle=d.ink;LOGO_PATHS.forEach(function(p){x.fill(new Path2D(p));});x.restore();
+  x.fillStyle=d.ink;x.globalAlpha=.72;x.font='400 56px "Google Sans Flex","Google Sans","Helvetica Neue",Arial,sans-serif';x.textAlign='left';x.textBaseline='bottom';
+  x.fillText('Gift card',86,H-86);x.globalAlpha=1;
+  return new Promise(function(res){cv.toBlob(res,'image/png');});
+}
+var downloads=null;
+if(window.claude&&typeof window.claude.use==='function'){
+  window.claude.use('downloads').then(function(dl){downloads=dl;if(dl)$('#imgBtn').hidden=false;}).catch(function(){});
+}
+$('#imgBtn').addEventListener('click',function(){
+  if(!downloads)return;
+  cardPNG().then(function(blob){return downloads.save({filename:'ama-gift-card-'+giftCode+'.png',data:blob});})
+  .then(function(){toast('Image saved');})
+  .catch(function(err){var c=err&&err.code;if(c==='declined')return;if(c==='unavailable'||c==='not_granted'){ $('#imgBtn').hidden=true; }toast('Couldn’t save the image here');});
+});
+var tt;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show');},2200);}
+
+/* keyboard: the bar steps aside while a field has focus; iOS may slide the visible area down, so the header follows it */
+var isField=function(el){return el&&!el.classList.contains('hx')&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.tagName==='SELECT');};
+document.addEventListener('focusin',function(e){if(isField(e.target)&&!e.target.closest('.modal')){typing=true;updateBar();}});
+document.addEventListener('focusout',function(){setTimeout(function(){if(!isField(document.activeElement)){typing=false;updateBar();hdr.style.translate='';}},0);});
+var hdr=document.querySelector('.site-header');
+if(window.visualViewport){var vv=window.visualViewport;var fix=function(){var f=isField(document.activeElement);var top=f?Math.max(0,vv.offsetTop):0;hdr.style.translate=top?('0 '+top+'px'):'';};vv.addEventListener('resize',fix);vv.addEventListener('scroll',fix);}
+
+/* landing blocks fade up once when they first enter the screen */
+if('IntersectionObserver' in window&&!reduce){
+  var rvIO=new IntersectionObserver(function(es){es.forEach(function(en){if(!en.isIntersecting)return;var el=en.target;rvIO.unobserve(el);el.classList.add('in');
+    setTimeout(function(){el.classList.remove('rv','in');},800);});},{threshold:0.12,rootMargin:'0px 0px -6% 0px'});
+  $$('#vLanding .rv').forEach(function(el){rvIO.observe(el);});
+}else{$$('.rv').forEach(function(el){el.classList.remove('rv');});}
+/* light tick when an option is chosen */
+document.addEventListener('click',function(e){var o=e.target.closest&&e.target.closest('.sw,.tile,.seg button');if(o&&o.getAttribute('aria-pressed')!=='true'&&o.getAttribute('aria-checked')!=='true')haptic('light');},true);
+/* iOS 26.5+ lets only a real finger tap on a system switch play a haptic; script-triggered ticks were closed by Apple.
+   So on iPhone each key control carries a transparent switch under the finger. Android keeps navigator.vibrate. */
+if(isIOS){
+  var addHx=function(el){if(el.querySelector(':scope > .hx'))return;var i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');i.className='hx';i.tabIndex=-1;i.setAttribute('aria-hidden','true');
+    i.addEventListener('focus',function(){i.blur();});el.appendChild(i);};
+  $$('button.btn,.sw,.tile,.seg button').forEach(addHx);
+}
+/* start */
+markSw();renderAmount();renderDelivery();renderSummary();
+if(location.hash==='#buy'){try{history.replaceState(null,'',location.pathname);}catch(_){}}
+show('landing');
+})();
+</script>
+</body></html>
