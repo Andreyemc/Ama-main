@@ -108,14 +108,11 @@ input[type=range]{width:210px;accent-color:var(--rust)}
         <div class="fc-art"></div><div class="fc-veil"></div><div class="fc-frost"></div><div class="fc-shade"></div><div class="fc-sheen"></div>
         <svg class="fc-print" viewBox="0 0 856 540" preserveAspectRatio="none" aria-hidden="true">
           <defs>
-            <g id="pr" class="pg">
-              <use href="#ama-logo" x="48" y="44" width="154" height="58"/>
-              <text x="808" y="74" text-anchor="end" font-size="27" font-weight="500">Gift card</text>
-              <text class="amt" id="tAmt" x="44" y="490" font-size="88">£75</text>
-              <text id="tName" x="808" y="488" text-anchor="end" font-size="32" font-weight="500">Anna</text>
-            </g>
-            <mask id="pm" maskUnits="userSpaceOnUse" x="0" y="0" width="856" height="540"><use href="#pr" fill="#fff"/></mask>
-            <linearGradient id="env" gradientUnits="userSpaceOnUse"></linearGradient>
+            <g id="eL" class="pg"><use href="#ama-logo" x="48" y="44" width="154" height="58"/></g>
+            <g id="eK" class="pg"><text x="808" y="74" text-anchor="end" font-size="27" font-weight="500">Gift card</text></g>
+            <g id="eA" class="pg"><text class="amt" id="tAmt" x="44" y="490" font-size="88">£75</text></g>
+            <g id="eN" class="pg"><text id="tName" x="808" y="488" text-anchor="end" font-size="32" font-weight="500">Anna</text></g>
+            <mask id="pm" maskUnits="userSpaceOnUse" x="0" y="0" width="856" height="540"><use href="#eL" fill="#fff"/><use href="#eK" fill="#fff"/><use href="#eA" fill="#fff"/><use href="#eN" fill="#fff"/></mask>
             <linearGradient id="spec" gradientUnits="userSpaceOnUse">
               <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".46" stop-color="#fff" stop-opacity="0"/>
               <stop offset=".49" stop-color="#fff" stop-opacity=".45"/><stop offset=".5" stop-color="#fff" stop-opacity=".8"/><stop offset=".51" stop-color="#fff" stop-opacity=".45"/>
@@ -123,9 +120,7 @@ input[type=range]{width:210px;accent-color:var(--rust)}
             </linearGradient>
             <filter id="soft" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="1"/></filter>
           </defs>
-          <use href="#pr" id="pShade" fill="#000" fill-opacity=".28" filter="url(#soft)"/>
-          <use href="#pr" id="pLit" fill="#fff" fill-opacity=".55"/>
-          <rect width="856" height="540" fill="url(#env)" mask="url(#pm)"/>
+          <g id="pLayers"></g>
           <rect width="856" height="540" fill="url(#spec)" mask="url(#pm)" id="pSpec"/>
         </svg>
         <div class="fc-rim"></div>
@@ -144,12 +139,11 @@ input[type=range]{width:210px;accent-color:var(--rust)}
   <div class="ctl">
     <div class="row"><span>Finish</span><div class="seg" id="segVer"><button type="button" aria-pressed="true" data-v="new">New</button><button type="button" aria-pressed="false" data-v="old">Current</button></div></div>
     <div class="field"><label for="nameIn">Recipient’s name</label><input id="nameIn" maxlength="24" value="Anna" autocomplete="off" placeholder="Their name"></div>
-    <div class="row"><span>Polished print</span><div class="seg" id="segTone"><button type="button" aria-pressed="true" data-v="auto">Auto</button><button type="button" aria-pressed="false" data-v="deep">Deep</button><button type="button" aria-pressed="false" data-v="bright">Bright</button></div></div>
     <div class="row"><span>Frost</span><input type="range" id="frost" min="0" max="2" step="0.1" value="1" aria-label="Frost strength"></div>
     <div class="row"><span>Amount</span><div class="seg" id="segAmt"><button type="button" aria-pressed="true" data-v="75">£75</button><button type="button" aria-pressed="false" data-v="250">£250</button></div></div>
     <div class="row"><span>Background</span><div class="seg" id="segBg"><button type="button" aria-pressed="true" data-v="cream">Cream</button><button type="button" aria-pressed="false" data-v="dark">Dark</button></div></div>
   </div>
-  <p class="fine">New: the surface is frosted, so it only takes a soft wide sheen. The logo, “Gift card”, the amount and the name are polished: they mirror the room, sit deeper or brighter than the frost, and a sharp highlight runs through them as the card turns. Deep suits light cards, bright suits dark ones; Auto picks by the colour. Current: the card as it is in version A.</p>
+  <p class="fine">New: the surface is frosted, so it only takes a soft wide sheen. The logo, “Gift card”, the amount and the name are polished: they mirror the room, sit deeper or brighter than the frost, and a sharp highlight runs through them as the card turns. The print tone is worked out for each colour so every word on the card keeps at least 4.5:1 contrast with the frost around it, wherever the light is. Current: the card as it is in version A.</p>
 </div></main>
 <script>
 (function(){
@@ -174,30 +168,59 @@ function hex(c){return [parseInt(c.substr(1,2),16),parseInt(c.substr(3,2),16),pa
 function toHex(a){return '#'+a.map(function(v){v=Math.max(0,Math.min(255,Math.round(v)));return (v<16?'0':'')+v.toString(16);}).join('');}
 function mix(a,b,t){var p=hex(a),q=hex(b);return toHex(p.map(function(v,i){return v+(q[i]-v)*t;}));}
 function lum(c){var p=hex(c).map(function(v){v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);});return .2126*p[0]+.7152*p[1]+.0722*p[2];}
-var cardNew=$('#cardNew'),cardOld=$('#cardOld'),env=$('#env'),spec=$('#spec'),cur=DESIGNS[0],tone='auto',frost=1;
+var cardNew=$('#cardNew'),cardOld=$('#cardOld'),spec=$('#spec'),cur=DESIGNS[0],tone='auto',frost=1;
 /* the room the polished print reflects: a soft studio light on a darker room (deep) or a bright room with one dark strip (bright) */
-function envStops(d,mode){
-  /* the print always keeps its side of the contrast: the deep print never gets lighter than the frost around it, the bright
-     one never darker. The room only moves it within that side; the crisp white streak on top is what reads as polish. */
-  var mid=mix(d.c1,d.c2,.5);
-  if(mode==='deep'){
-    var deep=mix(mix(d.c2,mid,.3),'#000000',.6),deeper=mix(deep,'#000000',.3),half=mix(deep,d.c1,.2),glow=mix(deep,d.c1,.36);
-    return [[0,deep],[.2,deeper],[.34,deep],[.42,half],[.48,glow],[.52,glow],[.58,half],[.68,deep],[.8,deeper],[1,deep]];
-  }
-  var base=mix(d.c1,'#FFFFFF',.8),hi='#FFFFFF',dim=mix(base,d.c2,.14),low=mix(base,d.c2,.26);
+/* contrast is solved, not guessed. Each print element (logo, Gift card, amount, name) is checked against the frost
+   right under it, also with the sheen on it and with the shade on it. Its tone is pushed until the main tone clears
+   4.5:1 (3:1 under the passing sheen) and even the lightest (deep) or darkest (bright) part of the reflection clears 3:1.
+   All four take the same side, deep or bright, when that costs little contrast; on a card whose colour runs from very
+   light to very dark (Forest, Sunrise) each element takes the side that reads better where it sits. */
+function ratio(a,b){var x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
+var EL=[{id:'L',t:[.06,.14,.22],big:true},{id:'K',t:[.5,.56,.62]},{id:'A',t:[.34,.44,.56],big:true},{id:'N',t:[.84,.89,.94]}]; // spots along the card's 140° colour line
+function ends(d){var mid=mix(d.c1,d.c2,.5),k=.18*frost;return [mix(d.c1,mid,k),mix(d.c2,mid,k)];}
+function spots(d,ts){var e=ends(d),o=[];ts.forEach(function(t){var c=mix(e[0],e[1],t);o.push({c:c,sheen:false},{c:mix(c,'#000000',.06),sheen:false},{c:mix(c,'#FFFFFF',.14+.05*frost),sheen:true});});return o;}
+function score(main,edge,sp,big){var need=big?3:4.5,m=1e9,ok=true;sp.forEach(function(x){var r=ratio(main,x.c);m=Math.min(m,x.sheen?r*1.5:r);if(r<(x.sheen?need*2/3:need))ok=false;if(!x.sheen&&ratio(edge,x.c)<(big?2.2:3))ok=false;});return {ok:ok,m:m};}
+/* among the tones that pass, take the first that reaches 7:1, otherwise the strongest; at equal depth the widest reflection wins */
+function solveEl(d,e,mode){
+  var sp=spots(d,e.t),mid=mix(d.c1,d.c2,.5),best=null,bestOk=null;
+  for(var i=0;i<=30;i++)for(var gi=0;gi<4;gi++){var p,sc,gk=[.32,.22,.14,.07][gi];
+    if(mode==='deep'){var deep=mix(mix(d.c2,mid,.3),'#000000',.4+i*.019);p={mode:'deep',deep:deep,glow:mix(deep,d.c1,gk)};sc=score(deep,p.glow,sp,e.big);}
+    else{var base=mix(d.c1,'#FFFFFF',Math.min(1,.55+i*.015));p={mode:'bright',base:base,low:mix(base,d.c2,gk*.6)};sc=score(base,p.low,sp,e.big);}
+    p.ok=sc.ok;p.m=sc.m;
+    if(sc.ok){if(sc.m>=7)return p;if(!bestOk||sc.m>bestOk.m+.05)bestOk=p;}
+    if(!best||sc.m>best.m)best=p;}
+  return bestOk||best;
+}
+function solve(d){
+  var deep=EL.map(function(e){return solveEl(d,e,'deep');}),bright=EL.map(function(e){return solveEl(d,e,'bright');});
+  function all(a){return a.every(function(p){return p.ok;});}function low(a){return Math.min.apply(null,a.map(function(p){return p.m;}));}
+  /* one side for the whole card when it costs little; otherwise each element takes the side that reads better where it sits */
+  var pick,each=EL.map(function(e,i){var a=deep[i],b=bright[i];return a.ok!==b.ok?(a.ok?a:b):(a.m>=b.m?a:b);});
+  if(all(deep)&&low(deep)>=.85*low(each))pick=deep;else if(all(bright)&&low(bright)>=.85*low(each))pick=bright;else pick=each;
+  return pick;
+}
+function envStops(p){
+  if(p.mode==='deep'){var deep=p.deep,deeper=mix(deep,'#000000',.3),half=mix(deep,p.glow,.5),glow=p.glow;
+    return [[0,deep],[.2,deeper],[.34,deep],[.42,half],[.48,glow],[.52,glow],[.58,half],[.68,deep],[.8,deeper],[1,deep]];}
+  var base=p.base,hi=mix(base,'#FFFFFF',.7),dim=mix(base,p.low,.5),low=p.low;
   return [[0,base],[.2,hi],[.34,base],[.42,dim],[.48,low],[.52,low],[.58,dim],[.68,base],[.8,hi],[1,base]];
 }
-function pickTone(d){if(tone!=='auto')return tone;return lum(mix(d.c1,d.c2,.5))>.2?'deep':'bright';}
+/* the layers per element: a soft shade away from the light, a hairline of light towards it, the polished fill */
+var NS='http://www.w3.org/2000/svg',layers=$('#pLayers'),ENV={};
+EL.forEach(function(e){
+  layers.insertAdjacentHTML('beforeend','<linearGradient id="env'+e.id+'" gradientUnits="userSpaceOnUse"></linearGradient><mask id="m'+e.id+'" maskUnits="userSpaceOnUse" x="0" y="0" width="856" height="540"><use href="#e'+e.id+'" fill="#fff"/></mask>'+
+    '<use href="#e'+e.id+'" class="sh" fill="#000" filter="url(#soft)"/><use href="#e'+e.id+'" class="lt" fill="#fff"/><rect width="856" height="540" fill="url(#env'+e.id+')" mask="url(#m'+e.id+')"/>');
+  ENV[e.id]=document.getElementById('env'+e.id);
+});
 function paint(d){
-  cur=d;var m=pickTone(d);
-  env.innerHTML=envStops(d,m).map(function(s){return '<stop offset="'+s[0]+'" stop-color="'+s[1]+'"/>';}).join('');
-  /* the frost pulls the two ends of the colour together a little, so the print never lands on the palest or darkest corner */
-  var mid=mix(d.c1,d.c2,.5),k=.18*frost;
+  cur=d;var pr=solve(d);window.__print=pr;
+  EL.forEach(function(e,i){var p=pr[i];ENV[e.id].innerHTML=envStops(p).map(function(st){return '<stop offset="'+st[0]+'" stop-color="'+st[1]+'"/>';}).join('');
+    var g=layers.querySelectorAll('use.sh')[i],l=layers.querySelectorAll('use.lt')[i];
+    g.setAttribute('fill-opacity',p.mode==='deep'?'.12':'.3');l.setAttribute('fill-opacity',p.mode==='deep'?'.16':'.12');});
+  var se=ends(d);
   [cardNew,cardOld].forEach(function(c){c.style.setProperty('--edge',d.edge);});
-  var s=cardNew.style;s.setProperty('--s1',mix(d.c1,mid,k));s.setProperty('--s2',mix(d.c2,mid,k));
+  var s=cardNew.style;s.setProperty('--s1',se[0]);s.setProperty('--s2',se[1]);
   s.setProperty('--veil',(.05*frost).toFixed(3));s.setProperty('--grain',(.22*frost).toFixed(2));
-  $('#pShade').setAttribute('fill-opacity',m==='deep'?'.12':'.3');
-  $('#pLit').setAttribute('fill-opacity',m==='deep'?'.16':'.12');
   var o=cardOld.style;o.setProperty('--art','linear-gradient(140deg,'+d.c1+' 0%,'+d.c2+' 100%)');o.setProperty('--c2',d.c2);o.setProperty('--metal',METAL[d.metal]);
   $$('#sw button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.id===d.id);});
   $('#swname').textContent=d.name;
@@ -205,7 +228,6 @@ function paint(d){
 var sw=$('#sw');DESIGNS.forEach(function(d){var b=document.createElement('button');b.type='button';b.setAttribute('role','radio');b.dataset.id=d.id;b.style.setProperty('--c',mix(d.c1,d.c2,.5));b.setAttribute('aria-label',d.name);b.addEventListener('click',function(){paint(d);});sw.appendChild(b);});
 function seg(id,fn){$$('#'+id+' button').forEach(function(b){b.addEventListener('click',function(){$$('#'+id+' button').forEach(function(x){x.setAttribute('aria-pressed',x===b);});fn(b.dataset.v);});});}
 seg('segVer',function(v){cardNew.hidden=v!=='new';cardOld.hidden=v==='new';});
-seg('segTone',function(v){tone=v;paint(cur);});
 seg('segAmt',function(v){$('#tAmt').textContent='£'+v;$('#oAmt').textContent='£'+v;});
 seg('segBg',function(v){document.documentElement.classList.toggle('dark',v==='dark');document.querySelector('meta[name=theme-color]').content=v==='dark'?'#2B2A28':'#F7EEE0';});
 $('#frost').addEventListener('input',function(e){frost=+e.target.value;paint(cur);});
@@ -245,12 +267,12 @@ function frame(now){
   var u=c.ly/24,v=c.lx/20,s=cardNew.style;
   s.setProperty('--rx',rx);s.setProperty('--ry',ry);
   s.setProperty('--lx',clamp(38+u*34,0,100).toFixed(1)+'%');s.setProperty('--ly',clamp(30-v*36,0,100).toFixed(1)+'%');
-  band(env,1800,260+u*760-v*300);
+  EL.forEach(function(e){band(ENV[e.id],1800,260+u*760-v*300);});
   band(spec,1500,-330+u*1150-v*420);
   /* the thin lit edge faces the light, the soft shade falls away from it */
   var ldx=-.55+u*.9,ldy=-.85-v*.7,ll=Math.max(.001,Math.hypot(ldx,ldy));ldx/=ll;ldy/=ll;
-  $('#pShade').setAttribute('transform','translate('+(-ldx*1.4).toFixed(2)+' '+(-ldy*1.6).toFixed(2)+')');
-  $('#pLit').setAttribute('transform','translate('+(ldx*.8).toFixed(2)+' '+(ldy*.8).toFixed(2)+')');
+  var tS='translate('+(-ldx*1.4).toFixed(2)+' '+(-ldy*1.6).toFixed(2)+')',tL='translate('+(ldx*.8).toFixed(2)+' '+(ldy*.8).toFixed(2)+')';
+  layers.querySelectorAll('use.sh').forEach(function(n){n.setAttribute('transform',tS);});layers.querySelectorAll('use.lt').forEach(function(n){n.setAttribute('transform',tL);});
   /* current: the same numbers as version A */
   var o=cardOld.style;o.setProperty('--rx',rx);o.setProperty('--ry',ry);
   o.setProperty('--gx',clamp(50+c.ly*2.4,-20,120).toFixed(1)+'%');o.setProperty('--gy',clamp(40-c.lx*2.6,-20,120).toFixed(1)+'%');
