@@ -113,32 +113,23 @@ a.btn{text-decoration:none}
 .gc-tilt{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(var(--rx)) rotateY(var(--ry));will-change:transform}
 .gc-edge{position:absolute;inset:-2px;border:2px solid transparent;background-clip:padding-box;border-radius:calc(3.8cqw + 2px);background-color:var(--edge,#8E3F10)}
 /* a 2px transparent border keeps the visible edge inside each 3D layer, so the GPU smooths it instead of drawing a stair-stepped outline when the card turns */
-.gc-face{position:absolute;inset:-2px;border:2px solid transparent;background-clip:padding-box;border-radius:calc(3.8cqw + 2px);overflow:hidden;transform:translateZ(.5px);background-color:var(--c2);isolation:isolate}
-.gc-art{position:absolute;inset:0;background:var(--art);background-size:cover;background-position:center}
-.gc-art::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 22% 18%,rgba(255,255,255,.30),rgba(255,255,255,0) 55%)}
-.gc-foil{position:absolute;inset:-2px;mix-blend-mode:soft-light;opacity:.55;pointer-events:none;
-  background:
-    repeating-linear-gradient(118deg,rgba(255,255,255,0) 0 6px,rgba(255,255,255,.07) 6px 7px),
-    linear-gradient(115deg,transparent 22%,rgba(255,214,180,.9) 36%,rgba(214,246,226,.9) 46%,rgba(206,216,255,.9) 56%,rgba(250,214,255,.9) 66%,transparent 80%);
-  background-size:100% 100%,300% 300%;background-position:0 0,var(--fx) var(--fy)}
-.gc-band{position:absolute;inset:-30%;pointer-events:none;mix-blend-mode:soft-light;opacity:.75;
-  background:radial-gradient(ellipse 42% 52% at var(--bx) 42%,rgba(255,255,255,.95),rgba(255,255,255,.35) 40%,rgba(255,255,255,0) 72%)} /* wide, soft, blurred light that follows the tilt */
-.gc-tex{position:absolute;inset:0;pointer-events:none;opacity:.2;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")} /* matte grain */
-.gc-glare{position:absolute;inset:0;mix-blend-mode:soft-light;pointer-events:none;background:radial-gradient(ellipse 70% 85% at var(--gx) var(--gy),rgba(255,255,255,.3),rgba(255,255,255,0) 70%)}
-.gc-foil{display:none} /* no sharp rainbow streak: the shimmer lives in the metal print */
-.gc-rim{position:absolute;inset:0;border-radius:3.8cqw;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),inset 0 1px 0 rgba(255,255,255,.35);pointer-events:none}
-.gc-logo{position:absolute;left:5.6cqw;top:5.4cqw;width:18cqw;height:6.8cqw;color:var(--ink-c)}
-.gc-logo svg{width:100%;height:100%;display:block;fill:currentColor;visibility:hidden}
-/* metal silk-screen: logo, kind and amount are printed in metal; the bright band runs through them with the light */
-.gc{--metal:linear-gradient(var(--ink-c),var(--ink-c))}
-.gc-logo,.gc-kind,.gc-amt{background-image:var(--metal);background-size:320% 100%;background-position:var(--mx,50%) 50%;filter:drop-shadow(0 .5px 0 rgba(0,0,0,.22))}
-.gc-logo{-webkit-mask:var(--logo-mask) left center/contain no-repeat;mask:var(--logo-mask) left center/contain no-repeat}
-.gc-kind,.gc-amt{color:transparent!important;-webkit-background-clip:text;background-clip:text}
-.logo svg{fill:var(--ink)}
-.gc-kind{position:absolute;right:5.6cqw;top:6.4cqw;font-size:3.1cqw;color:var(--ink-c);opacity:.86}
-.gc-amt{position:absolute;left:5.4cqw;bottom:4.6cqw;font-size:10cqw;line-height:1;letter-spacing:-.01em;color:var(--ink-c);font-variant-numeric:tabular-nums}
+.gc-face{position:absolute;inset:-2px;border:2px solid transparent;background-clip:padding-box;border-radius:calc(3.8cqw + 2px);overflow:hidden;transform:translateZ(.5px);background-color:var(--s2,var(--c2));isolation:isolate}
+.gc-face>i,.gc-face>svg{position:absolute;inset:0;pointer-events:none}
+/* finish approved 20 Oct (test /gift/finish/, frost 65%): a frosted matte card with a polished print.
+   The frost scatters light, so the surface only takes a soft wide sheen; the print mirrors the room, sits clearly deeper
+   or brighter than the frost and carries a moving reflection and a crisp streak. */
+.gc-art{background:linear-gradient(140deg,var(--s1),var(--s2))}
+.gc-veil{background:rgba(255,255,255,.065)}
+.gc-frost{opacity:.286;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.gc-face>.gc-sheen{inset:-40%;mix-blend-mode:soft-light;background:radial-gradient(ellipse 46% 52% at var(--lx,38%) var(--ly,30%),rgba(255,255,255,.55),rgba(255,255,255,.18) 45%,rgba(255,255,255,0) 75%)}
+.gc-face>.gc-shade{inset:-40%;mix-blend-mode:multiply;opacity:.16;background:radial-gradient(ellipse 50% 60% at calc(100% - var(--lx,38%)) calc(100% - var(--ly,30%)),rgba(0,0,0,.9),rgba(0,0,0,0) 70%)}
+.gc-print{width:100%;height:100%;overflow:visible}
+.gc-print .pg{font-family:var(--sans);font-weight:400}
+.gc-print .gc-amt{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.gc-rim{position:absolute;inset:0;border-radius:3.8cqw;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1px 0 rgba(0,0,0,.12);pointer-events:none}
 .gc.no-amt .gc-amt{visibility:hidden}
+.logo svg{fill:var(--ink)}
 .gc.swap .gc-tilt{animation:swap .42s cubic-bezier(.2,.8,.2,1)}
 @keyframes swap{0%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(.97)}100%{transform:rotateX(var(--rx)) rotateY(var(--ry)) scale(1)}} /* no opacity: fading a 3D card makes Safari flatten and redraw it, which flickers */
 .gc.glint .gc-face::after{content:"";position:absolute;inset:-20%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-80%);animation:glint 1.3s .55s ease-out forwards;mix-blend-mode:soft-light}
@@ -860,6 +851,93 @@ var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelect
 /* =========================================================
    3D CARD
    ========================================================= */
+/* ---------- card finish: frosted card, polished print ----------
+   The print (logo, Gift card, amount, recipient's name) is one SVG per card. Each element is masked out of its own
+   reflection gradient, so the reflection runs across the card as one room, and its tone is solved so it never melts
+   into the frost under it. */
+var FROST=1.3, cardSeq=0, PRINT_EL=[{id:'L',t:[.06,.14,.22]},{id:'K',t:[.5,.56,.62]},{id:'A',t:[.34,.44,.56],big:true},{id:'N',t:[.84,.89,.94]}];
+function printSVG(p){
+  var defs='<g id="'+p+'L" class="pg"><use href="#ama-logo" x="48" y="44" width="154" height="58"/></g>'+
+    '<g id="'+p+'K" class="pg"><text x="808" y="74" text-anchor="end" font-size="27" font-weight="500">Gift card</text></g>'+
+    '<g id="'+p+'A" class="pg"><text class="gc-amt" x="44" y="490" font-size="88"></text></g>'+
+    '<g id="'+p+'N" class="pg"><text class="gc-name" x="808" y="488" text-anchor="end" font-size="32" font-weight="500"></text></g>'+
+    '<mask id="'+p+'m" maskUnits="userSpaceOnUse" x="0" y="0" width="856" height="540"><use href="#'+p+'L" fill="#fff"/><use href="#'+p+'K" fill="#fff"/><use href="#'+p+'A" fill="#fff"/><use href="#'+p+'N" fill="#fff"/></mask>'+
+    '<linearGradient id="'+p+'s" class="spec" gradientUnits="userSpaceOnUse"><stop offset="0" stop-opacity="0"/><stop offset=".46" stop-opacity="0"/><stop offset=".49" stop-opacity=".45"/><stop offset=".5" stop-opacity=".8"/><stop offset=".51" stop-opacity=".45"/><stop offset=".54" stop-opacity="0"/><stop offset="1" stop-opacity="0"/></linearGradient>'+
+    '<filter id="'+p+'f" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="1"/></filter>';
+  var body='';
+  PRINT_EL.forEach(function(e){var x=p+e.id;
+    defs+='<linearGradient id="'+x+'e" class="env" gradientUnits="userSpaceOnUse"></linearGradient><mask id="'+x+'m" maskUnits="userSpaceOnUse" x="0" y="0" width="856" height="540"><use href="#'+x+'" fill="#fff"/></mask>';
+    body+='<use href="#'+x+'" class="sh" fill="#000" filter="url(#'+p+'f)"/><use href="#'+x+'" class="lt" fill="#fff"/><rect width="856" height="540" fill="url(#'+x+'e)" mask="url(#'+x+'m)"/>';});
+  return '<svg class="gc-print" viewBox="0 0 856 540" preserveAspectRatio="none" aria-hidden="true"><defs>'+defs+'</defs>'+body+'<rect width="856" height="540" fill="url(#'+p+'s)" mask="url(#'+p+'m)"/></svg>';
+}
+function hexA(c){return [parseInt(c.substr(1,2),16),parseInt(c.substr(3,2),16),parseInt(c.substr(5,2),16)];}
+function mixHex(a,b,t){var p=hexA(a),q=hexA(b);return '#'+p.map(function(v,i){v=Math.max(0,Math.min(255,Math.round(v+(q[i]-v)*t)));return (v<16?'0':'')+v.toString(16);}).join('');}
+function lumHex(c){var p=hexA(c).map(function(v){v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);});return .2126*p[0]+.7152*p[1]+.0722*p[2];}
+function cratio(a,b){var x=lumHex(a),y=lumHex(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
+/* the frost draws the two ends of a card's colour a little together; a card running from very light to very dark gets a
+   little more (never past a third), so one print tone holds on the whole card */
+function frostEnds(d,sq){var mid=mixHex(d.c1,d.c2,.5),k=Math.min(.9,.18*FROST+sq);return [mixHex(d.c1,mid,k),mixHex(d.c2,mid,k)];}
+function printSolve(d,sq){
+  var e=frostEnds(d,sq),mid=mixHex(d.c1,d.c2,.5);
+  function spots(ts){var o=[];ts.forEach(function(t){var c=mixHex(e[0],e[1],t);o.push({c:c},{c:mixHex(c,'#000000',.06)},{c:mixHex(c,'#FFFFFF',.14+.05*FROST),sheen:true});});return o;}
+  function score(main,edge,sp,big){var need=big?3:4.5,m=1e9,ok=true;sp.forEach(function(x){var r=cratio(main,x.c);m=Math.min(m,x.sheen?r*1.5:r);if(r<(x.sheen?need*2/3:need))ok=false;if(!x.sheen&&cratio(edge,x.c)<(big?2.2:3))ok=false;});return {ok:ok,m:m};}
+  function one(el,mode){var sp=spots(el.t),best=null,bestOk=null;
+    for(var i=0;i<=30;i++)for(var gi=0;gi<5;gi++){var p,sc,gk=(mode==='deep'?[.32,.26,.2,.14,.07]:[.55,.45,.35,.25,.15])[gi];
+      if(mode==='deep'){var dp=mixHex(mixHex(d.c2,mid,.3),'#000000',.4+i*.019);p={mode:'deep',main:dp,edge:mixHex(dp,d.c1,gk)};}
+      else{var bs=mixHex(d.c1,'#FFFFFF',Math.min(1,.55+i*.015));p={mode:'bright',main:bs,edge:mixHex(bs,d.c2,gk)};}
+      sc=score(p.main,p.edge,sp,el.big);p.ok=sc.ok;p.m=sc.m;
+      if(sc.ok){if(sc.m>=7)return p;if(!bestOk||sc.m>bestOk.m+.05)bestOk=p;}
+      if(!best||sc.m>best.m)best=p;}
+    return bestOk||best;}
+  return {deep:PRINT_EL.map(function(el){return one(el,'deep');}),bright:PRINT_EL.map(function(el){return one(el,'bright');})};
+}
+var PRINT_CACHE={};
+function printFor(d){
+  if(PRINT_CACHE[d.id])return PRINT_CACHE[d.id];
+  function all(a){return a.every(function(p){return p.ok;});}function low(a){return Math.min.apply(null,a.map(function(p){return p.m;}));}
+  var best=null;
+  for(var n=0;n<=10;n++){var sq=n*.03,r=printSolve(d,sq),pick=all(r.deep)&&all(r.bright)?(low(r.deep)>=low(r.bright)?r.deep:r.bright):all(r.deep)?r.deep:all(r.bright)?r.bright:null;
+    if(pick){best={els:pick,sq:sq};break;}
+    var c=low(r.deep)>=low(r.bright)?r.deep:r.bright;if(!best||low(c)>low(best.els)+.05)best={els:c,sq:sq};}
+  var e=frostEnds(d,best.sq);best.s1=e[0];best.s2=e[1];best.mode=best.els[0].mode;
+  best.stops=best.els.map(function(p){
+    if(p.mode==='deep'){var dp=p.main,dr=mixHex(dp,'#000000',.3),hf=mixHex(dp,p.edge,.5),gl=p.edge;
+      return [[0,dp],[.2,dr],[.34,dp],[.42,hf],[.48,gl],[.52,gl],[.58,hf],[.68,dp],[.8,dr],[1,dp]];}
+    var bs=p.main,hi=mixHex(bs,'#FFFFFF',.7),dm=mixHex(bs,p.edge,.5),lo=p.edge;
+    return [[0,bs],[.2,hi],[.34,bs],[.42,dm],[.48,lo],[.52,lo],[.58,dm],[.68,bs],[.8,hi],[1,bs]];}).map(function(st){return st.map(function(x){return '<stop offset="'+x[0]+'" stop-color="'+x[1]+'"/>';}).join('');});
+  /* the moving streak: white on deep print; on bright print a white streak would vanish, so it is the room's dark passing through */
+  best.spec=best.mode==='bright'?{c:mixHex(d.c2,'#000000',.25),k:.7}:{c:'#FFFFFF',k:1};
+  return PRINT_CACHE[d.id]=best;
+}
+function paintPrint(c,d){
+  var f=printFor(d),el=c.el,s=el.style;s.setProperty('--s1',f.s1);s.setProperty('--s2',f.s2);
+  if(c._pd===d.id)return;c._pd=d.id;
+  var envs=el.querySelectorAll('.gc-print .env'),sh=el.querySelectorAll('.gc-print use.sh'),lt=el.querySelectorAll('.gc-print use.lt');
+  for(var i=0;i<envs.length;i++){envs[i].innerHTML=f.stops[i];var deep=f.els[i].mode==='deep';sh[i].setAttribute('fill-opacity',deep?'.12':'.3');lt[i].setAttribute('fill-opacity',deep?'.16':'.12');}
+  var o=[0,0,.45,.8,.45,0,0];el.querySelectorAll('.gc-print .spec stop').forEach(function(st,k){st.setAttribute('stop-color',f.spec.c);st.setAttribute('stop-opacity',(o[k]*f.spec.k).toFixed(3));});
+  c._env=envs;c._spec=el.querySelector('.gc-print .spec');c._sh=sh;c._lt=lt;
+}
+/* the recipient's name sits on the purchase cards; a long name gets smaller, then is cut with an ellipsis, so it never meets the amount */
+function paintName(c,name){
+  var t=c.el.querySelector('.gc-name');if(!t)return;name=(name||'').trim();if(t._n===name)return;t._n=name;
+  t.setAttribute('font-size','32');t.textContent=name;if(!name)return;
+  try{var w=t.getComputedTextLength(),max=380;if(w>max){var fs=Math.max(24,32*max/w);t.setAttribute('font-size',fs.toFixed(1));w=t.getComputedTextLength();
+    if(w>max){var n=name;while(n.length>1&&t.getComputedTextLength()>max){n=n.slice(0,-1);t.textContent=n.trim()+'…';}}}}catch(_){}
+}
+/* light: the frost drifts a little, the polished print a lot (a mirror turns the room faster than the card turns) */
+var PW=856,PH=540,PTH=28*Math.PI/180,PDX=Math.cos(PTH),PDY=Math.sin(PTH);
+function bandAt(g,len,off){var cx=PW/2+PDX*off,cy=PH/2+PDY*off;g.setAttribute('x1',(cx-PDX*len/2).toFixed(1));g.setAttribute('y1',(cy-PDY*len/2).toFixed(1));g.setAttribute('x2',(cx+PDX*len/2).toFixed(1));g.setAttribute('y2',(cy+PDY*len/2).toFixed(1));}
+function lightPrint(c){
+  if(!c._env)return;var u=(c.ly||0)/24,v=(c.lx||0)/20,s=c.el.style;
+  if(c._lu!=null&&Math.abs(u-c._lu)<.002&&Math.abs(v-c._lv)<.002)return;c._lu=u;c._lv=v;
+  s.setProperty('--lx',clamp(38+u*34,0,100).toFixed(1)+'%');s.setProperty('--ly',clamp(30-v*36,0,100).toFixed(1)+'%');
+  for(var i=0;i<c._env.length;i++)bandAt(c._env[i],1800,260+u*760-v*300);
+  bandAt(c._spec,1500,60+u*1150-v*420); // at rest the streak crosses the empty middle of the card, it reaches the print only as the card turns
+  var dx=-.55+u*.9,dy=-.85-v*.7,l=Math.max(.001,Math.hypot(dx,dy));dx/=l;dy/=l;
+  var tS='translate('+(-dx*1.4).toFixed(2)+' '+(-dy*1.6).toFixed(2)+')',tL='translate('+(dx*.8).toFixed(2)+' '+(dy*.8).toFixed(2)+')';
+  for(var j=0;j<c._sh.length;j++){c._sh[j].setAttribute('transform',tS);c._lt[j].setAttribute('transform',tL);}
+}
+
 var cards=[];
 var GYRO_CARDS=['hero','flow','preview','done','dsg'];
 var LOGO_SVG='<svg viewBox="0 0 69 26" aria-hidden="true"><use href="#ama-logo"/></svg>';
@@ -868,7 +946,7 @@ function buildCard(host){
   var el=document.createElement('div');el.className='gc';el.setAttribute('role','img');
   if(host.hasAttribute('data-nodrag'))el.classList.add('nodrag');
   var edges='';for(var i=1;i<=7;i++)edges+='<i class="gc-edge" style="transform:translateZ('+(-i*0.45)+'px)"></i>';
-  el.innerHTML='<div class="gc-tilt">'+edges+'<div class="gc-face"><div class="gc-art"></div><div class="gc-foil"></div><div class="gc-tex"></div><div class="gc-band"></div><div class="gc-glare"></div><div class="gc-rim"></div><div class="gc-logo">'+LOGO_SVG+'</div><span class="gc-kind">Gift card</span><span class="gc-amt"></span></div></div>';
+  el.innerHTML='<div class="gc-tilt">'+edges+'<div class="gc-face"><i class="gc-art"></i><i class="gc-veil"></i><i class="gc-frost"></i><i class="gc-shade"></i><i class="gc-sheen"></i>'+printSVG('k'+(cardSeq++))+'<i class="gc-rim"></i></div></div>';
   host.replaceWith(el);if(host.id)el.id=host.id;
   var c={el:el,amp:amp,rx:0,ry:0,vx:0,vy:0,tx:0,ty:0,phase:Math.random()*6.28,visible:true,drag:null,hover:false,idle:1,
     key:host.getAttribute('data-card'),fixedDesign:host.getAttribute('data-design'),nodrag:el.classList.contains('nodrag')};
@@ -879,12 +957,11 @@ function buildCard(host){
 }
 function designById(id){return DESIGNS.find(function(d){return d.id===id;})||DESIGNS[0];}
 function paintCard(c,d,amount){
-  c.el.style.setProperty('--art',d.art);c.el.style.setProperty('--c2',d.c2);
-  c.el.style.setProperty('--ink-c',d.ink);c.el.style.setProperty('--edge',d.edge);
-  c.el.style.setProperty('--metal',METAL[d.metal]||'linear-gradient('+d.ink+','+d.ink+')');
-  
+  c.el.style.setProperty('--c2',d.c2);c.el.style.setProperty('--edge',d.edge);
+  paintPrint(c,d);c._lu=null;lightPrint(c);
   c.el.querySelector('.gc-amt').textContent=money(amount);
-  c.el.setAttribute('aria-label',d.name+' AMA gift card, '+money(amount));
+  if(FLOW_CARDS.indexOf(c.key)>=0)paintName(c,S.to);
+  c.el.setAttribute('aria-label',d.name+' AMA gift card, '+money(amount)+(FLOW_CARDS.indexOf(c.key)>=0&&S.to?', for '+S.to:''));
 }
 function bump(c){c.el.classList.remove('swap');void c.el.offsetWidth;c.el.classList.add('swap');}
 
@@ -1034,10 +1111,7 @@ function frame(now){
     c.rested=c.still&&Math.abs(c.rx)<0.02&&Math.abs(c.ry)<0.02&&Math.abs(c.vx)<0.05&&Math.abs(c.vy)<0.05;
     var s=c.el.style;
     s.setProperty('--rx',c.rx.toFixed(2)+'deg');s.setProperty('--ry',c.ry.toFixed(2)+'deg');
-    s.setProperty('--gx',clamp(50+c.ly*2.4,-20,120).toFixed(1)+'%');s.setProperty('--gy',clamp(40-c.lx*2.6,-20,120).toFixed(1)+'%');
-    s.setProperty('--bx',clamp(50+c.ly*2.4-c.lx*0.8,-10,110).toFixed(1)+'%');
-    s.setProperty('--mx',clamp(50+c.ly*4.2-c.lx*1.6,0,100).toFixed(1)+'%');           // metal print band
-    s.setProperty('--fx',clamp(50+c.ly*2.2,0,100).toFixed(1)+'%');s.setProperty('--fy',clamp(50-c.lx*2.2,0,100).toFixed(1)+'%');
+    lightPrint(c);
   }
   requestAnimationFrame(frame);
 }
@@ -1577,7 +1651,7 @@ $('#amountInput').addEventListener('input',function(e){
   var n=+v;$('#fAmount').classList.remove('invalid');
   if(n>=10&&n<=500)setAmount(n);
 });
-$('#toInput').addEventListener('input',function(e){S.to=e.target.value.trim();persist();$('#fTo').classList.remove('invalid');});
+$('#toInput').addEventListener('input',function(e){S.to=e.target.value.trim();persist();$('#fTo').classList.remove('invalid');FLOW_CARDS.forEach(function(k){if(C[k])paintName(C[k],S.to);});});
 $('#fromInput').addEventListener('input',function(e){S.from=e.target.value.trim();persist();$('#fFrom').classList.remove('invalid');});
 $('#msgInput').addEventListener('input',function(e){S.msg=e.target.value;persist();renderMsgCount();});
 $$('.seg button').forEach(function(b){b.addEventListener('click',function(){S.mode=b.dataset.mode;persist();renderDelivery();});});
@@ -1742,11 +1816,12 @@ function cardPNG(){
   var r=64;x.beginPath();x.moveTo(r,0);x.arcTo(W,0,W,H,r);x.arcTo(W,H,0,H,r);x.arcTo(0,H,0,0,r);x.arcTo(0,0,W,0,r);x.closePath();x.clip();
   var a=140*Math.PI/180,cx=W/2,cy=H/2,len=Math.abs(W*Math.sin(a))+Math.abs(H*Math.cos(a));
   var g=x.createLinearGradient(cx-Math.sin(a)*len/2,cy+Math.cos(a)*len/2,cx+Math.sin(a)*len/2,cy-Math.cos(a)*len/2);
-  g.addColorStop(0,d.c1);g.addColorStop(1,d.c2);x.fillStyle=g;x.fillRect(0,0,W,H);
-  var rg=x.createRadialGradient(W*.22,H*.18,0,W*.22,H*.18,W*.65);rg.addColorStop(0,'rgba(255,255,255,.30)');rg.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=rg;x.fillRect(0,0,W,H);
-  x.save();x.translate(96,92);x.scale(4.45,4.45);x.fillStyle=d.ink;LOGO_PATHS.forEach(function(p){x.fill(new Path2D(p));});x.restore();
-  x.fillStyle=d.ink;x.globalAlpha=.72;x.font='400 50px "Google Sans Flex","Google Sans","Helvetica Neue",Arial,sans-serif';x.textAlign='right';x.textBaseline='top';
-  x.fillText('Gift card',W-96,106);x.globalAlpha=1;if('letterSpacing' in x)x.letterSpacing='0px';
+  var f=printFor(d);g.addColorStop(0,f.s1);g.addColorStop(1,f.s2);x.fillStyle=g;x.fillRect(0,0,W,H); // the same frost and print tone as the live card
+  var rg=x.createRadialGradient(W*.38,H*.3,0,W*.38,H*.3,W*.6);rg.addColorStop(0,'rgba(255,255,255,.16)');rg.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=rg;x.fillRect(0,0,W,H);
+  var sc=W/856;
+  x.save();x.translate(48*sc,44*sc);x.scale(154*sc/69,58*sc/26);x.fillStyle=f.els[0].main;LOGO_PATHS.forEach(function(p){x.fill(new Path2D(p));});x.restore();
+  x.fillStyle=f.els[1].main;x.font='500 '+(27*sc)+'px "Google Sans Flex","Google Sans","Helvetica Neue",Arial,sans-serif';x.textAlign='right';x.textBaseline='alphabetic';x.fillText('Gift card',808*sc,74*sc);
+  if(S.to){x.fillStyle=f.els[3].main;x.font='500 '+(32*sc)+'px "Google Sans Flex","Google Sans","Helvetica Neue",Arial,sans-serif';x.fillText(S.to,808*sc,488*sc);}
   /* the image goes into a chat: no amount on it, the recipient sees the amount when they open the gift */
   return new Promise(function(res){cv.toBlob(res,'image/png');});
 }

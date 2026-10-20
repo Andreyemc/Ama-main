@@ -139,7 +139,7 @@ input[type=range]{width:210px;accent-color:var(--rust)}
   <div class="ctl">
     <div class="row"><span>Finish</span><div class="seg" id="segVer"><button type="button" aria-pressed="true" data-v="new">New</button><button type="button" aria-pressed="false" data-v="old">Current</button></div></div>
     <div class="field"><label for="nameIn">Recipient’s name</label><input id="nameIn" maxlength="24" value="Anna" autocomplete="off" placeholder="Their name"></div>
-    <div class="row"><span>Frost <b id="frostVal" style="font-weight:400;color:var(--ink)">50%</b></span><input type="range" id="frost" min="0" max="2" step="0.1" value="1" aria-label="Frost strength"></div>
+    <div class="row"><span>Frost <b id="frostVal" style="font-weight:400;color:var(--ink)">65%</b></span><input type="range" id="frost" min="0" max="2" step="0.1" value="1.3" aria-label="Frost strength"></div>
     <div class="row"><span>Amount</span><div class="seg" id="segAmt"><button type="button" aria-pressed="true" data-v="75">£75</button><button type="button" aria-pressed="false" data-v="250">£250</button></div></div>
     <div class="row"><span>Background</span><div class="seg" id="segBg"><button type="button" aria-pressed="true" data-v="cream">Cream</button><button type="button" aria-pressed="false" data-v="dark">Dark</button></div></div>
   </div>
@@ -168,7 +168,7 @@ function hex(c){return [parseInt(c.substr(1,2),16),parseInt(c.substr(3,2),16),pa
 function toHex(a){return '#'+a.map(function(v){v=Math.max(0,Math.min(255,Math.round(v)));return (v<16?'0':'')+v.toString(16);}).join('');}
 function mix(a,b,t){var p=hex(a),q=hex(b);return toHex(p.map(function(v,i){return v+(q[i]-v)*t;}));}
 function lum(c){var p=hex(c).map(function(v){v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);});return .2126*p[0]+.7152*p[1]+.0722*p[2];}
-var cardNew=$('#cardNew'),cardOld=$('#cardOld'),spec=$('#spec'),cur=DESIGNS[0],tone='auto',frost=1;
+var cardNew=$('#cardNew'),cardOld=$('#cardOld'),spec=$('#spec'),cur=DESIGNS[0],tone="auto",frost=1.3;
 /* the room the polished print reflects: a soft studio light on a darker room (deep) or a bright room with one dark strip (bright) */
 /* contrast is solved, not guessed. Each print element (logo, Gift card, amount, name) is checked against the frost
    right under it, also with the sheen on it and with the shade on it. Its tone is pushed until the main tone clears
@@ -276,7 +276,7 @@ function frame(now){
   s.setProperty('--rx',rx);s.setProperty('--ry',ry);
   s.setProperty('--lx',clamp(38+u*34,0,100).toFixed(1)+'%');s.setProperty('--ly',clamp(30-v*36,0,100).toFixed(1)+'%');
   EL.forEach(function(e){band(ENV[e.id],1800,260+u*760-v*300);});
-  band(spec,1500,-330+u*1150-v*420);
+  band(spec,1500,60+u*1150-v*420);
   /* the thin lit edge faces the light, the soft shade falls away from it */
   var ldx=-.55+u*.9,ldy=-.85-v*.7,ll=Math.max(.001,Math.hypot(ldx,ldy));ldx/=ll;ldy/=ll;
   var tS='translate('+(-ldx*1.4).toFixed(2)+' '+(-ldy*1.6).toFixed(2)+')',tL='translate('+(ldx*.8).toFixed(2)+' '+(ldy*.8).toFixed(2)+')';
