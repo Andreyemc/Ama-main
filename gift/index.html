@@ -1719,6 +1719,8 @@ function openPreview(){
   pv.setProperty('--sand',m.bg);pv.setProperty('--ink',m.text);pv.setProperty('--body',m.mute);pv.setProperty('--mute',m.mute);
   pv.setProperty('--line','rgba('+tx.join(',')+',.2)');pv.setProperty('--rust',m.btn);pv.setProperty('--rust-press',m.btn);pv.setProperty('--light',m.btnText);
   $('#preview').hidden=false;document.body.style.overflow='hidden';$('#pvClose').focus();
+  /* Safari paints the strip under its bottom bar with the page's own background, not the fixed sheet: give the page the sheet's colour while it is open */
+  document.documentElement.style.background=m.bg;document.body.style.background=m.bg;
   veilIn($('#preview'),[$('#preview .sheet-body'),$('#preview .sheet-bar')],m.bg);
 }
 /* the success arrival, reused: content fades in (0 → 1 by 450 ms) while a frosted layer in the given colour
@@ -1739,7 +1741,7 @@ function veilIn(el,parts,hexc){
     st.background='rgb('+c+')';st.backdropFilter='';st.webkitBackdropFilter='';parts.forEach(function(p){if(p)p.style.opacity='';}); // ends on the same solid colour, so nothing blinks when the layer is handed over
   })(t0);
 }
-function closePreview(){if($('#preview').hidden)return;$('#preview').hidden=true;document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
+function closePreview(){if($('#preview').hidden)return;$('#preview').hidden=true;document.body.style.overflow='';document.documentElement.style.background='';document.body.style.background='';if(lastFocus)lastFocus.focus();}
 $('#previewBtn').addEventListener('click',openPreview);
 $('#pvClose').addEventListener('click',closePreview);
 
