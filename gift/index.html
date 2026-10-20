@@ -372,7 +372,8 @@ a.btn{text-decoration:none}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .phrases{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px))}
 .phrases::-webkit-scrollbar{display:none}
-.phrase{flex:none;border-radius:20px;box-shadow:inset 0 0 0 1px var(--line);padding:9px 14px;font-size:14px;background:var(--paper)}
+.phrase{flex:none;border-radius:20px;box-shadow:inset 0 0 0 1px var(--line);padding:9px 14px;font-size:14px;background:var(--paper);transition:background .18s,color .18s,box-shadow .18s}
+.phrase[aria-pressed="true"]{background:var(--ink);color:var(--light);box-shadow:none} /* the message is this phrase word for word; any edit returns the tag to default */
 .seg{--i:0;position:relative;display:grid;grid-template-columns:1fr 1fr;background:var(--sand);border-radius:30px;padding:4px;gap:4px;isolation:isolate}
 /* the selected tab is a pill that slides between the two options */
 .seg::before{content:"";position:absolute;z-index:-1;top:4px;bottom:4px;left:4px;width:calc(50% - 6px);border-radius:26px;background:var(--paper);box-shadow:0 1px 2px rgba(30,28,26,.12),0 2px 8px rgba(30,28,26,.06);
@@ -1375,7 +1376,7 @@ PRESETS.forEach(function(p){var b=document.createElement('button');b.className='
 var other=document.createElement('button');other.className='chip wide';other.type='button';other.textContent='Other amount';other.addEventListener('click',function(){S.custom=true;renderAmount();var i=$('#amountInput');i.value=PRESETS.indexOf(S.amount)<0?S.amount:'';setTimeout(function(){i.focus();},50);});chips.appendChild(other);
 // flow: phrases
 var ph=$('#phrases');
-PHRASES.forEach(function(p){var b=document.createElement('button');b.className='phrase';b.type='button';b.textContent=p[0];b.addEventListener('click',function(){var m=$('#msgInput');m.value=p[1];S.msg=p[1];persist();renderMsgCount();});ph.appendChild(b);});
+PHRASES.forEach(function(p){var b=document.createElement('button');b.className='phrase';b.type='button';b.textContent=p[0];b.dataset.msg=p[1];b.setAttribute('aria-pressed','false');b.addEventListener('click',function(){var m=$('#msgInput');m.value=p[1];S.msg=p[1];persist();renderMsgCount();});ph.appendChild(b);});
 
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 function coversFor(a){
@@ -1417,7 +1418,7 @@ function renderAmount(){
   $('#fAmount').hidden=!S.custom;
   var cv=coversFor(S.amount);$('#coversText').textContent='Enough for '+cv.text;$('#coversIcon').innerHTML='<use href="#p-'+cv.pil+'"/>';
 }
-function renderMsgCount(){$('#msgCount').textContent=$('#msgInput').value.length+' / 300';}
+function renderMsgCount(){var v=$('#msgInput').value;$('#msgCount').textContent=v.length+' / 300';$$('.phrase').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.msg===v);});}
 function renderDelivery(){
   $$('.seg button').forEach(function(b,k){var on=b.dataset.mode===S.mode;b.setAttribute('aria-pressed',on);if(on)b.parentNode.style.setProperty('--i',k);});
   $('#modeEmail').style.display=S.mode==='email'?'flex':'none';$('#modeSelf').hidden=S.mode!=='self';
