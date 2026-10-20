@@ -1206,7 +1206,7 @@ function setBuys(i){
   if(i===buysIdx)return;buysIdx=i;var b=BUYS[i];
   $('#buysImg').src='img/'+b.img+'.avif'; // hard cut, no fade
   swapText($('#buysWhat'),b.t);
-  paintCard(C.buys,designById(b.d),b.a);C.buys.el.classList.remove('no-amt'); // the card shows the same amount as the dial
+  paintCard(C.buys,designById(b.d),b.a);paintName(C.buys,DEMO_NAME);C.buys.el.classList.remove('no-amt'); // the card shows the same amount as the dial
   dItems.forEach(function(x,k){x.setAttribute('aria-selected',k===i);});
 }
 /* dial: pos is continuous (2.4 = between the 3rd and 4th amount); the item at |d|=0 is full size, at |d|>=1 a third of it */
