@@ -139,7 +139,7 @@ input[type=range]{width:210px;accent-color:var(--rust)}
   <div class="ctl">
     <div class="row"><span>Finish</span><div class="seg" id="segVer"><button type="button" aria-pressed="true" data-v="new">New</button><button type="button" aria-pressed="false" data-v="old">Current</button></div></div>
     <div class="field"><label for="nameIn">Recipient’s name</label><input id="nameIn" maxlength="24" value="Anna" autocomplete="off" placeholder="Their name"></div>
-    <div class="row"><span>Frost</span><input type="range" id="frost" min="0" max="2" step="0.1" value="1" aria-label="Frost strength"></div>
+    <div class="row"><span>Frost <b id="frostVal" style="font-weight:400;color:var(--ink)">50%</b></span><input type="range" id="frost" min="0" max="2" step="0.1" value="1" aria-label="Frost strength"></div>
     <div class="row"><span>Amount</span><div class="seg" id="segAmt"><button type="button" aria-pressed="true" data-v="75">£75</button><button type="button" aria-pressed="false" data-v="250">£250</button></div></div>
     <div class="row"><span>Background</span><div class="seg" id="segBg"><button type="button" aria-pressed="true" data-v="cream">Cream</button><button type="button" aria-pressed="false" data-v="dark">Dark</button></div></div>
   </div>
@@ -238,7 +238,7 @@ function seg(id,fn){$$('#'+id+' button').forEach(function(b){b.addEventListener(
 seg('segVer',function(v){cardNew.hidden=v!=='new';cardOld.hidden=v==='new';});
 seg('segAmt',function(v){$('#tAmt').textContent='£'+v;$('#oAmt').textContent='£'+v;});
 seg('segBg',function(v){document.documentElement.classList.toggle('dark',v==='dark');document.querySelector('meta[name=theme-color]').content=v==='dark'?'#2B2A28':'#F7EEE0';});
-$('#frost').addEventListener('input',function(e){frost=+e.target.value;paint(cur);});
+$('#frost').addEventListener('input',function(e){frost=+e.target.value;$('#frostVal').textContent=Math.round(frost*50)+'%';paint(cur);});
 $('#nameIn').addEventListener('input',function(e){$('#tName').textContent=e.target.value.trim();});
 
 /* ---------- tilt: the spring of the prototype ---------- */
