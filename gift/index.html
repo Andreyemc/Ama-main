@@ -846,7 +846,7 @@ document.documentElement.style.setProperty('--logo-mask','url("data:image/svg+xm
 /* =========================================================
    STATE (+ draft in this browser)
    ========================================================= */
-var DEMO_AMOUNT=150,DEMO_NAME='Olivia Smith'; // 20 Oct: every sample card shows £150 and this name until the buyer chooses their own
+var DEMO_AMOUNT=150,DEMO_NAME='Olivia Smith'; // 20 Oct: sample cards carry this name; the amount step starts on £150, and no card shows an amount before that step
 var DEF={design:'sand',amount:DEMO_AMOUNT,custom:false,to:'',from:'',msg:'',mode:'email',email:'',when:'now',date:'',time:'09:00',buyer:'',pay:'wallet'};
 var S=Object.assign({},DEF);
 try{var saved=JSON.parse(localStorage.getItem('ama-gift-draft')||'null');if(saved&&typeof saved==='object')Object.keys(DEF).forEach(function(k){if(k in saved)S[k]=saved[k];});}catch(e){}
@@ -1185,8 +1185,8 @@ $$('[data-card]').forEach(function(h){var c=buildCard(h);C[c.key]=c;observe(c);}
 var FLOW_CARDS=['flow','preview','done'];
 function paintAll(){var d=design();FLOW_CARDS.forEach(function(k){if(C[k])paintCard(C[k],d,S.amount);});}
 (function(){var h=document.createElement('div');h.id='doneHolder';h.className='dc';C.done.el.parentNode.insertBefore(h,C.done.el);h.appendChild(C.done.el);})(); // the Done card sits in a holder that can stand it upright
-paintCard(C.hero,designById('night'),DEMO_AMOUNT);paintName(C.hero,DEMO_NAME);
-paintCard(C.chat,designById('sand'),DEMO_AMOUNT);paintName(C.chat,DEMO_NAME); // the landing's chat illustration shows the sample card too
+paintCard(C.hero,designById('night'),DEMO_AMOUNT);paintName(C.hero,DEMO_NAME);C.hero.el.classList.add('no-amt'); // sample cards carry the name, never an amount: it shows only once it is being chosen
+paintCard(C.chat,designById('sand'),DEMO_AMOUNT);paintName(C.chat,DEMO_NAME);C.chat.el.classList.add('no-amt'); // the landing's chat illustration shows the sample card too
 
 /* ---------- A2: what each amount buys (pinned, scroll-driven) ---------- */
 var BUYS=[ /* 20 Oct: £50–£500; under each amount a few things it could be, joined by "or", so it never reads as one product */
@@ -1321,7 +1321,7 @@ function makeCarousel(row,key,onPick,onNear,onPlace){
   DESIGNS.forEach(function(d,i){
     var b=document.createElement('button');b.type='button';b.tabIndex=-1;b.setAttribute('role','option');b.setAttribute('aria-label',d.name+' design');
     b.innerHTML='<div class="up"><div data-card="'+key+'" data-nodrag data-amp=".7"></div></div>';row.appendChild(b);
-    var c=buildCard(b.querySelector('[data-card]'));c.upright=true;observe(c);paintCard(c,d,DEMO_AMOUNT);paintName(c,DEMO_NAME);
+    var c=buildCard(b.querySelector('[data-card]'));c.upright=true;observe(c);paintCard(c,d,DEMO_AMOUNT);paintName(c,DEMO_NAME);c.el.classList.add('no-amt');
     items.push(b);cards.push(c);
     b.addEventListener('click',function(){ if(drag&&drag.moved)return; var s=i-cur-Math.round(p); if(s===1||s===-1){haptic('light');step(s,4.5);} });
   });
@@ -1562,7 +1562,7 @@ function goStep(n,dir){
   if(prev===2&&n===1&&view==='flow'){fromStage=C.flow.el.getBoundingClientRect();}
   currentStep=n;
   if(n>=2)amountSeen=true;
-  C.flow.el.classList.remove('no-amt'); // step 1 shows the sample amount (or the one already chosen)
+  C.flow.el.classList.toggle('no-amt',n===1&&!amountSeen); // no amount until the amount step
   var flow=$('#vFlow');flow.dataset.step=n;
   $$('.step',flow).forEach(function(s){var on=+s.dataset.step===n;s.hidden=!on;s.classList.toggle('after-turn',on&&!!fromUp&&!reduce);s.classList.toggle('after-turn-back',on&&!!fromStage&&!reduce);if(on){s.classList.toggle('back',dir<0);s.style.animation='none';void s.offsetWidth;s.style.animation='';}});
   $('#stepTitle').textContent=STEP_TITLES[n-1];
