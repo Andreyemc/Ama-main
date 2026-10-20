@@ -173,31 +173,35 @@ var cardNew=$('#cardNew'),cardOld=$('#cardOld'),spec=$('#spec'),cur=DESIGNS[0],t
 /* contrast is solved, not guessed. Each print element (logo, Gift card, amount, name) is checked against the frost
    right under it, also with the sheen on it and with the shade on it. Its tone is pushed until the main tone clears
    4.5:1 (3:1 under the passing sheen) and even the lightest (deep) or darkest (bright) part of the reflection clears 3:1.
-   All four take the same side, deep or bright, when that costs little contrast; on a card whose colour runs from very
-   light to very dark (Forest, Sunrise) each element takes the side that reads better where it sits. */
+   All four always take the same side, deep or bright. */
 function ratio(a,b){var x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
-var EL=[{id:'L',t:[.06,.14,.22],big:true},{id:'K',t:[.5,.56,.62]},{id:'A',t:[.34,.44,.56],big:true},{id:'N',t:[.84,.89,.94]}]; // spots along the card's 140° colour line
-function ends(d){var mid=mix(d.c1,d.c2,.5),k=.18*frost;return [mix(d.c1,mid,k),mix(d.c2,mid,k)];}
+var EL=[{id:'L',t:[.06,.14,.22]},{id:'K',t:[.5,.56,.62]},{id:'A',t:[.34,.44,.56],big:true},{id:'N',t:[.84,.89,.94]}]; // spots along the card's 140° colour line
+var SQ=0;
+function ends(d){var mid=mix(d.c1,d.c2,.5),k=Math.min(.9,.18*frost+SQ);return [mix(d.c1,mid,k),mix(d.c2,mid,k)];}
 function spots(d,ts){var e=ends(d),o=[];ts.forEach(function(t){var c=mix(e[0],e[1],t);o.push({c:c,sheen:false},{c:mix(c,'#000000',.06),sheen:false},{c:mix(c,'#FFFFFF',.14+.05*frost),sheen:true});});return o;}
 function score(main,edge,sp,big){var need=big?3:4.5,m=1e9,ok=true;sp.forEach(function(x){var r=ratio(main,x.c);m=Math.min(m,x.sheen?r*1.5:r);if(r<(x.sheen?need*2/3:need))ok=false;if(!x.sheen&&ratio(edge,x.c)<(big?2.2:3))ok=false;});return {ok:ok,m:m};}
 /* among the tones that pass, take the first that reaches 7:1, otherwise the strongest; at equal depth the widest reflection wins */
 function solveEl(d,e,mode){
   var sp=spots(d,e.t),mid=mix(d.c1,d.c2,.5),best=null,bestOk=null;
-  for(var i=0;i<=30;i++)for(var gi=0;gi<4;gi++){var p,sc,gk=[.32,.22,.14,.07][gi];
+  for(var i=0;i<=30;i++)for(var gi=0;gi<5;gi++){var p,sc,gk=(mode==='deep'?[.32,.26,.2,.14,.07]:[.55,.45,.35,.25,.15])[gi];
     if(mode==='deep'){var deep=mix(mix(d.c2,mid,.3),'#000000',.4+i*.019);p={mode:'deep',deep:deep,glow:mix(deep,d.c1,gk)};sc=score(deep,p.glow,sp,e.big);}
-    else{var base=mix(d.c1,'#FFFFFF',Math.min(1,.55+i*.015));p={mode:'bright',base:base,low:mix(base,d.c2,gk*.6)};sc=score(base,p.low,sp,e.big);}
+    else{var base=mix(d.c1,'#FFFFFF',Math.min(1,.55+i*.015));p={mode:'bright',base:base,low:mix(base,d.c2,gk)};sc=score(base,p.low,sp,e.big);}
     p.ok=sc.ok;p.m=sc.m;
     if(sc.ok){if(sc.m>=7)return p;if(!bestOk||sc.m>bestOk.m+.05)bestOk=p;}
     if(!best||sc.m>best.m)best=p;}
   return bestOk||best;
 }
+/* one tone for the whole card. When a card's colour runs from very light to very dark (Forest), the frost draws its two
+   ends a little closer, only as much as it takes for every element to clear the bar in that one tone */
 function solve(d){
-  var deep=EL.map(function(e){return solveEl(d,e,'deep');}),bright=EL.map(function(e){return solveEl(d,e,'bright');});
   function all(a){return a.every(function(p){return p.ok;});}function low(a){return Math.min.apply(null,a.map(function(p){return p.m;}));}
-  /* one side for the whole card when it costs little; otherwise each element takes the side that reads better where it sits */
-  var pick,each=EL.map(function(e,i){var a=deep[i],b=bright[i];return a.ok!==b.ok?(a.ok?a:b):(a.m>=b.m?a:b);});
-  if(all(deep)&&low(deep)>=.85*low(each))pick=deep;else if(all(bright)&&low(bright)>=.85*low(each))pick=bright;else pick=each;
-  return pick;
+  var bestTry=null;
+  for(var n=0;n<=10;n++){SQ=n*.03;
+    var deep=EL.map(function(e){return solveEl(d,e,'deep');}),bright=EL.map(function(e){return solveEl(d,e,'bright');});
+    var pick=all(deep)&&all(bright)?(low(deep)>=low(bright)?deep:bright):all(deep)?deep:all(bright)?bright:null;
+    if(pick){pick.squeeze=SQ;return pick;}
+    var c=low(deep)>=low(bright)?deep:bright;if(!bestTry||low(c)>low(bestTry)+.05){bestTry=c;bestTry.squeeze=SQ;}}
+  SQ=bestTry.squeeze;return bestTry; // the frost never flattens a card by more than a third
 }
 function envStops(p){
   if(p.mode==='deep'){var deep=p.deep,deeper=mix(deep,'#000000',.3),half=mix(deep,p.glow,.5),glow=p.glow;
@@ -217,6 +221,10 @@ function paint(d){
   EL.forEach(function(e,i){var p=pr[i];ENV[e.id].innerHTML=envStops(p).map(function(st){return '<stop offset="'+st[0]+'" stop-color="'+st[1]+'"/>';}).join('');
     var g=layers.querySelectorAll('use.sh')[i],l=layers.querySelectorAll('use.lt')[i];
     g.setAttribute('fill-opacity',p.mode==='deep'?'.12':'.3');l.setAttribute('fill-opacity',p.mode==='deep'?'.16':'.12');});
+  /* the moving streak: white on a deep print; on a bright print a white streak would vanish, so the streak is the dark of
+     the room passing through it, as on chrome */
+  var dark=pr[0].mode==='bright',sc=dark?mix(d.c2,'#000000',.25):'#FFFFFF';
+  spec.querySelectorAll('stop').forEach(function(st){st.setAttribute('stop-color',sc);var o=+(st.dataset.o||(st.dataset.o=st.getAttribute('stop-opacity')));st.setAttribute('stop-opacity',(dark?o*.7:o).toFixed(3));});
   var se=ends(d);
   [cardNew,cardOld].forEach(function(c){c.style.setProperty('--edge',d.edge);});
   var s=cardNew.style;s.setProperty('--s1',se[0]);s.setProperty('--s2',se[1]);
