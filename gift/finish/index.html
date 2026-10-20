@@ -1,0 +1,280 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AMA Gift Card · print finish test</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F7EEE0">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300;400;500&display=swap">
+<style>
+/* Test bench for the client note of 20 Oct: the logo, "Gift card" and the amount melt into the card.
+   New finish: the card is frosted and matte, the print is polished glass, as on the back of a phone with a frosted
+   back and a polished logo. The matte surface only takes a soft, wide sheen; the polished print reflects the room,
+   so it reads deeper (or brighter) than the surface and a crisp highlight runs through it as the card turns.
+   The recipient's name is printed on the card too. Nothing here touches versions A or B. */
+:root{--cream:#F7EEE0;--paper:#FFFAF3;--sand:#EFE3D1;--ink:#1E1C1A;--body:#4F473F;--mute:#6E6358;--line:rgba(30,28,26,.14);--rust:#B04F13;--light:#FFF3E4;
+  --sans:"Google Sans Flex","Google Sans","Helvetica Neue",Helvetica,Arial,sans-serif;--hdr:58px;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{background:var(--cream);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s,color .3s}
+html.dark{--cream:#2B2A28;--paper:#3A3836;--sand:#3A3836;--ink:#FFFFFF;--body:#D9D3CC;--mute:#B5AEA6;--line:rgba(255,255,255,.2)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0;-webkit-tap-highlight-color:transparent}
+h1{font-weight:400;margin:0;font-size:30px;line-height:1.15;letter-spacing:-.01em}p{margin:0}
+.site-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;height:var(--hdr);background:var(--cream);color:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:0 max(16px,env(safe-area-inset-left,0px));transition:background .3s}
+.site-header .left{display:flex;align-items:center;gap:14px}.icon-btn{width:40px;height:40px;display:grid;place-items:center;margin:-8px;border-radius:20px}.icon-btn svg{display:block}
+.logo{display:block;width:69px;height:26px}.logo svg{display:block;width:100%;height:100%;fill:var(--ink)}
+main{padding:20px max(16px,env(safe-area-inset-left,0px)) 60px}
+.col{max-width:520px;margin:0 auto}
+.lead{color:var(--mute);font-size:15px;margin-top:8px;max-width:38ch}
+.stage{padding:34px 0 22px;display:flex;justify-content:center}
+.note{font-size:13px;color:var(--mute);text-align:center;min-height:1.4em}
+.note button{text-decoration:underline;text-underline-offset:3px;font-size:13px;color:var(--ink)}
+.sw{display:flex;justify-content:center;gap:12px;margin-top:22px}
+.sw button{width:36px;height:36px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.sw button[aria-pressed="true"]{box-shadow:inset 0 0 0 1px rgba(0,0,0,.12),0 0 0 2px var(--cream),0 0 0 3.5px var(--ink)}
+.swname{text-align:center;margin-top:12px;font-size:16px}
+.ctl{margin-top:30px;display:flex;flex-direction:column;gap:14px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;color:var(--body)}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--sand);border-radius:30px;padding:3px;gap:3px;min-width:210px}
+.seg button{height:34px;border-radius:26px;font-size:14px;color:var(--mute);padding:0 10px;transition:background .2s,color .2s}
+.seg button[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 2px rgba(30,28,26,.12)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;color:var(--mute)}
+.field input{height:48px;border-radius:12px;border:0;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);padding:0 14px;font-size:16px;outline:none}
+.field input:focus{box-shadow:inset 0 0 0 1px var(--ink)}
+input[type=range]{width:210px;accent-color:var(--rust)}
+.fine{margin-top:34px;font-size:13px;color:var(--mute);line-height:1.5}
+
+/* ---------- shared card frame ---------- */
+.card{--rx:0deg;--ry:0deg;position:relative;width:100%;aspect-ratio:85.6/53.98;container-type:inline-size;perspective:1100px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.tilt{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(var(--rx)) rotateY(var(--ry));will-change:transform}
+.edge{position:absolute;inset:-2px;border:2px solid transparent;background-clip:padding-box;border-radius:calc(3.8cqw + 2px);background-color:var(--edge)}
+.face{position:absolute;inset:-2px;border:2px solid transparent;background-clip:padding-box;border-radius:calc(3.8cqw + 2px);overflow:hidden;transform:translateZ(.5px);isolation:isolate}
+.face>*{position:absolute;inset:0;pointer-events:none}
+
+/* ---------- NEW: frosted card, polished print ---------- */
+.fc .face{background:var(--s2)}
+.fc-art{background:linear-gradient(140deg,var(--s1),var(--s2))}
+/* frost: a fine satin grain and a faint milky veil; it scatters light, so the surface stays soft at any angle */
+.fc-frost{opacity:var(--grain);mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.fc-veil{background:rgba(255,255,255,var(--veil))}
+/* matte sheen: wide and soft, it drifts slowly with the light; no sharp band on the surface */
+.fc-sheen{inset:-40%;mix-blend-mode:soft-light;background:radial-gradient(ellipse 46% 52% at var(--lx) var(--ly),rgba(255,255,255,.55),rgba(255,255,255,.18) 45%,rgba(255,255,255,0) 75%)}
+.fc-shade{inset:-40%;mix-blend-mode:multiply;opacity:.16;background:radial-gradient(ellipse 50% 60% at calc(100% - var(--lx)) calc(100% - var(--ly)),rgba(0,0,0,.9),rgba(0,0,0,0) 70%)}
+.fc-print{width:100%;height:100%;overflow:visible}
+.fc-print .pg{font-family:var(--sans);font-weight:400}
+.fc-print .amt{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.fc-rim{border-radius:3.8cqw;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1px 0 rgba(0,0,0,.12)}
+
+/* ---------- BEFORE: the card as it is in version A today ---------- */
+.gc .face{background-color:var(--c2)}
+.gc-art{background:var(--art)}
+.gc-art::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 22% 18%,rgba(255,255,255,.30),rgba(255,255,255,0) 55%)}
+.gc-band{inset:-30%!important;mix-blend-mode:soft-light;opacity:.75;background:radial-gradient(ellipse 42% 52% at var(--bx) 42%,rgba(255,255,255,.95),rgba(255,255,255,.35) 40%,rgba(255,255,255,0) 72%)}
+.gc-tex{opacity:.2;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.gc-glare{mix-blend-mode:soft-light;background:radial-gradient(ellipse 70% 85% at var(--gx) var(--gy),rgba(255,255,255,.3),rgba(255,255,255,0) 70%)}
+.gc-rim{border-radius:3.8cqw;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),inset 0 1px 0 rgba(255,255,255,.35)}
+.face>.gc-logo,.face>.gc-kind,.face>.gc-amt{inset:auto}
+.face>.gc-logo{left:5.6cqw;top:5.4cqw;width:18cqw;height:6.8cqw}
+.gc-logo,.gc-kind,.gc-amt{background-image:var(--metal);background-size:320% 100%;background-position:var(--mx,50%) 50%;filter:drop-shadow(0 .5px 0 rgba(0,0,0,.22))}
+.gc-logo{-webkit-mask:var(--logo-mask) left center/contain no-repeat;mask:var(--logo-mask) left center/contain no-repeat}
+.gc-kind,.gc-amt{color:transparent;-webkit-background-clip:text;background-clip:text}
+.face>.gc-kind{right:5.6cqw;top:6.4cqw;font-size:3.1cqw;opacity:.86}
+.face>.gc-amt{left:5.4cqw;bottom:4.6cqw;font-size:10cqw;line-height:1;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.stage .card[hidden]{display:none}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="ama-logo" viewBox="0 0 69 26">
+      <path id="lgA" d="M68.6223 7.19211C68.6223 7.76903 68.4692 8.26903 68.2395 8.88441C66.7085 13.1152 63.5698 21.1921 63.1488 22.7305C63.187 22.8074 63.3019 22.8844 63.3784 22.8844C64.1057 22.8844 65.8281 21.1921 67.5506 19.1921L68.163 19.9998C66.1726 22.9228 63.0722 25.9997 61.5794 25.9997C60.6225 25.9997 59.7039 25.4613 59.7039 24.4228C59.7039 24.1151 59.9718 23.3459 60.3546 22.3074L61.656 18.9613L61.4646 18.8844C59.0149 22.3459 55.1107 25.9997 53.3882 25.9997C51.6275 25.769 50.7089 24.1921 50.7089 22.1921C50.7089 16.1921 56.8331 6.84596 62.7277 6.84596C63.6463 6.84596 64.7946 7.11519 65.5602 7.57673C65.7898 6.92288 65.9812 6.38442 66.1343 5.88442C66.4023 5.84596 66.5171 5.84596 66.7085 5.84596C67.8568 5.84596 68.6223 6.42288 68.6223 7.19211ZM54.9958 22.8459C56.4886 22.8459 60.3163 19.8075 63.1488 14.1152L64.6798 10.1152C63.6846 9.34595 62.4215 8.76903 60.6225 8.76903C57.3307 8.76903 54.0389 16.8844 54.0389 20.7305C54.0389 21.9613 54.4982 22.8459 54.9958 22.8459Z"/>
+      <path id="lgM" d="M51.3376 19.1925L51.9501 20.0002C49.9597 22.731 47.242 25.9233 44.9072 25.9233C43.7206 25.9233 43.4527 25.231 43.4527 24.5387C43.4527 23.4233 48.2755 11.1541 48.3903 10.308C48.2372 9.65411 47.8927 9.23104 47.3186 9.23104C46.0937 9.23104 42.3809 12.5772 37.7877 22.3079L36.4863 25.6156C36.2567 25.6541 36.1418 25.6541 36.1036 25.6541C34.7639 25.6541 34.228 25.1541 34.228 24.2695C34.228 23.8079 34.3811 23.3079 34.7639 22.2695C35.7208 19.6156 39.204 10.808 39.204 10.308C39.0126 9.57719 38.6681 9.23104 38.1322 9.23104C36.4863 9.2695 32.3907 14.0003 28.3334 22.8848C27.9506 23.8848 27.5679 24.8464 27.2999 25.6156C27.1851 25.6541 26.9937 25.6541 26.9172 25.6541C25.5392 25.6541 25.0416 25.1156 25.0416 24.231C25.0416 23.8079 25.1565 23.3848 25.3478 22.7695C26.7258 18.7695 29.6731 11.0387 29.941 9.88488C29.7114 9.57719 29.52 9.46181 29.1755 9.46181C28.5248 9.46181 27.6062 10.6926 26.8789 11.9233L26.0751 11.3849C27.4913 8.19258 28.9076 7.0772 30.3238 7.0772C31.4338 7.0772 32.3142 7.65412 33.118 9.15411L30.0941 16.6926L30.3621 16.8079C33.9983 10.0772 37.0987 6.80797 39.4336 6.80797C41.2326 6.80797 42.1513 8.19258 42.1513 9.38488C42.1513 10.0772 39.8929 15.3079 39.2805 16.6926L39.5485 16.8079C43.7206 9.07719 46.7444 6.80797 48.5817 6.80797C50.3042 6.80797 51.3759 8.07719 51.3759 9.46181C51.3759 10.7695 47.931 19.6156 46.9358 22.6925C46.9741 22.7695 47.0889 22.8464 47.2038 22.8464C47.8927 22.8464 49.8449 21.0002 51.3376 19.1925Z"/>
+      <path id="lgB" d="M27.7888 1.46153L26.3343 5.49998L20.8225 23.1922C21.2052 23.5768 21.4349 23.7307 22.277 23.9615L23.3487 24.2692L23.0042 25.3845H13.3585L13.703 24.2692L14.8131 23.9999C16.4207 23.6153 16.9565 23.3461 17.6455 21.1153L19.368 15.5384C17.7221 15.6538 15.8465 15.7307 14.392 15.7307C13.8179 15.7307 12.8227 15.7307 12.0571 15.6923C11.904 15.923 11.7509 16.1153 11.5978 16.3076C9.9902 18.3846 7.65533 21.6922 6.69842 23.4615C7.04291 23.7307 7.34912 23.8845 7.92327 23.9999L9.10984 24.2692L8.76535 25.3461L1.52588e-05 25.923L0.344504 24.8076C2.56455 23.9999 4.17216 22.6922 6.2391 20.2692C8.8419 17.1538 14.1241 10.5384 17.2628 6.96152C22.1239 1.42307 24.1908 0 25.3774 0C26.4874 0 27.2912 0.230767 27.7888 1.46153ZM19.8273 14.1923L23.4636 2.49999C21.1287 4.57691 17.4159 8.88459 13.1289 14.3846C14.8513 14.2692 16.9565 14.1923 19.8273 14.1923Z"/>
+    </symbol></svg>
+<header class="site-header" id="siteHeader">
+  <div class="left">
+    <button class="icon-btn" id="menuBtn" aria-label="Open menu">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none"><path d="M.75 8.3h24M.75 15.7h24" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+    </button>
+    <a class="logo" href="#top" id="logoLink" aria-label="AMA home"><svg viewBox="0 0 69 26" aria-hidden="true"><use href="#ama-logo"/></svg></a>
+  </div>
+  <button class="icon-btn" aria-label="Search">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM15 15l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+  </button>
+</header>
+<main><div class="col">
+  <h1>Print finish</h1>
+  <p class="lead">A frosted card with a polished print, a new light, and the recipient’s name on the card. Tilt the phone, or drag the card.</p>
+  <div class="stage">
+    <div class="card fc" id="cardNew" role="img" aria-label="AMA gift card, new finish">
+      <div class="tilt"><i class="edge" style="transform:translateZ(-0.45px)"></i><i class="edge" style="transform:translateZ(-0.9px)"></i><i class="edge" style="transform:translateZ(-1.35px)"></i><i class="edge" style="transform:translateZ(-1.8px)"></i><i class="edge" style="transform:translateZ(-2.25px)"></i><i class="edge" style="transform:translateZ(-2.7px)"></i><i class="edge" style="transform:translateZ(-3.15px)"></i><div class="face">
+        <div class="fc-art"></div><div class="fc-veil"></div><div class="fc-frost"></div><div class="fc-shade"></div><div class="fc-sheen"></div>
+        <svg class="fc-print" viewBox="0 0 856 540" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <g id="pr" class="pg">
+              <use href="#ama-logo" x="48" y="44" width="154" height="58"/>
+              <text x="808" y="74" text-anchor="end" font-size="27" font-weight="500">Gift card</text>
+              <text class="amt" id="tAmt" x="44" y="490" font-size="88">£75</text>
+              <text id="tName" x="808" y="488" text-anchor="end" font-size="32" font-weight="500">Anna</text>
+            </g>
+            <mask id="pm" maskUnits="userSpaceOnUse" x="0" y="0" width="856" height="540"><use href="#pr" fill="#fff"/></mask>
+            <linearGradient id="env" gradientUnits="userSpaceOnUse"></linearGradient>
+            <linearGradient id="spec" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".46" stop-color="#fff" stop-opacity="0"/>
+              <stop offset=".49" stop-color="#fff" stop-opacity=".45"/><stop offset=".5" stop-color="#fff" stop-opacity=".8"/><stop offset=".51" stop-color="#fff" stop-opacity=".45"/>
+              <stop offset=".54" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+            </linearGradient>
+            <filter id="soft" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="1"/></filter>
+          </defs>
+          <use href="#pr" id="pShade" fill="#000" fill-opacity=".28" filter="url(#soft)"/>
+          <use href="#pr" id="pLit" fill="#fff" fill-opacity=".55"/>
+          <rect width="856" height="540" fill="url(#env)" mask="url(#pm)"/>
+          <rect width="856" height="540" fill="url(#spec)" mask="url(#pm)" id="pSpec"/>
+        </svg>
+        <div class="fc-rim"></div>
+      </div></div>
+    </div>
+    <div class="card gc" id="cardOld" role="img" aria-label="AMA gift card, current finish" hidden>
+      <div class="tilt"><i class="edge" style="transform:translateZ(-0.45px)"></i><i class="edge" style="transform:translateZ(-0.9px)"></i><i class="edge" style="transform:translateZ(-1.35px)"></i><i class="edge" style="transform:translateZ(-1.8px)"></i><i class="edge" style="transform:translateZ(-2.25px)"></i><i class="edge" style="transform:translateZ(-2.7px)"></i><i class="edge" style="transform:translateZ(-3.15px)"></i><div class="face">
+        <div class="gc-art"></div><div class="gc-tex"></div><div class="gc-band"></div><div class="gc-glare"></div><div class="gc-rim"></div>
+        <div class="gc-logo"></div><span class="gc-kind">Gift card</span><span class="gc-amt" id="oAmt">£75</span>
+      </div></div>
+    </div>
+  </div>
+  <p class="note" id="note"></p>
+  <div class="sw" id="sw" role="radiogroup" aria-label="Design"></div>
+  <p class="swname" id="swname">Sand</p>
+  <div class="ctl">
+    <div class="row"><span>Finish</span><div class="seg" id="segVer"><button type="button" aria-pressed="true" data-v="new">New</button><button type="button" aria-pressed="false" data-v="old">Current</button></div></div>
+    <div class="field"><label for="nameIn">Recipient’s name</label><input id="nameIn" maxlength="24" value="Anna" autocomplete="off" placeholder="Their name"></div>
+    <div class="row"><span>Polished print</span><div class="seg" id="segTone"><button type="button" aria-pressed="true" data-v="auto">Auto</button><button type="button" aria-pressed="false" data-v="deep">Deep</button><button type="button" aria-pressed="false" data-v="bright">Bright</button></div></div>
+    <div class="row"><span>Frost</span><input type="range" id="frost" min="0" max="2" step="0.1" value="1" aria-label="Frost strength"></div>
+    <div class="row"><span>Amount</span><div class="seg" id="segAmt"><button type="button" aria-pressed="true" data-v="75">£75</button><button type="button" aria-pressed="false" data-v="250">£250</button></div></div>
+    <div class="row"><span>Background</span><div class="seg" id="segBg"><button type="button" aria-pressed="true" data-v="cream">Cream</button><button type="button" aria-pressed="false" data-v="dark">Dark</button></div></div>
+  </div>
+  <p class="fine">New: the surface is frosted, so it only takes a soft wide sheen. The logo, “Gift card”, the amount and the name are polished: they mirror the room, sit deeper or brighter than the frost, and a sharp highlight runs through them as the card turns. Deep suits light cards, bright suits dark ones; Auto picks by the colour. Current: the card as it is in version A.</p>
+</div></main>
+<script>
+(function(){
+'use strict';
+function $(s){return document.querySelector(s);}function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches;
+var LOGO_PATHS=['lgA','lgM','lgB'].map(function(id){return document.getElementById(id).getAttribute('d');});
+document.documentElement.style.setProperty('--logo-mask','url("data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 69 26">'+LOGO_PATHS.map(function(d){return '<path d="'+d+'"/>';}).join('')+'</svg>')+'")');
+/* the six designs of version A */
+var DESIGNS=[
+  {id:'sand',   metal:'bronze', name:'Sand',   c1:'#F3E6D2',c2:'#C9A57E',ink:'#1E1C1A',edge:'#AE8962'},
+  {id:'night',  metal:'silver', name:'Night',  c1:'#4A3B33',c2:'#141210',ink:'#FFF3E4',edge:'#100E0C'},
+  {id:'forest', metal:'silver', name:'Forest', c1:'#A3A47C',c2:'#3B402A',ink:'#FFF3E4',edge:'#30351F'},
+  {id:'bloom',  metal:'bronze', name:'Bloom',  c1:'#F6DCD0',c2:'#D99A86',ink:'#1E1C1A',edge:'#B97C69'},
+  {id:'ember',  metal:'silver', name:'Ember',  c1:'#783206',c2:'#2A0F08',ink:'#FFF3E4',edge:'#2A0F08'},
+  {id:'sunrise',metal:'silver', name:'Sunrise',c1:'#F4B98C',c2:'#B04F13',ink:'#FFF3E4',edge:'#8E3F10'}
+];
+var METAL={
+  silver:'linear-gradient(105deg,#B9B9BE 0%,#F7F7F9 20%,#E7DDFF 24%,#D6F1EA 28%,#F2F2F4 32%,#A3A3A9 42%,#8E8E94 50%,#A3A3A9 58%,#F2F2F4 68%,#E7DDFF 72%,#D6F1EA 76%,#F7F7F9 80%,#B9B9BE 100%)',
+  bronze:'linear-gradient(105deg,#6E5232 0%,#C9A169 20%,#B49BC4 24%,#93BBA8 28%,#C49D64 32%,#6E5232 42%,#4E3B23 50%,#6E5232 58%,#C49D64 68%,#B49BC4 72%,#93BBA8 76%,#C9A169 80%,#6E5232 100%)'};
+function hex(c){return [parseInt(c.substr(1,2),16),parseInt(c.substr(3,2),16),parseInt(c.substr(5,2),16)];}
+function toHex(a){return '#'+a.map(function(v){v=Math.max(0,Math.min(255,Math.round(v)));return (v<16?'0':'')+v.toString(16);}).join('');}
+function mix(a,b,t){var p=hex(a),q=hex(b);return toHex(p.map(function(v,i){return v+(q[i]-v)*t;}));}
+function lum(c){var p=hex(c).map(function(v){v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);});return .2126*p[0]+.7152*p[1]+.0722*p[2];}
+var cardNew=$('#cardNew'),cardOld=$('#cardOld'),env=$('#env'),spec=$('#spec'),cur=DESIGNS[0],tone='auto',frost=1;
+/* the room the polished print reflects: a soft studio light on a darker room (deep) or a bright room with one dark strip (bright) */
+function envStops(d,mode){
+  /* the print always keeps its side of the contrast: the deep print never gets lighter than the frost around it, the bright
+     one never darker. The room only moves it within that side; the crisp white streak on top is what reads as polish. */
+  var mid=mix(d.c1,d.c2,.5);
+  if(mode==='deep'){
+    var deep=mix(mix(d.c2,mid,.3),'#000000',.6),deeper=mix(deep,'#000000',.3),half=mix(deep,d.c1,.2),glow=mix(deep,d.c1,.36);
+    return [[0,deep],[.2,deeper],[.34,deep],[.42,half],[.48,glow],[.52,glow],[.58,half],[.68,deep],[.8,deeper],[1,deep]];
+  }
+  var base=mix(d.c1,'#FFFFFF',.8),hi='#FFFFFF',dim=mix(base,d.c2,.14),low=mix(base,d.c2,.26);
+  return [[0,base],[.2,hi],[.34,base],[.42,dim],[.48,low],[.52,low],[.58,dim],[.68,base],[.8,hi],[1,base]];
+}
+function pickTone(d){if(tone!=='auto')return tone;return lum(mix(d.c1,d.c2,.5))>.2?'deep':'bright';}
+function paint(d){
+  cur=d;var m=pickTone(d);
+  env.innerHTML=envStops(d,m).map(function(s){return '<stop offset="'+s[0]+'" stop-color="'+s[1]+'"/>';}).join('');
+  /* the frost pulls the two ends of the colour together a little, so the print never lands on the palest or darkest corner */
+  var mid=mix(d.c1,d.c2,.5),k=.18*frost;
+  [cardNew,cardOld].forEach(function(c){c.style.setProperty('--edge',d.edge);});
+  var s=cardNew.style;s.setProperty('--s1',mix(d.c1,mid,k));s.setProperty('--s2',mix(d.c2,mid,k));
+  s.setProperty('--veil',(.05*frost).toFixed(3));s.setProperty('--grain',(.22*frost).toFixed(2));
+  $('#pShade').setAttribute('fill-opacity',m==='deep'?'.12':'.3');
+  $('#pLit').setAttribute('fill-opacity',m==='deep'?'.16':'.12');
+  var o=cardOld.style;o.setProperty('--art','linear-gradient(140deg,'+d.c1+' 0%,'+d.c2+' 100%)');o.setProperty('--c2',d.c2);o.setProperty('--metal',METAL[d.metal]);
+  $$('#sw button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.id===d.id);});
+  $('#swname').textContent=d.name;
+}
+var sw=$('#sw');DESIGNS.forEach(function(d){var b=document.createElement('button');b.type='button';b.setAttribute('role','radio');b.dataset.id=d.id;b.style.setProperty('--c',mix(d.c1,d.c2,.5));b.setAttribute('aria-label',d.name);b.addEventListener('click',function(){paint(d);});sw.appendChild(b);});
+function seg(id,fn){$$('#'+id+' button').forEach(function(b){b.addEventListener('click',function(){$$('#'+id+' button').forEach(function(x){x.setAttribute('aria-pressed',x===b);});fn(b.dataset.v);});});}
+seg('segVer',function(v){cardNew.hidden=v!=='new';cardOld.hidden=v==='new';});
+seg('segTone',function(v){tone=v;paint(cur);});
+seg('segAmt',function(v){$('#tAmt').textContent='£'+v;$('#oAmt').textContent='£'+v;});
+seg('segBg',function(v){document.documentElement.classList.toggle('dark',v==='dark');document.querySelector('meta[name=theme-color]').content=v==='dark'?'#2B2A28':'#F7EEE0';});
+$('#frost').addEventListener('input',function(e){frost=+e.target.value;paint(cur);});
+$('#nameIn').addEventListener('input',function(e){$('#tName').textContent=e.target.value.trim();});
+
+/* ---------- tilt: the spring of the prototype ---------- */
+var MAXX=20,MAXY=24,K=reduce?220:110,DAMP=reduce?30:15;
+function soft(v,m){return m*Math.tanh(v/m);}function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+var c={rx:0,ry:0,vx:0,vy:0,tx:0,ty:0,lx:null,ly:null,drag:null,hover:false,idle:1,phase:Math.random()*6.28};
+var gyro={on:false,got:false,b0:null,g0:null,x:0,y:0,rx:null,ry:null};
+[cardNew,cardOld].forEach(function(card){
+  card.addEventListener('pointerdown',function(e){c.drag={x0:e.clientX,y0:e.clientY,bx:c.rx,by:c.ry};try{card.setPointerCapture(e.pointerId);}catch(_){}});
+  card.addEventListener('pointermove',function(e){
+    if(c.drag){var dx=e.clientX-c.drag.x0,dy=e.clientY-c.drag.y0;c.tx=soft(c.drag.bx-dy*0.16,MAXX);c.ty=soft(c.drag.by+dx*0.2,MAXY);}
+    else if(e.pointerType==='mouse'){var r=card.getBoundingClientRect();var px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;c.hover=true;c.tx=(0.5-py)*18;c.ty=(px-0.5)*22;}
+  });
+  function end(){if(!c.drag)return;c.drag=null;c.idle=0;}
+  card.addEventListener('pointerup',end);card.addEventListener('pointercancel',end);card.addEventListener('pointerleave',function(){c.hover=false;c.idle=0;});
+});
+var W=856,H=540,TH=28*Math.PI/180,DX=Math.cos(TH),DY=Math.sin(TH);
+function band(el,len,off){var cx=W/2+DX*off,cy=H/2+DY*off;el.setAttribute('x1',(cx-DX*len/2).toFixed(1));el.setAttribute('y1',(cy-DY*len/2).toFixed(1));el.setAttribute('x2',(cx+DX*len/2).toFixed(1));el.setAttribute('y2',(cy+DY*len/2).toFixed(1));}
+var last=performance.now();
+function frame(now){
+  var dt=Math.min((now-last)/1000,1/30);last=now;var t=now/1000;
+  if(gyro.rx!=null){var lp=Math.min(1,dt*6.5);gyro.x+=(gyro.rx-gyro.x)*lp;gyro.y+=(gyro.ry-gyro.y)*lp;}
+  var tx,ty;
+  if(c.drag||c.hover){tx=c.tx;ty=c.ty;}
+  else{c.idle=Math.min(1,c.idle+dt*0.6);var sx=reduce?0:Math.sin(t*0.6+c.phase)*4*c.idle,sy=reduce?0:Math.sin(t*0.45+c.phase*1.3)*6*c.idle;
+    if(gyro.on&&gyro.got){tx=gyro.x+sx*0.3;ty=gyro.y+sy*0.3;}else{tx=sx;ty=sy;}}
+  var dmp=(!c.drag&&!c.hover&&gyro.on&&gyro.got)?2*Math.sqrt(K):DAMP;
+  var ax=K*(tx-c.rx)-dmp*c.vx,ay=K*(ty-c.ry)-dmp*c.vy;c.vx+=ax*dt;c.vy+=ay*dt;c.rx+=c.vx*dt;c.ry+=c.vy*dt;
+  var lg=(gyro.on&&gyro.got&&!c.drag&&!c.hover)?1.3:1;
+  c.ly=(c.ly==null?c.ry:c.ly)+(c.ry*lg-(c.ly==null?c.ry:c.ly))*Math.min(1,dt*8);
+  c.lx=(c.lx==null?c.rx:c.lx)+(c.rx*lg-(c.lx==null?c.rx:c.lx))*Math.min(1,dt*8);
+  var rx=c.rx.toFixed(2)+'deg',ry=c.ry.toFixed(2)+'deg';
+  /* new: the frost drifts a little, the polished print a lot (a mirror turns the room twice as fast as the card) */
+  var u=c.ly/24,v=c.lx/20,s=cardNew.style;
+  s.setProperty('--rx',rx);s.setProperty('--ry',ry);
+  s.setProperty('--lx',clamp(38+u*34,0,100).toFixed(1)+'%');s.setProperty('--ly',clamp(30-v*36,0,100).toFixed(1)+'%');
+  band(env,1800,260+u*760-v*300);
+  band(spec,1500,-330+u*1150-v*420);
+  /* the thin lit edge faces the light, the soft shade falls away from it */
+  var ldx=-.55+u*.9,ldy=-.85-v*.7,ll=Math.max(.001,Math.hypot(ldx,ldy));ldx/=ll;ldy/=ll;
+  $('#pShade').setAttribute('transform','translate('+(-ldx*1.4).toFixed(2)+' '+(-ldy*1.6).toFixed(2)+')');
+  $('#pLit').setAttribute('transform','translate('+(ldx*.8).toFixed(2)+' '+(ldy*.8).toFixed(2)+')');
+  /* current: the same numbers as version A */
+  var o=cardOld.style;o.setProperty('--rx',rx);o.setProperty('--ry',ry);
+  o.setProperty('--gx',clamp(50+c.ly*2.4,-20,120).toFixed(1)+'%');o.setProperty('--gy',clamp(40-c.lx*2.6,-20,120).toFixed(1)+'%');
+  o.setProperty('--bx',clamp(50+c.ly*2.4-c.lx*0.8,-10,110).toFixed(1)+'%');o.setProperty('--mx',clamp(50+c.ly*4.2-c.lx*1.6,0,100).toFixed(1)+'%');
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+/* gyroscope: the baseline is how the phone is held; iOS asks on the first tap */
+function screenAngle(){var a=(screen.orientation&&typeof screen.orientation.angle==='number')?screen.orientation.angle:(window.orientation||0);return ((a%360)+360)%360;}
+function onOrient(e){
+  if(e.beta==null||e.gamma==null)return;var b=e.beta,g=e.gamma,a=screenAngle(),fb=b,fg=g;
+  if(a===90){fb=-g;fg=b;}else if(a===270){fb=g;fg=-b;}else if(a===180){fb=-b;fg=-g;}
+  if(!gyro.got){gyro.got=true;gyro.b0=fb;gyro.g0=fg;hint();}
+  if(Math.abs(fb-gyro.b0)>60||Math.abs(fg-gyro.g0)>60){gyro.b0=fb;gyro.g0=fg;}
+  gyro.b0+=(fb-gyro.b0)*0.0016;gyro.g0+=(fg-gyro.g0)*0.0016;
+  gyro.rx=soft(-(fb-gyro.b0)*0.5,8);gyro.ry=soft((fg-gyro.g0)*0.5,10);
+}
+var needsPerm=typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function',permState='unknown';
+function startGyro(){if(gyro.on)return;gyro.on=true;gyro.got=false;window.addEventListener('deviceorientation',onOrient);}
+function askGyro(){if(!needsPerm||permState!=='unknown')return;try{DeviceOrientationEvent.requestPermission().then(function(r){permState=r==='granted'?'granted':'denied';if(r==='granted')startGyro();hint();}).catch(function(){hint();});}catch(_){}}
+if(needsPerm){document.addEventListener('touchend',askGyro,{passive:true});document.addEventListener('click',askGyro);}else if('DeviceOrientationEvent' in window){startGyro();}
+function hint(){var n=$('#note');if(gyro.on&&gyro.got){n.textContent='';return;}if(needsPerm&&permState==='unknown'){n.innerHTML='Drag the card or <button type="button">turn on tilt</button>';return;}n.textContent=finePointer?'Move the cursor over the card':'Drag the card';}
+hint();
+paint(DESIGNS[0]);
+})();
+</script>
+</body></html>
