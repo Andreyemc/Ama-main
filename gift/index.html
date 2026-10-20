@@ -592,7 +592,7 @@ html.no-tr *,html.no-tr *::before,html.no-tr *::after{transition:none!important}
       <section class="chat-section">
         <h2>It arrives<br>like a message</h2>
         <div class="chat" id="chat" aria-label="Example of the gift in a chat">
-          <div class="chat-head"><i aria-hidden="true"></i><div><b>Anna</b><span>online</span></div></div>
+          <div class="chat-head"><i aria-hidden="true"></i><div><b>Olivia</b><span>online</span></div></div>
           <div class="chat-body">
             <div class="msg">how was the retreat?<time>18:41</time></div>
             <div class="msg out gift"><div class="preview"><div data-card="chat" data-amp=".7"></div><b>AMA gift card</b><small>amaforyou.com</small></div><p>a little time just for you 🤍<br><a href="#top" tabindex="-1">amaforyou.com/gift/7KQ2-M9XA</a></p><time>18:42 ✓✓</time></div>
@@ -832,7 +832,7 @@ var ITEMS=[
   {a:'a women’s health consultation',p:130,pil:'nutrition'},
   {a:'a sleep enhancement session',p:250,pil:'sleep'}
 ];
-var PRESET_COVERS={50:[3],75:[5],100:[6,2],150:[8,1],250:[9],500:[9,8]};
+var PRESET_COVERS={50:[3],75:[5],100:[6,2],150:[8],250:[9],500:[9,8]};
 var PHRASES=[
   ['Merry Christmas','Merry Christmas. Here’s some time just for you this winter.'],
   ['Happy birthday','Happy birthday. Take an hour for yourself, it’s on me.'],
@@ -846,7 +846,8 @@ document.documentElement.style.setProperty('--logo-mask','url("data:image/svg+xm
 /* =========================================================
    STATE (+ draft in this browser)
    ========================================================= */
-var DEF={design:'sand',amount:75,custom:false,to:'',from:'',msg:'',mode:'email',email:'',when:'now',date:'',time:'09:00',buyer:'',pay:'wallet'};
+var DEMO_AMOUNT=150,DEMO_NAME='Olivia Smith'; // 20 Oct: every sample card shows £150 and this name until the buyer chooses their own
+var DEF={design:'sand',amount:DEMO_AMOUNT,custom:false,to:'',from:'',msg:'',mode:'email',email:'',when:'now',date:'',time:'09:00',buyer:'',pay:'wallet'};
 var S=Object.assign({},DEF);
 try{var saved=JSON.parse(localStorage.getItem('ama-gift-draft')||'null');if(saved&&typeof saved==='object')Object.keys(DEF).forEach(function(k){if(k in saved)S[k]=saved[k];});}catch(e){}
 function persist(){try{localStorage.setItem('ama-gift-draft',JSON.stringify(S));}catch(e){}}
@@ -967,7 +968,7 @@ function paintCard(c,d,amount){
   c.el.style.setProperty('--c2',d.c2);c.el.style.setProperty('--edge',d.edge);
   paintPrint(c,d);c._lu=null;lightPrint(c);
   c.el.querySelector('.gc-amt').textContent=money(amount);
-  if(FLOW_CARDS.indexOf(c.key)>=0)paintName(c,S.to);
+  if(FLOW_CARDS.indexOf(c.key)>=0)paintName(c,S.to||DEMO_NAME);
   c.el.setAttribute('aria-label',d.name+' AMA gift card, '+money(amount)+(FLOW_CARDS.indexOf(c.key)>=0&&S.to?', for '+S.to:''));
 }
 function bump(c){c.el.classList.remove('swap');void c.el.offsetWidth;c.el.classList.add('swap');}
@@ -1184,8 +1185,8 @@ $$('[data-card]').forEach(function(h){var c=buildCard(h);C[c.key]=c;observe(c);}
 var FLOW_CARDS=['flow','preview','done'];
 function paintAll(){var d=design();FLOW_CARDS.forEach(function(k){if(C[k])paintCard(C[k],d,S.amount);});}
 (function(){var h=document.createElement('div');h.id='doneHolder';h.className='dc';C.done.el.parentNode.insertBefore(h,C.done.el);h.appendChild(C.done.el);})(); // the Done card sits in a holder that can stand it upright
-paintCard(C.hero,designById('night'),75);C.hero.el.classList.add('no-amt'); // no amount until it is chosen
-paintCard(C.chat,designById('sand'),75);C.chat.el.classList.add('no-amt'); // the link preview never shows the amount
+paintCard(C.hero,designById('night'),DEMO_AMOUNT);paintName(C.hero,DEMO_NAME);
+paintCard(C.chat,designById('sand'),DEMO_AMOUNT);paintName(C.chat,DEMO_NAME); // the landing's chat illustration shows the sample card too
 
 /* ---------- A2: what each amount buys (pinned, scroll-driven) ---------- */
 var BUYS=[ /* 20 Oct: £50–£500; under each amount a few things it could be, joined by "or", so it never reads as one product */
@@ -1320,7 +1321,7 @@ function makeCarousel(row,key,onPick,onNear,onPlace){
   DESIGNS.forEach(function(d,i){
     var b=document.createElement('button');b.type='button';b.tabIndex=-1;b.setAttribute('role','option');b.setAttribute('aria-label',d.name+' design');
     b.innerHTML='<div class="up"><div data-card="'+key+'" data-nodrag data-amp=".7"></div></div>';row.appendChild(b);
-    var c=buildCard(b.querySelector('[data-card]'));c.upright=true;observe(c);paintCard(c,d,75);c.el.classList.add('no-amt');
+    var c=buildCard(b.querySelector('[data-card]'));c.upright=true;observe(c);paintCard(c,d,DEMO_AMOUNT);paintName(c,DEMO_NAME);
     items.push(b);cards.push(c);
     b.addEventListener('click',function(){ if(drag&&drag.moved)return; var s=i-cur-Math.round(p); if(s===1||s===-1){haptic('light');step(s,4.5);} });
   });
@@ -1445,7 +1446,7 @@ new IntersectionObserver(function(es,obs){
   setTimeout(function(){chatMsgs[0].classList.add('in-view');},150);
   setTimeout(function(){chatMsgs[1].classList.add('in-view');},800);
   setTimeout(function(){typing.classList.add('in-view');},1700);
-  setTimeout(function(){reply.hidden=false;void reply.offsetWidth;reply.classList.add('in-view');},3300); // the reply lands above the dots, and Anna keeps typing
+  setTimeout(function(){reply.hidden=false;void reply.offsetWidth;reply.classList.add('in-view');},3300); // the reply lands above the dots, and Olivia keeps typing
 },{threshold:0.35}).observe($('#chat'));
 
 // flow: thumbnails
@@ -1561,7 +1562,7 @@ function goStep(n,dir){
   if(prev===2&&n===1&&view==='flow'){fromStage=C.flow.el.getBoundingClientRect();}
   currentStep=n;
   if(n>=2)amountSeen=true;
-  C.flow.el.classList.toggle('no-amt',n===1&&!amountSeen);
+  C.flow.el.classList.remove('no-amt'); // step 1 shows the sample amount (or the one already chosen)
   var flow=$('#vFlow');flow.dataset.step=n;
   $$('.step',flow).forEach(function(s){var on=+s.dataset.step===n;s.hidden=!on;s.classList.toggle('after-turn',on&&!!fromUp&&!reduce);s.classList.toggle('after-turn-back',on&&!!fromStage&&!reduce);if(on){s.classList.toggle('back',dir<0);s.style.animation='none';void s.offsetWidth;s.style.animation='';}});
   $('#stepTitle').textContent=STEP_TITLES[n-1];
@@ -1658,7 +1659,7 @@ $('#amountInput').addEventListener('input',function(e){
   var n=+v;$('#fAmount').classList.remove('invalid');
   if(n>=25&&n<=500)setAmount(n);
 });
-$('#toInput').addEventListener('input',function(e){S.to=e.target.value.trim();persist();$('#fTo').classList.remove('invalid');FLOW_CARDS.forEach(function(k){if(C[k])paintName(C[k],S.to);});});
+$('#toInput').addEventListener('input',function(e){S.to=e.target.value.trim();persist();$('#fTo').classList.remove('invalid');FLOW_CARDS.forEach(function(k){if(C[k])paintName(C[k],S.to||DEMO_NAME);});});
 $('#fromInput').addEventListener('input',function(e){S.from=e.target.value.trim();persist();$('#fFrom').classList.remove('invalid');});
 $('#msgInput').addEventListener('input',function(e){S.msg=e.target.value;persist();renderMsgCount();});
 $$('.seg button').forEach(function(b){b.addEventListener('click',function(){S.mode=b.dataset.mode;persist();renderDelivery();});});
@@ -1709,7 +1710,7 @@ function validate(step){
 var lastFocus=null;
 function openPreview(){
   lastFocus=document.activeElement;
-  var to=S.to||'Anna', from=S.from||'a friend';
+  var to=S.to||DEMO_NAME.split(' ')[0], from=S.from||'a friend';
   $('#pvBar').textContent='Preview · this is what '+to+' will see';
   $('#pvTitle').textContent=to+', here’s a gift from '+from;
   $('#pvMsg').textContent=S.msg||'';
