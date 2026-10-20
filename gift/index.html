@@ -438,7 +438,14 @@ html.no-tr *,html.no-tr *::before,html.no-tr *::after{transition:none!important}
 .sheet-bar .col{height:48px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .sheet-bar .icon-btn{margin:0 -8px 0 0}
 .sheet-body{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.sheet-body .col{padding-block:48px 140px;display:flex;flex-direction:column;gap:24px;text-align:center} /* what the recipient sees: centred, on the colour of the card */
+/* what the recipient sees (layout of 20 Oct): centred on the colour of the card; the title, the card and the message
+   sit together, the button stands apart with the terms under it; no bottom bar, the close button is in the top bar */
+.sheet-body .col{min-height:calc(100svh - 48px - env(safe-area-inset-top,0px));padding-block:40px calc(32px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;justify-content:center;text-align:center}
+#preview h2{margin:0 auto 32px;max-width:10em;text-wrap:wrap}
+#preview .quote{margin-top:16px;font-size:20px;font-weight:400;line-height:1.3;max-width:27ch;margin-inline:auto;text-wrap:balance}
+#preview .quote:empty{display:none}
+.pv-act{margin-top:72px;display:flex;flex-direction:column;gap:24px}
+.pv-act .hint{font-size:14px;line-height:1.4;max-width:30ch;margin-inline:auto}
 .sheet{color:var(--ink)}
 .sheet .hint{color:var(--mute)}
 .sheet-bar{--ink:#1E1C1A;--light:#FFF3E4}
@@ -741,10 +748,8 @@ html.no-tr *,html.no-tr *::before,html.no-tr *::after{transition:none!important}
     <h2 id="pvTitle">Anna, here’s a gift from Andrey</h2>
     <div data-card="preview" data-amp="1.1"></div>
     <p class="quote" id="pvMsg"></p>
-    <p class="hint" id="pvMeta"></p>
-    <div class="btn static" aria-hidden="true">Book a session</div>
+    <div class="pv-act"><div class="btn static" aria-hidden="true">Book a session</div><p class="hint" id="pvMeta"></p></div>
   </div></div>
-  <div class="dock"><div class="col"><button class="btn ghost" id="pvBack" style="background:var(--sand)">Back to message</button></div></div>
 </div>
 
 <div id="menuLayer" hidden>
@@ -1703,9 +1708,9 @@ var lastFocus=null;
 function openPreview(){
   lastFocus=document.activeElement;
   var to=S.to||'Anna', from=S.from||'a friend';
-  $('#pvBar').textContent='Preview · what '+to+' will see';
+  $('#pvBar').textContent='Preview · this is what '+to+' will see';
   $('#pvTitle').textContent=to+', here’s a gift from '+from;
-  $('#pvMsg').textContent=S.msg?('“'+S.msg+'”'):'';
+  $('#pvMsg').textContent=S.msg||'';
   var exp=new Date();exp.setMonth(exp.getMonth()+24);
   $('#pvMeta').textContent=money(S.amount)+' to spend on any session at AMA. Valid until '+exp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+'.';
   paintCard(C.preview,design(),S.amount);
@@ -1714,7 +1719,7 @@ function openPreview(){
   pv.setProperty('--sand',m.bg);pv.setProperty('--ink',m.text);pv.setProperty('--body',m.mute);pv.setProperty('--mute',m.mute);
   pv.setProperty('--line','rgba('+tx.join(',')+',.2)');pv.setProperty('--rust',m.btn);pv.setProperty('--rust-press',m.btn);pv.setProperty('--light',m.btnText);
   $('#preview').hidden=false;document.body.style.overflow='hidden';$('#pvClose').focus();
-  veilIn($('#preview'),[$('#preview .sheet-body'),$('#preview .sheet-bar'),$('#preview .dock')],m.bg);
+  veilIn($('#preview'),[$('#preview .sheet-body'),$('#preview .sheet-bar')],m.bg);
 }
 /* the success arrival, reused: content fades in (0 → 1 by 450 ms) while a frosted layer in the given colour
    darkens the bottom first, evens out, then thickens into the solid colour (1650 ms) */
@@ -1736,7 +1741,7 @@ function veilIn(el,parts,hexc){
 }
 function closePreview(){if($('#preview').hidden)return;$('#preview').hidden=true;document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
 $('#previewBtn').addEventListener('click',openPreview);
-$('#pvClose').addEventListener('click',closePreview);$('#pvBack').addEventListener('click',closePreview);
+$('#pvClose').addEventListener('click',closePreview);
 
 /* =========================================================
    PAYMENT → DONE
