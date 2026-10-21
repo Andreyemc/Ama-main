@@ -22,6 +22,7 @@ h2{font-weight:400;margin:36px 0 0;font-size:24px;line-height:1.2;letter-spacing
 p{margin:0}
 .site-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;height:var(--hdr);background:var(--cream);color:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:0 max(16px,env(safe-area-inset-left,0px));transition:background .3s}
 .site-header .left{display:flex;align-items:center;gap:14px}.icon-btn{width:40px;height:40px;display:grid;place-items:center;margin:-8px;border-radius:20px}.icon-btn svg{display:block}
+.i-sun{display:none!important}html.dark .i-sun{display:block!important}html.dark .i-moon{display:none}
 .logo{display:block;width:69px;height:26px}.logo svg{display:block;width:100%;height:100%;fill:var(--ink)}
 main{padding:20px max(16px,env(safe-area-inset-left,0px)) 60px}
 .col{max-width:520px;margin:0 auto}
@@ -121,8 +122,10 @@ input[type=range]{width:210px;accent-color:var(--rust)}
     </button>
     <a class="logo" href="../" aria-label="AMA gift card"><svg viewBox="0 0 69 26" aria-hidden="true"><use href="#ama-logo"/></svg></a>
   </div>
-  <button class="icon-btn" aria-label="Search">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM15 15l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+  <!-- light and dark: icons from Iconoteka, regular weight (MIT) -->
+  <button class="icon-btn" id="themeBtn" type="button" aria-label="Dark background" aria-pressed="false">
+    <svg class="i-moon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.0005 22C7.40049 22 3.00049 17.6 3.00049 12C3.00049 6.4 7.40049 2 13.0005 2C15.8505 2 18.3255 3.175 20.0505 4.9C16.6255 5.325 13.7505 8.2 13.7505 12C13.7505 15.8 16.6255 18.675 20.0505 19.1C18.3255 20.825 15.8505 22 13.0005 22ZM13.0005 20.1C14.1005 20.1 15.1005 20 16.2755 19.6C13.4755 17.95 11.8005 15.25 11.8005 12C11.8005 8.75 13.5005 6.025 16.2505 4.4C15.1005 4 14.1005 3.9 13.0005 3.9C8.47549 3.9 4.95049 7.45 4.95049 12C4.95049 16.55 8.47549 20.1 13.0005 20.1Z"/></svg>
+    <svg class="i-sun" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.0005 15.975C9.75049 15.975 8.00049 14.25 8.00049 12C8.00049 9.75 9.75049 8.025 12.0005 8.025C14.2505 8.025 16.0005 9.75 16.0005 12C16.0005 14.25 14.2505 15.975 12.0005 15.975ZM12.0005 14.225C13.3005 14.225 14.2255 13.3 14.2255 12C14.2255 10.7 13.3005 9.775 12.0005 9.775C10.7505 9.775 9.77549 10.75 9.77549 12C9.77549 13.3 10.7255 14.225 12.0005 14.225ZM5.57549 19.725L4.27549 18.425L7.10049 15.6L8.40049 16.9L5.57549 19.725ZM2.00049 12.925V11.075H6.00049V12.925H2.00049ZM11.0505 22V18H12.9505V22H11.0505ZM18.4255 19.725L15.6005 16.9L16.9005 15.6L19.7255 18.425L18.4255 19.725ZM7.10049 8.4L4.27549 5.575L5.57549 4.275L8.40049 7.1L7.10049 8.4ZM11.0505 6V2H12.9505V6H11.0505ZM18.0005 12.925V11.075H22.0005V12.925H18.0005ZM16.9005 8.4L15.6005 7.1L18.4255 4.275L19.7255 5.575L16.9005 8.4Z"/></svg>
   </button>
 </header>
 <main><div class="col">
@@ -137,7 +140,7 @@ input[type=range]{width:210px;accent-color:var(--rust)}
           <defs>
             <g id="eL" class="pg"><use href="#ama-logo" x="48" y="44" width="154" height="58"/></g>
             <g id="eK" class="pg"><text x="808" y="74" text-anchor="end" font-size="27" font-weight="500">Gift card</text></g>
-            <g id="eA" class="pg"><text class="amt" id="tAmt" x="44" y="490" font-size="88">£150</text></g>
+            <g id="eA" class="pg"><text class="amt" id="tAmt" x="44" y="490" font-size="88">£250</text></g>
             <g id="eN" class="pg"><text id="tName" x="808" y="488" text-anchor="end" font-size="32" font-weight="500">Olivia Smith</text></g>
             <mask id="pm" maskUnits="userSpaceOnUse" x="0" y="0" width="856" height="540"><use href="#eL" fill="#fff"/><use href="#eK" fill="#fff"/><use href="#eA" fill="#fff"/><use href="#eN" fill="#fff"/></mask>
             <linearGradient id="spec" gradientUnits="userSpaceOnUse">
@@ -173,12 +176,9 @@ input[type=range]{width:210px;accent-color:var(--rust)}
   </div>
 
   <div class="ctl" style="margin-top:40px">
-    <div class="field"><label for="nameIn">Recipient’s name</label><input id="nameIn" maxlength="24" value="Olivia Smith" autocomplete="off" placeholder="Their name"></div>
-    <div class="row"><span>Amount</span><div class="seg" id="segAmt"><button type="button" aria-pressed="true" data-v="150"></button><button type="button" aria-pressed="false" data-v="1890"></button><button type="button" aria-pressed="false" data-v="0">None</button></div></div>
-    <div class="row"><span>Currency</span><div class="seg" id="segCur"><button type="button" aria-pressed="true" data-v="GBP">£</button><button type="button" aria-pressed="false" data-v="USD">$</button><button type="button" aria-pressed="false" data-v="EUR">€</button></div></div>
     <div class="row"><span>Frost <b class="val" id="frostVal">65%</b></span><input type="range" id="frost" min="0" max="2" step="0.1" value="1.3" aria-label="Frost strength"></div>
     <div class="row"><span>Card</span><div class="seg" id="segOri"><button type="button" aria-pressed="true" data-v="h">Horizontal</button><button type="button" aria-pressed="false" data-v="v">Vertical</button></div></div>
-    <div class="row"><span>Background</span><div class="seg" id="segBg"><button type="button" aria-pressed="true" data-v="cream">Cream</button><button type="button" aria-pressed="false" data-v="dark">Dark</button></div></div>
+    <div class="row"><span>Page</span><div class="seg" id="segPage"><button type="button" aria-pressed="true" data-v="ama">AMA</button><button type="button" aria-pressed="false" data-v="card">From the card</button></div></div>
   </div>
 
 </div></main>
@@ -232,7 +232,7 @@ var ORD='ama-card-art-order';function orders(){try{return JSON.parse(localStorag
   if(!n.every(function(x){return by[x];}))return;var L=n.map(function(x){return by[x];});if(L.some(function(l,i){return l!==p.layers[i];})){p.layers=L;p.needCompose=true;}});})();
 function presets(){var h=hidden();return PRESETS.filter(function(p){return h.indexOf(p.id)<0;});}
 var uploads=[],ARTS=presets();
-var S={art:null,amount:150,cur:'GBP',frost:1.3,prot:'off',vert:false,
+var S={art:null,amount:250,page:'ama',cur:'GBP',frost:1.3,prot:'off',vert:false,
   vn:{on:false},mtone:'auto'}; // which layers are polished is kept on the layers themselves
 var card=$('#card'),face=card.querySelector('.face'),scrimEl=card.querySelector('.fc-scrim'),spec=$('#spec'),vn=$('#vn');
 var ART=null; // {data,c1,c2,src}
@@ -240,9 +240,20 @@ var ART=null; // {data,c1,c2,src}
 /* ---------- amounts in any currency: the formatter places the sign (£150, $150, 150 €) ---------- */
 var LOC={GBP:'en-GB',USD:'en-US',EUR:'de-DE'};
 function money(a){try{return new Intl.NumberFormat(LOC[S.cur],{style:'currency',currency:S.cur,maximumFractionDigits:0,minimumFractionDigits:0}).format(a);}catch(_){return '£'+a;}}
-function amtLabels(){$$('#segAmt button').forEach(function(b){if(+b.dataset.v)b.textContent=money(+b.dataset.v);});}
 
 /* ---------- reading the art ---------- */
+/* the main light (or dark) area of a picture: the most common colour among its lighter (darker) half, not a mean of
+   everything, so a sky stays a sky and a rug stays a rug */
+function domi(d,light){var bins={},n=d.length/4,step=7,lims=[];for(var i=0;i<d.length;i+=4*step)lims.push(lumA(d[i],d[i+1],d[i+2]));lims.sort(function(a,b){return a-b;});
+  var cut=lims[Math.floor(lims.length*(light?.5:.45))];
+  for(i=0;i<d.length;i+=4*step){var r=d[i],g=d[i+1],b=d[i+2],L=lumA(r,g,b);if(light?L<cut:L>cut)continue;var k=(r>>4)*256+(g>>4)*16+(b>>4),e=bins[k]||(bins[k]=[0,0,0,0]);e[0]+=r;e[1]+=g;e[2]+=b;e[3]++;}
+  var best=null;for(var k in bins)if(!best||bins[k][3]>best[3])best=bins[k];return toHex([best[0]/best[3],best[1]/best[3],best[2]/best[3]]);}
+/* move a colour towards white (or black) until it reaches a lightness, keeping its hue */
+function toL(c,target){var to=target>50?'#FFFFFF':'#000000',lo=0,hi=1;if(target>50?Lstar(lum(c))>=target:Lstar(lum(c))<=target)return c;for(var i=0;i<20;i++){var m=(lo+hi)/2,L=Lstar(lum(mix(c,to,m)));if(target>50?L<target:L>target)lo=m;else hi=m;}return mix(c,to,hi);}
+function applyPage(){var R=document.documentElement,dark=R.classList.contains('dark'),meta=document.querySelector('meta[name=theme-color]');
+  if(S.page!=='card'||!ART){['--cream','--paper','--sand'].forEach(function(v){R.style.removeProperty(v);});meta.content=dark?'#2B2A28':'#F7EEE0';return;}
+  var bg=dark?toL(mix(ART.darkA,'#2B2A28',.35),17):toL(ART.lightA,92); // a dark page is calmed towards AMA graphite
+  R.style.setProperty('--cream',bg);R.style.setProperty('--paper',dark?mix(bg,'#FFFFFF',.1):mix(bg,'#FFFFFF',.6));R.style.setProperty('--sand',dark?mix(bg,'#FFFFFF',.08):mix(bg,'#1E1C1A',.07));meta.content=bg;}
 var AC=document.createElement('canvas');AC.width=MW;AC.height=MH;var actx=AC.getContext('2d',{willReadFrequently:true});
 function readArt(img){
   var s=Math.max(MW/img.naturalWidth,MH/img.naturalHeight),dw=img.naturalWidth*s,dh=img.naturalHeight*s;
@@ -251,7 +262,8 @@ function readArt(img){
   for(var i=0;i<d.length;i+=4*37)L.push([lumA(d[i],d[i+1],d[i+2]),d[i],d[i+1],d[i+2]]);
   L.sort(function(a,b){return a[0]-b[0];});
   function avg(a,b){var r=0,g=0,bl=0,n=0;for(var i=Math.floor(a*L.length);i<Math.floor(b*L.length);i++){r+=L[i][1];g+=L[i][2];bl+=L[i][3];n++;}return toHex([r/n,g/n,bl/n]);}
-  var c1=avg(.88,1),g=Math.round(lum(c1)>0?Math.pow(lum(c1),1/2.2)*255:0);var C1=mix(c1,toHex([g,g,g]),.35),C2=avg(0,.12);return {data:d,c2:C2,c1:C1,mid:avg(.45,.55),scD:hex(mix(C2,'#000000',.35)),scL:hex(mix(C1,'#FFFFFF',.55))};
+  var lightA=domi(d,true),darkA=domi(d,false);
+  var c1=avg(.88,1),g=Math.round(lum(c1)>0?Math.pow(lum(c1),1/2.2)*255:0);var C1=mix(c1,toHex([g,g,g]),.35),C2=avg(0,.12);return {data:d,lightA:lightA,darkA:darkA,c2:C2,c1:C1,mid:avg(.45,.55),scD:hex(mix(C2,'#000000',.35)),scL:hex(mix(C1,'#FFFFFF',.55))};
 }
 
 /* ---------- print: the approved engine, now reading the picture under each element ---------- */
@@ -436,7 +448,7 @@ function useArt(id){
   if(a.needCompose){a.needCompose=false;$('#artName').textContent=a.name;compose(a).then(function(){useArt(a.id);});return;}
   thumbs();
   $('#artName').textContent=a.name+(a.layers&&a.layers.length>1?' · '+a.layers.length+' layers':'');ART=null;vnUI();
-  var img=new Image();img.onload=function(){if(S.art!==a.id)return;ART=readArt(img);ART.layers=a.layers;card.style.setProperty('--img','url("'+a.src+'")');paint();if(S.vn.on)remask();};img.src=a.src;
+  var img=new Image();img.onload=function(){if(S.art!==a.id)return;ART=readArt(img);ART.layers=a.layers;card.style.setProperty('--img','url("'+a.src+'")');paint();applyPage();if(S.vn.on)remask();};img.src=a.src;
 }
 function fileToCanvas(file,w,h,cb){var r=new FileReader();r.onload=function(){var img=new Image();img.onload=function(){var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d',{willReadFrequently:true}),s=Math.max(w/img.naturalWidth,h/img.naturalHeight),dw=img.naturalWidth*s,dh=img.naturalHeight*s;x.drawImage(img,(w-dw)/2,(h-dh)/2,dw,dh);cb(c,x,img);};img.onerror=function(){note('That file could not be read as a picture');};img.src=r.result;};r.readAsDataURL(file);}
 function loadImg(file){return new Promise(function(res,rej){var u=URL.createObjectURL(file),img=new Image();img.onload=function(){res(img);};img.onerror=function(){rej(file.name);};img.src=u;});}
@@ -473,15 +485,13 @@ $('#fileLay').addEventListener('change',function(e){var f=e.target.files;if(f&&f
 var noteT=0;function note(t){var n=$('#note');n.textContent=t;clearTimeout(noteT);noteT=setTimeout(hint,4200);}
 function seg(id,fn){$$('#'+id+' button').forEach(function(b){b.addEventListener('click',function(){$$('#'+id+' button').forEach(function(x){x.setAttribute('aria-pressed',x===b);});fn(b.dataset.v);});});}
 function setAmt(){$('#tAmt').textContent=S.amount?money(S.amount):'';$('#tAmt').setAttribute('visibility',S.amount?'visible':'hidden');repaint();}
-seg('segAmt',function(v){S.amount=+v;setAmt();});
-seg('segCur',function(v){S.cur=v;amtLabels();setAmt();});
 seg('segOri',function(v){S.vert=v==='v';$('#hold').classList.toggle('up',S.vert);});
-seg('segBg',function(v){document.documentElement.classList.toggle('dark',v==='dark');document.querySelector('meta[name=theme-color]').content=v==='dark'?'#2B2A28':'#F7EEE0';});
+seg('segPage',function(v){S.page=v;applyPage();});
+$('#themeBtn').addEventListener('click',function(){var on=!document.documentElement.classList.contains('dark');document.documentElement.classList.toggle('dark',on);this.setAttribute('aria-pressed',on);this.setAttribute('aria-label',on?'Light background':'Dark background');applyPage();});
 function setVn(on,quiet){S.vn.on=on;$$('#segVn button').forEach(function(b){b.setAttribute('aria-pressed',(b.dataset.v==='on')===on);});if(!on)vn.hidden=true;if(quiet)return;vnUI();if(on)remask();repaint();}
 seg('segVn',function(v){setVn(v==='on');});
 seg('segTone',function(v){S.mtone=v;repaint();});
 $('#frost').addEventListener('input',function(e){S.frost=+e.target.value;$('#frostVal').textContent=Math.round(S.frost*50)+'%';repaint();});
-$('#nameIn').addEventListener('input',function(e){$('#tName').textContent=e.target.value.trim();repaint();});
 /* ---------- tilt: the spring of the prototype ---------- */
 var MAXX=20,MAXY=24,K=reduce?220:110,DAMP=reduce?30:15;
 function soft(v,m){return m*Math.tanh(v/m);}
@@ -545,7 +555,7 @@ function askGyro(){if(!needsPerm||permState!=='unknown')return;try{DeviceOrienta
 if(needsPerm){document.addEventListener('touchend',askGyro,{passive:true});document.addEventListener('click',askGyro);}else if('DeviceOrientationEvent' in window){startGyro();}
 function hint(){$('#note').textContent='';}
 hint();
-amtLabels();vnUI();
+vnUI();
 useArt(ARTS[0]&&ARTS[0].id);
 /* uploads from earlier visits; the first version kept them in localStorage, they move over once */
 dbAll().then(function(list){var old=[];try{old=JSON.parse(localStorage.getItem('ama-card-art-v1')||'[]');}catch(_){}
