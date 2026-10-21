@@ -32,7 +32,6 @@ main{padding:20px max(16px,env(safe-area-inset-left,0px)) 60px}
 .hold.up>.card{position:absolute;top:0;left:100%;width:calc(100% * 85.6 / 53.98);transform-origin:0 0;transform:rotate(90deg)}
 .note{font-size:13px;color:var(--mute);text-align:center;min-height:1.4em}
 .note button{text-decoration:underline;text-underline-offset:3px;font-size:13px;color:var(--ink)}
-.stage.picking .card{cursor:crosshair}
 
 /* art picker */
 .arts{display:flex;gap:10px;margin-top:22px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:none}
@@ -65,9 +64,6 @@ input[type=range]{width:210px;accent-color:var(--rust)}
 .val{font-weight:400;color:var(--ink)}
 .btn2{height:38px;padding:0 16px;border-radius:30px;font-size:14px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink)}
 .chip{display:inline-block;width:18px;height:18px;border-radius:50%;vertical-align:-4px;margin-right:6px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
-.lays{display:flex;flex-wrap:wrap;gap:8px}
-.lays button{height:34px;padding:0 14px;border-radius:30px;font-size:14px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink)}
-.lays button[aria-pressed="true"]{background:var(--ink);color:var(--cream);box-shadow:none}
 .laynote{font-size:14px;color:var(--body);margin-bottom:10px}
 .fine{margin-top:30px;font-size:13px;color:var(--mute);line-height:1.5}
 .fine+.fine{margin-top:10px}
@@ -93,24 +89,24 @@ input[type=range]{width:210px;accent-color:var(--rust)}
 .fc-print .amt{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 .fc-rim{border-radius:3.8cqw;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1px 0 rgba(0,0,0,.12)}
 
-/* ---------- limited edition: screen-printed clear varnish ----------
-   The varnish has no frost on it, so the art under it reads deeper and wetter than the matte card around it.
-   It stands a hair above the card: a thin dark rim away from the light, a thin lit rim towards it.
-   As the card turns, a hotspot and a streak of light run across the varnish only. Holo and Pearl add a colour shift. */
+/* ---------- limited edition: polished layers ----------
+   A polished layer is finished like the logo and the amount: no frost on it, so the art reads a touch deeper and
+   crisper than the matte card; the room's reflection and a thin streak run across it faster than the card turns
+   (the same bands and speed as the print); a hair of relief, a dark rim away from the light and a lit rim towards it. */
 .vn-sh,.vn-lt,.vn-body{-webkit-mask:var(--vmask) 0 0/100% 100% no-repeat;mask:var(--vmask) 0 0/100% 100% no-repeat}
-.vn-sh{background:#000;opacity:var(--rsh,.45);transform:translate(var(--shx,0),var(--shy,0))}
-.vn-lt{background:#fff;opacity:var(--rlt,.35);transform:translate(var(--ltx,0),var(--lty,0))}
+.vn-sh{background:#000;opacity:.28;transform:translate(var(--shx,0),var(--shy,0))}
+.vn-lt{background:#fff;opacity:.18;transform:translate(var(--ltx,0),var(--lty,0))}
 .vn-body{isolation:isolate}
-.vn-art{filter:saturate(1.22) brightness(var(--vdeep,.9)) contrast(1.06)}
-.vn-holo{opacity:var(--ho,0);mix-blend-mode:color;background-size:150% 150%;background-position:var(--px,50%) var(--py,50%);
-  background-image:linear-gradient(118deg,#ff4fa3 0%,#ffb340 8%,#f4ff5a 15%,#3dffa0 23%,#38d5ff 31%,#6b6bff 39%,#d24dff 47%,#ff4fa3 55%,#ffb340 63%,#f4ff5a 70%,#3dffa0 78%,#38d5ff 86%,#6b6bff 93%,#d24dff 100%)}
-.vn-glint{opacity:calc(var(--ho,0) * .5);mix-blend-mode:soft-light;background-size:60% 60%;background-position:var(--px,50%) var(--py,50%);
-  background-image:repeating-linear-gradient(62deg,rgba(255,255,255,0) 0 6px,rgba(255,255,255,.75) 7px,rgba(255,255,255,0) 9px 15px)}
-/* the colour shift lives where the light falls and travels with it; away from the light the art keeps its own colours */
-.vn-holo,.vn-glint{-webkit-mask-image:radial-gradient(ellipse 62% 90% at var(--cx,30%) var(--cy,40%),#000 0%,rgba(0,0,0,.6) 40%,rgba(0,0,0,.14) 78%);mask-image:radial-gradient(ellipse 62% 90% at var(--cx,30%) var(--cy,40%),#000 0%,rgba(0,0,0,.6) 40%,rgba(0,0,0,.14) 78%)}
-.vn-hi{opacity:var(--hio,1);mix-blend-mode:screen;background:radial-gradient(ellipse 24% 38% at var(--hx,-20%) var(--hy,40%),rgba(255,255,255,.95),rgba(255,255,255,.42) 34%,rgba(255,255,255,.08) 62%,rgba(255,255,255,0) 76%)}
-.vn-band{opacity:var(--bo,.8);mix-blend-mode:screen;background-size:300% 100%;background-position:var(--bx,90%) 50%;
-  background-image:linear-gradient(112deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 45%,rgba(255,255,255,.45) 48.5%,rgba(255,255,255,.85) 50%,rgba(255,255,255,.45) 51.5%,rgba(255,255,255,0) 55%,rgba(255,255,255,0) 100%)}
+.vn-art{filter:saturate(1.08) contrast(1.05)}
+.vn-body>.vn-env,.vn-body>.vn-spec{inset:auto;left:50%;top:50%;height:300cqw;width:var(--len);margin:-150cqw 0 0 calc(var(--len) / -2);transform:rotate(28deg) translateX(var(--off,0))}
+.vn-body>.vn-env{--len:210cqw;--off:var(--eo);mix-blend-mode:overlay;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.5) 20%,rgba(255,255,255,0) 34%,rgba(0,0,0,.24) 42%,rgba(0,0,0,.46) 48%,rgba(0,0,0,.46) 52%,rgba(0,0,0,.24) 58%,rgba(0,0,0,0) 68%,rgba(255,255,255,.5) 80%,rgba(255,255,255,0) 100%)}
+.vn-body>.vn-spec{--len:175cqw;--off:var(--so);mix-blend-mode:screen;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 46%,rgba(255,255,255,.45) 49%,rgba(255,255,255,.8) 50%,rgba(255,255,255,.45) 51%,rgba(255,255,255,0) 54%,rgba(255,255,255,0) 100%)}
+.laylist{display:flex;flex-direction:column;gap:10px}
+.layrow{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--body)}
+.layrow .lthumb{flex:0 0 auto;width:52px;aspect-ratio:85.6/53.98;border-radius:5px;background:var(--sand) center/cover no-repeat;box-shadow:inset 0 0 0 1px var(--line)}
+.layrow span{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.layrow .seg{min-width:0;flex:0 0 auto}
+.layrow .seg button{padding:0 12px}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="ama-logo" viewBox="0 0 69 26">
       <path d="M68.6223 7.19211C68.6223 7.76903 68.4692 8.26903 68.2395 8.88441C66.7085 13.1152 63.5698 21.1921 63.1488 22.7305C63.187 22.8074 63.3019 22.8844 63.3784 22.8844C64.1057 22.8844 65.8281 21.1921 67.5506 19.1921L68.163 19.9998C66.1726 22.9228 63.0722 25.9997 61.5794 25.9997C60.6225 25.9997 59.7039 25.4613 59.7039 24.4228C59.7039 24.1151 59.9718 23.3459 60.3546 22.3074L61.656 18.9613L61.4646 18.8844C59.0149 22.3459 55.1107 25.9997 53.3882 25.9997C51.6275 25.769 50.7089 24.1921 50.7089 22.1921C50.7089 16.1921 56.8331 6.84596 62.7277 6.84596C63.6463 6.84596 64.7946 7.11519 65.5602 7.57673C65.7898 6.92288 65.9812 6.38442 66.1343 5.88442C66.4023 5.84596 66.5171 5.84596 66.7085 5.84596C67.8568 5.84596 68.6223 6.42288 68.6223 7.19211ZM54.9958 22.8459C56.4886 22.8459 60.3163 19.8075 63.1488 14.1152L64.6798 10.1152C63.6846 9.34595 62.4215 8.76903 60.6225 8.76903C57.3307 8.76903 54.0389 16.8844 54.0389 20.7305C54.0389 21.9613 54.4982 22.8459 54.9958 22.8459Z"/>
@@ -135,7 +131,7 @@ input[type=range]{width:210px;accent-color:var(--rust)}
     <div class="card" id="card" role="img" aria-label="AMA gift card">
       <div class="tilt"><i class="edge" style="transform:translateZ(-0.45px)"></i><i class="edge" style="transform:translateZ(-0.9px)"></i><i class="edge" style="transform:translateZ(-1.35px)"></i><i class="edge" style="transform:translateZ(-1.8px)"></i><i class="edge" style="transform:translateZ(-2.25px)"></i><i class="edge" style="transform:translateZ(-2.7px)"></i><i class="edge" style="transform:translateZ(-3.15px)"></i><div class="face">
         <div class="fc-art"></div><div class="fc-scrim"></div><div class="fc-veil"></div><div class="fc-frost"></div><div class="fc-shade"></div><div class="fc-sheen"></div>
-        <div class="vn" id="vn" hidden><i class="vn-sh"></i><i class="vn-lt"></i><div class="vn-body"><i class="vn-art"></i><i class="vn-holo"></i><i class="vn-glint"></i><i class="vn-hi"></i><i class="vn-band"></i></div></div>
+        <div class="vn" id="vn" hidden><i class="vn-sh"></i><i class="vn-lt"></i><div class="vn-body"><i class="vn-art"></i><i class="vn-env"></i><i class="vn-spec"></i></div></div>
         <svg class="fc-print" viewBox="0 0 856 540" preserveAspectRatio="none" aria-hidden="true">
           <defs>
             <g id="eL" class="pg"><use href="#ama-logo" x="48" y="44" width="154" height="58"/></g>
@@ -177,25 +173,19 @@ input[type=range]{width:210px;accent-color:var(--rust)}
   </div>
 
   <h2>Limited edition</h2>
-  <p class="lead">A varnish screen-printed over the matte card. It stays quiet at rest and catches the light as the card turns.</p>
+  <p class="lead">The art in layers. Each layer is matte, like the card, or polished, like the logo and the amount.</p>
   <div class="ctl">
-    <div class="row"><span>Varnish</span><div class="seg" id="segVn"><button type="button" aria-pressed="true" data-v="off">Off</button><button type="button" aria-pressed="false" data-v="on">On</button></div></div>
-    <div id="vnCtl" class="ctl" style="margin-top:0" hidden>
-      <div class="row"><span>Layer</span><div class="seg" id="segSrc"><button type="button" aria-pressed="true" data-v="layers">Art layers</button><button type="button" aria-pressed="false" data-v="colour">Colour</button><button type="button" aria-pressed="false" data-v="upload">File</button></div></div>
-      <div id="rowLay"><p class="laynote" id="layNote"></p><div class="lays" id="lays" role="group" aria-label="Varnish on these layers"></div></div>
-      <div class="row" id="rowPick"><span><i class="chip" id="pickChip"></i>Colour on the art</span><button type="button" class="btn2" id="pickBtn">Pick on the card</button></div>
-      <div class="row" id="rowTol"><span>Spread <b class="val" id="tolVal"></b></span><input type="range" id="tol" min="0.04" max="0.4" step="0.01" value="0.16" aria-label="Colour spread"></div>
-      <div class="row" id="rowUp"><span id="upName">No file yet</span><button type="button" class="btn2" id="upBtn">Upload layer</button></div>
-      <input type="file" id="fileMask" accept="image/*" hidden>
-      <div class="row"><span>Finish</span><div class="seg" id="segFin"><button type="button" aria-pressed="true" data-v="gloss">Gloss</button><button type="button" aria-pressed="false" data-v="holo">Holo</button><button type="button" aria-pressed="false" data-v="pearl">Pearl</button></div></div>
-      <div class="row"><span>Distress <b class="val" id="disVal"></b></span><input type="range" id="dis" min="0" max="1" step="0.05" value="0.2" aria-label="Distress"></div>
-      <div class="row"><span>Relief</span><div class="seg" id="segRel"><button type="button" aria-pressed="true" data-v="on">On</button><button type="button" aria-pressed="false" data-v="off">Off</button></div></div>
+    <div class="row"><span>Limited edition</span><div class="seg" id="segVn"><button type="button" aria-pressed="true" data-v="off">Off</button><button type="button" aria-pressed="false" data-v="on">On</button></div></div>
+    <div id="vnCtl" class="ctl" style="margin-top:4px" hidden>
+      <p class="laynote" id="layNote"></p>
+      <div class="laylist" id="layList"></div>
+      <div class="row"><span>Several PNG files, one size</span><button type="button" class="btn2" id="layBtn">Upload layers</button></div>
+      <input type="file" id="fileLay" accept="image/*" multiple hidden>
     </div>
   </div>
 
   <p class="fine">Art: any picture, cropped to the card (85.6 × 53.98, about 1712 × 1080 px). Keep the corners calm where the logo, “Gift card”, the amount and the name sit. The print tone is worked out from the picture under each of them, so each keeps at least 4.5:1 contrast (the amount 3:1). If the picture is too busy there, Print protection lays the weakest soft shade behind the print that brings it back to the bar. The tiles above show the contrast for each element.</p>
-  <p class="fine">Art in layers: choose several files at once in Add art, for example 1-background.png, 2-branches.png, 3-ball.png. They stack in the order of their names, the first at the bottom; every layer but the first is a PNG with a transparent background, all of the same size. Then pick the layers that get the varnish: only the branches, only the ball, or both. A layer hidden under another one gets no varnish there.</p>
-  <p class="fine">Other ways to set the varnish: Colour takes one colour of the art (pick it on the card), File takes one separate layer (a PNG of the same proportions, white or opaque where the varnish goes). Distress breaks the edges into screen-print grain, Relief raises the varnish a hair above the card.</p>
+  <p class="fine">Limited edition: upload the art as layers, several files at once, for example 1-background.png, 2-branches.png, 3-ball.png. They stack in the order of their names, the first at the bottom; every layer but the first is a PNG with a transparent background, all of one size. Then set each layer: Matte takes the frost of the card, Polished is finished like the logo and the amount, with no frost, the reflection and the streak running across it as the card turns, and a hair of relief. A layer shows only where nothing lies on top of it.</p>
 </div></main>
 <script>
 (function(){
@@ -231,7 +221,7 @@ var PRESETS=[{id:'bauble',name:'Bauble',src:'../img/xmas-bauble.jpg',layers:lay(
              {id:'camel',name:'Camel',src:'../img/xmas-camel.jpg',layers:lay('camel',['Background','Branches','Ball','Stars and swirls'])}];
 var uploads=[],ARTS=PRESETS.slice();
 var S={art:null,amount:150,cur:'GBP',frost:1.3,prot:'auto',vert:false,
-  vn:{on:false,src:'layers',fin:'holo',dis:.2,rel:true,tol:.16,pick:[132,148,246],mask:null,maskName:'',sel:{}}};
+  vn:{on:false,sel:{}}}; // sel: the polished layers of each art
 var card=$('#card'),face=card.querySelector('.face'),scrimEl=card.querySelector('.fc-scrim'),spec=$('#spec'),vn=$('#vn');
 var ART=null; // {data,c1,c2,src}
 
@@ -334,23 +324,7 @@ function paint(){
 var paintQ=0;function repaint(){if(paintQ)return;paintQ=requestAnimationFrame(function(){paintQ=0;paint();});}
 
 /* ---------- the varnish layer ---------- */
-function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
-var NOISE=null;
-function noise(){
-  if(NOISE)return NOISE;var R=rng(7),out=new Float32Array(MW*MH),c=document.createElement('canvas');c.width=MW;c.height=MH;var x=c.getContext('2d',{willReadFrequently:true});
-  [[Math.round(MW/5),.55],[Math.round(MW/22),.45]].forEach(function(o){var sw=o[0],sh=Math.round(sw*MH/MW),s=document.createElement('canvas');s.width=sw;s.height=sh;var sx=s.getContext('2d'),id=sx.createImageData(sw,sh);
-    for(var i=0;i<id.data.length;i+=4){var v=R()*255;id.data[i]=id.data[i+1]=id.data[i+2]=v;id.data[i+3]=255;}sx.putImageData(id,0,0);
-    x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(s,0,0,MW,MH);var d=x.getImageData(0,0,MW,MH).data;for(var j=0,k=0;j<d.length;j+=4,k++)out[k]+=d[j]/255*o[1];});
-  /* stretch to 0..1 */
-  var lo=1,hi=0;for(var i=0;i<out.length;i++){if(out[i]<lo)lo=out[i];if(out[i]>hi)hi=out[i];}for(i=0;i<out.length;i++)out[i]=(out[i]-lo)/(hi-lo);
-  return NOISE=out;
-}
-function blur(a,r){var w=MW,h=MH,t=new Float32Array(a.length),o=new Float32Array(a.length),x,y,s,n=2*r+1;
-  for(y=0;y<h;y++){s=0;var row=y*w;for(x=-r;x<=r;x++)s+=a[row+clamp(x,0,w-1)];for(x=0;x<w;x++){t[row+x]=s/n;s+=a[row+Math.min(w-1,x+r+1)]-a[row+Math.max(0,x-r)];}}
-  for(x=0;x<w;x++){s=0;for(y=-r;y<=r;y++)s+=t[clamp(y,0,h-1)*w+x];for(y=0;y<h;y++){o[y*w+x]=s/n;s+=t[Math.min(h-1,y+r+1)*w+x]-t[Math.max(0,y-r)*w+x];}}
-  return o;}
 var MC=document.createElement('canvas');MC.width=MW;MC.height=MH;var mctx=MC.getContext('2d',{willReadFrequently:true});
-var maskData=null; // the uploaded layer as alpha
 /* art layers: each layer's own shape, minus whatever lies on top of it */
 function layerVis(cb){
   var A=ART;if(!A||!A.layers||!A.layers.length)return cb(null);if(A.vis)return cb(A.vis);
@@ -363,48 +337,32 @@ function layerVis(cb){
     for(var i=n-1;i>=0;i--){var a=alphas[i],v=new Float32Array(a.length);for(var j=0;j<a.length;j++){v[j]=a[j]*(1-cover[j]);cover[j]+=v[j];}vis[i]=v;}
     if(ART===A){A.vis=vis;cb(vis);}}
 }
-function selOf(){var A=ARTS.filter(function(x){return x.id===S.art;})[0];if(!A||!A.layers||A.layers.length<2)return [];if(!S.vn.sel[S.art])S.vn.sel[S.art]=[1];return S.vn.sel[S.art];}
-function baseMap(vis){
-  var V=S.vn,a=new Float32Array(MW*MH),i;
-  var sc=src();
-  if(sc==='colour'&&ART){var d=ART.data,p=V.pick,t=V.tol;
-    for(i=0;i<a.length;i++){var j=i*4,dr=d[j]-p[0],dg=d[j+1]-p[1],db=d[j+2]-p[2],dist=Math.sqrt(dr*dr+dg*dg+db*db)/441.7;a[i]=1-sstep(t*.6,t,dist);}}
-  else if(sc==='layers'&&vis){selOf().forEach(function(k){var v=vis[k];if(v)for(i=0;i<a.length;i++)a[i]=Math.min(1,a[i]+v[i]);});}
-  else if(sc==='upload'&&maskData){for(i=0;i<a.length;i++)a[i]=maskData[i];}
-  return a;
-}
+/* the polished layers of the current art; at first the ball of the samples, or the top layer of an upload */
+function selOf(){var A=curArt();if(!A||!A.layers||A.layers.length<2)return [];if(!S.vn.sel[S.art]){var k=-1;A.layers.forEach(function(l,i){if(/^ball$/i.test(l.name))k=i;});S.vn.sel[S.art]=[k>=0?k:A.layers.length-1];}return S.vn.sel[S.art];}
 var vmURL=null,vmQ=0;
 function buildMask(){
-  var V=S.vn;if(!V.on){vn.hidden=true;return;}
-  if(src()==='layers')layerVis(make);else make(null);
-  function make(vis){
-    /* the shape keeps its own edges (thin needles survive); distress eats grain out of it, mostly along the edges */
-    var base=baseMap(vis),near=blur(base,Math.round(4*MS)),N=noise(),D=V.dis,id=mctx.createImageData(MW,MH),d=id.data;
-    for(var i=0;i<base.length;i++){var e=1-Math.abs(2*near[i]-1),thr=D*(.3+.6*e),v=base[i]*sstep(thr-.03,thr+.03,N[i]),j=i*4;d[j]=d[j+1]=d[j+2]=255;d[j+3]=v*255;}
+  var V=S.vn,A=curArt();if(!V.on||!A||!A.layers||A.layers.length<2||!selOf().length){vn.hidden=true;return;}
+  layerVis(function(vis){
+    if(!vis)return;var sel=selOf(),id=mctx.createImageData(MW,MH),d=id.data,n=MW*MH;
+    for(var i=0;i<n;i++){var a=0;for(var k=0;k<sel.length;k++){var v=vis[sel[k]];if(v)a+=v[i];}var j=i*4;d[j]=d[j+1]=d[j+2]=255;d[j+3]=Math.min(1,a)*255;}
     mctx.putImageData(id,0,0);
     MC.toBlob(function(bl){if(!bl)return;var u=URL.createObjectURL(bl);card.style.setProperty('--vmask','url("'+u+'")');if(vmURL)setTimeout(URL.revokeObjectURL.bind(URL,vmURL),500);vmURL=u;vn.hidden=false;},'image/png');
-  }
+  });
 }
 function remask(){if(vmQ)return;vmQ=requestAnimationFrame(function(){vmQ=0;buildMask();});}
-var FIN={gloss:{ho:0,hio:1,bo:.85,vdeep:.88},holo:{ho:.8,hio:.9,bo:.6,vdeep:1},pearl:{ho:.32,hio:.75,bo:.45,vdeep:1.04}};
-function finish(){var f=FIN[S.vn.fin],s=card.style;s.setProperty('--ho',f.ho);s.setProperty('--hio',f.hio);s.setProperty('--bo',f.bo);s.setProperty('--vdeep',f.vdeep);
-  s.setProperty('--rsh',S.vn.rel?.32:0);s.setProperty('--rlt',S.vn.rel?.2:0);
-  $('#vn').querySelector('.vn-holo').style.backgroundImage=S.vn.fin==='pearl'?'linear-gradient(118deg,#f2b8d6 0%,#b8d0f2 25%,#c4f0d8 50%,#f2b8d6 75%,#b8d0f2 100%)':'';}
-function vnUI(){var V=S.vn;$('#vnCtl').hidden=!V.on;layUI();$('#rowPick').hidden=src()!=='colour';$('#rowTol').hidden=src()!=='colour';$('#rowUp').hidden=src()!=='upload';
-  $('#pickChip').style.background=toHex(V.pick);$('#tolVal').textContent=Math.round(V.tol*100)+'%';$('#disVal').textContent=Math.round(V.dis*100)+'%';
-  $('#upName').textContent=V.maskName||'No file yet';
-  $$('#segSrc button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===src());});}
-
-/* the chosen source; a flat picture has no layers, so it falls back to a colour of the art */
-function src(){var A=curArt(),has=!!(A&&A.layers&&A.layers.length>1);return S.vn.src==='layers'&&!has?'colour':S.vn.src;}
+function vnUI(){var V=S.vn;$('#vnCtl').hidden=!V.on;layUI();}
 function curArt(){return ARTS.filter(function(x){return x.id===S.art;})[0];}
+/* the layer list, top layer first, as in a design tool */
 function layUI(){
-  var A=curArt(),has=!!(A&&A.layers&&A.layers.length>1),box=$('#lays');
-  $('#segSrc [data-v=layers]').disabled=!has;$('#segSrc [data-v=layers]').style.opacity=has?'':'.45';
-  $('#rowLay').hidden=src()!=='layers';box.innerHTML='';if(!has)return;
-  var sel=selOf();$('#layNote').textContent='Varnish on';
-  A.layers.forEach(function(l,i){var b=document.createElement('button');b.type='button';b.textContent=l.name;b.setAttribute('aria-pressed',sel.indexOf(i)>=0);
-    b.addEventListener('click',function(){var k=sel.indexOf(i);if(k>=0)sel.splice(k,1);else sel.push(i);b.setAttribute('aria-pressed',k<0);remask();});box.appendChild(b);});
+  var A=curArt(),has=!!(A&&A.layers&&A.layers.length>1),box=$('#layList');box.innerHTML='';
+  $('#layNote').textContent=has?(A.name+' · '+A.layers.length+' layers'):'This picture is one flat layer. Upload its layers to set a finish for each.';
+  if(!has)return;var sel=selOf();
+  A.layers.map(function(l,i){return i;}).reverse().forEach(function(i){var l=A.layers[i],row=document.createElement('div');row.className='layrow';
+    row.innerHTML='<i class="lthumb"></i><span></span><div class="seg"><button type="button" data-v="matte">Matte</button><button type="button" data-v="polished">Polished</button></div>';
+    row.querySelector('.lthumb').style.backgroundImage='url("'+l.src+'")';row.querySelector('span').textContent=l.name;
+    var bs=row.querySelectorAll('button');function show(){var on=sel.indexOf(i)>=0;bs[0].setAttribute('aria-pressed',!on);bs[1].setAttribute('aria-pressed',on);}show();
+    bs.forEach(function(b){b.addEventListener('click',function(){var k=sel.indexOf(i);if(b.dataset.v==='polished'&&k<0)sel.push(i);if(b.dataset.v==='matte'&&k>=0)sel.splice(k,1);show();remask();});});
+    box.appendChild(row);});
 }
 /* ---------- art picker ---------- */
 function thumbs(){
@@ -438,7 +396,6 @@ function addArt(files){
       var r=imgs[0].naturalWidth/imgs[0].naturalHeight,odd=Math.abs(r-85.6/53.98)>.02;
       return dbPut(rec).then(function(kept){var e=fromDb(rec);uploads.push(e);ARTS=PRESETS.concat(uploads);
         note((odd?'Cropped to the card’s proportions. ':'')+(kept?'Saved in this browser.':'Could not be saved, it stays until a reload.'));
-        if(rec.layers.length){S.vn.src='layers';S.vn.sel[rec.id]=[1];}
         useArt(rec.id);});
     });
   }).catch(function(n){note('Could not read '+n+' as a picture');});
@@ -447,12 +404,8 @@ $('#fileArt').addEventListener('change',function(e){addArt(e.target.files);e.tar
 $('#artDel').addEventListener('click',function(){var id=S.art;uploads=uploads.filter(function(u){return u.id!==id;});dbDel(id);ARTS=PRESETS.concat(uploads);useArt(PRESETS[0].id);});
 document.addEventListener('dragover',function(e){e.preventDefault();});
 document.addEventListener('drop',function(e){e.preventDefault();var f=e.dataTransfer&&e.dataTransfer.files;if(f&&f.length)addArt(f);});
-$('#upBtn').addEventListener('click',function(){$('#fileMask').click();});
-$('#fileMask').addEventListener('change',function(e){var f=e.target.files[0];e.target.value='';if(!f)return;
-  fileToCanvas(f,MW,MH,function(c,x){var d=x.getImageData(0,0,MW,MH).data,opaque=true,i;for(i=3;i<d.length;i+=4)if(d[i]<250){opaque=false;break;}
-    maskData=new Float32Array(MW*MH);for(i=0;i<maskData.length;i++){var j=i*4;maskData[i]=opaque?lumA(d[j],d[j+1],d[j+2])/1:d[j+3]/255;}
-    if(opaque)for(i=0;i<maskData.length;i++)maskData[i]=Math.pow(maskData[i],1/2.2); // back to the brightness the file shows
-    S.vn.maskName=f.name;vnUI();remask();});});
+$('#layBtn').addEventListener('click',function(){$('#fileLay').click();});
+$('#fileLay').addEventListener('change',function(e){var f=e.target.files;if(f&&f.length<2)note('Choose two files or more: the layers of one picture');else addArt(f);e.target.value='';});
 
 /* ---------- controls ---------- */
 var noteT=0;function note(t){var n=$('#note');n.textContent=t;clearTimeout(noteT);noteT=setTimeout(hint,4200);}
@@ -464,33 +417,17 @@ seg('segProt',function(v){S.prot=v;repaint();});
 seg('segOri',function(v){S.vert=v==='v';$('#hold').classList.toggle('up',S.vert);});
 seg('segBg',function(v){document.documentElement.classList.toggle('dark',v==='dark');document.querySelector('meta[name=theme-color]').content=v==='dark'?'#2B2A28':'#F7EEE0';});
 seg('segVn',function(v){S.vn.on=v==='on';vnUI();if(S.vn.on)remask();else vn.hidden=true;});
-seg('segSrc',function(v){S.vn.src=v;vnUI();if(v==='upload'&&!maskData){$('#fileMask').click();return;}remask();});
-seg('segFin',function(v){S.vn.fin=v;finish();});
-seg('segRel',function(v){S.vn.rel=v==='on';finish();});
 $('#frost').addEventListener('input',function(e){S.frost=+e.target.value;$('#frostVal').textContent=Math.round(S.frost*50)+'%';repaint();});
 $('#nameIn').addEventListener('input',function(e){$('#tName').textContent=e.target.value.trim();repaint();});
-$('#tol').addEventListener('input',function(e){S.vn.tol=+e.target.value;vnUI();remask();});
-$('#dis').addEventListener('input',function(e){S.vn.dis=+e.target.value;vnUI();remask();});
-var picking=false;
-$('#pickBtn').addEventListener('click',function(){picking=!picking;$('#stage').classList.toggle('picking',picking);$('#pickBtn').textContent=picking?'Tap the card':'Pick on the card';if(picking){note('Tap a colour on the card');var r=card.getBoundingClientRect();if(r.top<70||r.bottom>innerHeight)scrollTo({top:scrollY+r.top-90,behavior:reduce?'auto':'smooth'});}else hint();});
-function pickAt(e){
-  var r=card.getBoundingClientRect(),u,v;
-  if(S.vert){u=(e.clientY-r.top)/r.height;v=(r.right-e.clientX)/r.width;}else{u=(e.clientX-r.left)/r.width;v=(e.clientY-r.top)/r.height;}
-  if(!ART||u<0||u>1||v<0||v>1)return;
-  var cx=Math.round(u*(MW-1)),cy=Math.round(v*(MH-1)),R=0,G=0,B=0,n=0;
-  for(var y=-3;y<=3;y++)for(var x=-3;x<=3;x++){var i=(clamp(cy+y,0,MH-1)*MW+clamp(cx+x,0,MW-1))*4;R+=ART.data[i];G+=ART.data[i+1];B+=ART.data[i+2];n++;}
-  S.vn.pick=[R/n,G/n,B/n];picking=false;$('#stage').classList.remove('picking');$('#pickBtn').textContent='Pick on the card';vnUI();remask();hint();
-}
-
 /* ---------- tilt: the spring of the prototype ---------- */
 var MAXX=20,MAXY=24,K=reduce?220:110,DAMP=reduce?30:15;
 function soft(v,m){return m*Math.tanh(v/m);}
 var c={rx:0,ry:0,vx:0,vy:0,tx:0,ty:0,lx:null,ly:null,drag:null,hover:false,idle:1,phase:Math.random()*6.28};
 var gyro={on:false,got:false,b0:null,g0:null,x:0,y:0,rx:null,ry:null};
-card.addEventListener('pointerdown',function(e){if(picking){pickAt(e);return;}c.drag={x0:e.clientX,y0:e.clientY,bx:c.rx,by:c.ry};try{card.setPointerCapture(e.pointerId);}catch(_){}});
+card.addEventListener('pointerdown',function(e){c.drag={x0:e.clientX,y0:e.clientY,bx:c.rx,by:c.ry};try{card.setPointerCapture(e.pointerId);}catch(_){}});
 card.addEventListener('pointermove',function(e){
   if(c.drag){var dx=e.clientX-c.drag.x0,dy=e.clientY-c.drag.y0;c.tx=soft(c.drag.bx-dy*0.16,MAXX);c.ty=soft(c.drag.by+dx*0.2,MAXY);}
-  else if(e.pointerType==='mouse'&&!picking){var r=card.getBoundingClientRect();var px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;c.hover=true;c.tx=(0.5-py)*18;c.ty=(px-0.5)*22;}
+  else if(e.pointerType==='mouse'){var r=card.getBoundingClientRect();var px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;c.hover=true;c.tx=(0.5-py)*18;c.ty=(px-0.5)*22;}
 });
 function end(){if(!c.drag)return;c.drag=null;c.idle=0;}
 card.addEventListener('pointerup',end);card.addEventListener('pointercancel',end);card.addEventListener('pointerleave',function(){c.hover=false;c.idle=0;});
@@ -520,12 +457,9 @@ function frame(now){
   var tS='translate('+(-ldx*1.4).toFixed(2)+' '+(-ldy*1.6).toFixed(2)+')',tL='translate('+(ldx*.8).toFixed(2)+' '+(ldy*.8).toFixed(2)+')';
   if(!shUse){shUse=layers.querySelectorAll('use.sh');ltUse=layers.querySelectorAll('use.lt');}
   shUse.forEach(function(n){n.setAttribute('transform',tS);});ltUse.forEach(function(n){n.setAttribute('transform',tL);});
-  /* varnish: a mirror, so its light runs fast; at rest the hotspot waits just off the left edge */
+  /* polished layers: the same bands and speed as the print, in card widths */
   if(S.vn.on){
-    s.setProperty('--hx',(-18+u*150).toFixed(1)+'%');s.setProperty('--hy',(38-v*130).toFixed(1)+'%');
-    var f=-.3+u*1.6-v*.5;s.setProperty('--bx',((1.5-f)/2*100).toFixed(1)+'%');
-    s.setProperty('--cx',(25+u*120).toFixed(1)+'%');s.setProperty('--cy',(40-v*110).toFixed(1)+'%');
-    s.setProperty('--px',clamp(50+u*90,0,100).toFixed(1)+'%');s.setProperty('--py',clamp(50-v*90,0,100).toFixed(1)+'%');
+    s.setProperty('--eo',((260+u*760-v*300)/8.56).toFixed(2)+'cqw');s.setProperty('--so',((60+u*1150-v*420)/8.56).toFixed(2)+'cqw');
     s.setProperty('--shx',(-ldx*.2).toFixed(3)+'cqw');s.setProperty('--shy',(-ldy*.2).toFixed(3)+'cqw');
     s.setProperty('--ltx',(ldx*.11).toFixed(3)+'cqw');s.setProperty('--lty',(ldy*.11).toFixed(3)+'cqw');
   }
@@ -546,9 +480,9 @@ var needsPerm=typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientat
 function startGyro(){if(gyro.on)return;gyro.on=true;gyro.got=false;window.addEventListener('deviceorientation',onOrient);}
 function askGyro(){if(!needsPerm||permState!=='unknown')return;try{DeviceOrientationEvent.requestPermission().then(function(r){permState=r==='granted'?'granted':'denied';if(r==='granted')startGyro();hint();}).catch(function(){hint();});}catch(_){}}
 if(needsPerm){document.addEventListener('touchend',askGyro,{passive:true});document.addEventListener('click',askGyro);}else if('DeviceOrientationEvent' in window){startGyro();}
-function hint(){var n=$('#note');if(picking){n.textContent='Tap a colour on the card';return;}if(gyro.on&&gyro.got){n.textContent='';return;}if(needsPerm&&permState==='unknown'){n.innerHTML='Drag the card or <button type="button">turn on tilt</button>';return;}n.textContent=finePointer?'Move the cursor over the card':'Drag the card';}
+function hint(){var n=$('#note');if(gyro.on&&gyro.got){n.textContent='';return;}if(needsPerm&&permState==='unknown'){n.innerHTML='Drag the card or <button type="button">turn on tilt</button>';return;}n.textContent=finePointer?'Move the cursor over the card':'Drag the card';}
 hint();
-amtLabels();vnUI();finish();
+amtLabels();vnUI();
 useArt(PRESETS[0].id);
 /* uploads from earlier visits; the first version kept them in localStorage, they move over once */
 dbAll().then(function(list){var old=[];try{old=JSON.parse(localStorage.getItem('ama-card-art-v1')||'[]');}catch(_){}
