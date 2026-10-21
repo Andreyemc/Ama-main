@@ -36,9 +36,12 @@ main{padding:20px max(16px,env(safe-area-inset-left,0px)) 60px}
 /* art picker */
 .arts{display:flex;gap:10px;margin-top:22px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:none}
 .arts::-webkit-scrollbar{display:none}
-.arts button{flex:0 0 auto;width:84px;aspect-ratio:85.6/53.98;border-radius:8px;background:var(--sand) center/cover no-repeat;box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}
-.arts button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--cream),0 0 0 3.5px var(--ink)}
-.arts .add{display:grid;place-items:center;font-size:13px;color:var(--ink);background:var(--paper);box-shadow:inset 0 0 0 1px var(--line)}
+.arts .th{position:relative;flex:0 0 auto;width:84px;aspect-ratio:85.6/53.98}
+.arts .pick{display:block;width:100%;height:100%;border-radius:8px;background:var(--sand) center/cover no-repeat;box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}
+.arts .pick[aria-pressed="true"]{box-shadow:0 0 0 2px var(--cream),0 0 0 3.5px var(--ink)}
+.arts .del{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:rgba(30,28,26,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.arts .del svg{display:block}
+.arts .add{flex:0 0 auto;width:84px;aspect-ratio:85.6/53.98;border-radius:8px;display:grid;place-items:center;font-size:13px;color:var(--ink);background:var(--paper);box-shadow:inset 0 0 0 1px var(--line)}
 .artname{display:flex;justify-content:center;gap:14px;margin-top:10px;font-size:16px}
 .artname button{font-size:13px;color:var(--mute);text-decoration:underline;text-underline-offset:3px}
 
@@ -65,8 +68,6 @@ input[type=range]{width:210px;accent-color:var(--rust)}
 .btn2{height:38px;padding:0 16px;border-radius:30px;font-size:14px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink)}
 .chip{display:inline-block;width:18px;height:18px;border-radius:50%;vertical-align:-4px;margin-right:6px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
 .laynote{font-size:14px;color:var(--body);margin-bottom:10px}
-.fine{margin-top:30px;font-size:13px;color:var(--mute);line-height:1.5}
-.fine+.fine{margin-top:10px}
 
 /* ---------- the card ---------- */
 .card{--rx:0deg;--ry:0deg;position:relative;width:100%;aspect-ratio:85.6/53.98;container-type:inline-size;perspective:1100px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
@@ -160,7 +161,7 @@ input[type=range]{width:210px;accent-color:var(--rust)}
 
   <div class="arts" id="arts" role="radiogroup" aria-label="Art"></div>
   <input type="file" id="fileArt" accept="image/*" multiple hidden>
-  <p class="artname"><span id="artName"></span><button type="button" id="artDel" hidden>Remove</button></p>
+  <p class="artname"><span id="artName"></span></p>
 
   <div class="read" id="read" aria-live="polite"></div>
   <p class="readnote" id="readNote"></p>
@@ -170,7 +171,6 @@ input[type=range]{width:210px;accent-color:var(--rust)}
     <div class="row"><span>Amount</span><div class="seg" id="segAmt"><button type="button" aria-pressed="true" data-v="150"></button><button type="button" aria-pressed="false" data-v="1890"></button><button type="button" aria-pressed="false" data-v="0">None</button></div></div>
     <div class="row"><span>Currency</span><div class="seg" id="segCur"><button type="button" aria-pressed="true" data-v="GBP">£</button><button type="button" aria-pressed="false" data-v="USD">$</button><button type="button" aria-pressed="false" data-v="EUR">€</button></div></div>
     <div class="row"><span>Frost <b class="val" id="frostVal">65%</b></span><input type="range" id="frost" min="0" max="2" step="0.1" value="1.3" aria-label="Frost strength"></div>
-    <div class="row"><span>Print protection</span><div class="seg" id="segProt"><button type="button" aria-pressed="true" data-v="auto">Auto</button><button type="button" aria-pressed="false" data-v="off">Off</button></div></div>
     <div class="row"><span>Card</span><div class="seg" id="segOri"><button type="button" aria-pressed="true" data-v="h">Horizontal</button><button type="button" aria-pressed="false" data-v="v">Vertical</button></div></div>
     <div class="row"><span>Background</span><div class="seg" id="segBg"><button type="button" aria-pressed="true" data-v="cream">Cream</button><button type="button" aria-pressed="false" data-v="dark">Dark</button></div></div>
   </div>
@@ -178,7 +178,7 @@ input[type=range]{width:210px;accent-color:var(--rust)}
   <h2>Limited edition</h2>
   <p class="lead">The art in layers: each layer is matte, like the card, or polished. The print turns matte, in AMA ink or cream.</p>
   <div class="ctl">
-    <div class="row"><span>Limited edition</span><div class="seg" id="segVn"><button type="button" aria-pressed="true" data-v="off">Off</button><button type="button" aria-pressed="false" data-v="on">On</button></div></div>
+    <div class="row"><div class="seg" id="segVn"><button type="button" aria-pressed="true" data-v="off">Off</button><button type="button" aria-pressed="false" data-v="on">On</button></div></div>
     <div id="vnCtl" class="ctl" style="margin-top:4px" hidden>
       <div class="row"><span>Print</span><div class="seg" id="segTone"><button type="button" aria-pressed="true" data-v="auto">Auto</button><button type="button" aria-pressed="false" data-v="ink">Ink</button><button type="button" aria-pressed="false" data-v="cream">Cream</button></div></div>
       <p class="laynote" id="layNote" style="margin-top:6px"></p>
@@ -188,8 +188,6 @@ input[type=range]{width:210px;accent-color:var(--rust)}
     </div>
   </div>
 
-  <p class="fine">Art: any picture, cropped to the card (85.6 × 53.98, about 1712 × 1080 px). Keep the corners calm where the logo, “Gift card”, the amount and the name sit. The print tone is worked out from the picture under each of them, so each keeps at least 4.5:1 contrast (the amount 3:1). If the picture is too busy there, Print protection lays a soft shade behind the print, in the picture’s own darkest (or lightest) colour, only as strong as it takes and only while it stays quiet: on a dark picture it can go further, on a light one it stops before it turns into a grey halo. If that is not enough, the tile turns red: calm that part of the art, or on a limited edition switch the print between ink and cream. The tiles above show the contrast for each element.</p>
-  <p class="fine">Limited edition: upload the art as layers, several files at once, for example 1-background.png, 2-branches.png, 3-ball.png. They stack in the order of their names, the first at the bottom; every layer but the first is a PNG with a transparent background, all of one size. On a limited edition the polish belongs to the art, so the logo, “Gift card”, the amount and the name turn matte, in one flat tone: AMA ink or AMA cream (Auto takes the one that reads better on the art). Then set each layer: Matte takes the frost of the card, Polished has no frost, catches the soft glow of a spotlight behind you, which drifts across it as the card turns, and stands a hair above the card. A layer shows only where nothing lies on top of it.</p>
 </div></main>
 <script>
 (function(){
@@ -225,7 +223,7 @@ function lay(a,names){return names.map(function(n,i){return {name:n,src:'../img/
 var PRESETS=[{id:'bauble',name:'Bauble',src:'../img/xmas-bauble.jpg',layers:lay('bauble',['Background','Branches','Ball','Stars'])},
              {id:'camel',name:'Camel',src:'../img/xmas-camel.jpg',layers:lay('camel',['Background','Branches','Ball','Stars and swirls'])}];
 var uploads=[],ARTS=PRESETS.slice();
-var S={art:null,amount:150,cur:'GBP',frost:1.3,prot:'auto',vert:false,
+var S={art:null,amount:150,cur:'GBP',frost:1.3,prot:'off',vert:false,
   vn:{on:false,sel:{}},mtone:'auto'}; // sel: the polished layers of each art
 var card=$('#card'),face=card.querySelector('.face'),scrimEl=card.querySelector('.fc-scrim'),spec=$('#spec'),vn=$('#vn');
 var ART=null; // {data,c1,c2,src}
@@ -314,7 +312,7 @@ function envStops(p){
 }
 var NAMES={L:'Logo',K:'Gift card',A:'Amount',N:'Name'};
 /* limited edition: the print is matte, one flat tone in the colours of AMA, ink or cream. Auto takes the one that reads
-   better on this art; the protection shade still comes in only if the art is too busy under the print */
+   better on this art */
 var INK='#1E1C1A',CREAM='#F7EEE0';
 function solveMatte(){
   var B=boxes(),E=ells(B),steps=S.prot==='auto'?13:1,tones=S.mtone==='auto'?['ink','cream']:[S.mtone],best=null;
@@ -346,7 +344,7 @@ function paint(){
   /* readout */
   $('#read').innerHTML=EL.map(function(e,i){var p=pr[i],main=p.flat||(p.mode==='deep'?p.deep:p.base),r=ratio(main,p.worst),need=e.big?3:4.5,on=(e.id!=='A'||S.amount)&&(e.id!=='N'||$('#nameIn').value.trim());
     return '<div class="'+(on&&r<need?'low':'')+'"><b>'+(on?r.toFixed(1):'–')+'</b><span>'+NAMES[e.id]+'<br>needs '+need+'</span></div>';}).join('');
-  $('#readNote').textContent=(matte?(R.tone==='ink'?'Matte ink print':'Matte cream print'):dark?'Light print':'Dark print')+(k?' · protection shade '+Math.round(k*100)+'%':R.ok?' · no shade needed':'')+(R.ok?'':matte&&S.mtone!=='auto'?' · '+(R.tone==='ink'?'ink':'cream')+' does not read on this art, '+(R.tone==='ink'?'cream':'ink')+' or Auto will':' · below the bar, calm the art under the print');
+  $('#readNote').textContent=(matte?(R.tone==='ink'?'Matte ink print':'Matte cream print'):dark?'Light print':'Dark print')+(R.ok?'':matte&&S.mtone!=='auto'?' · '+(R.tone==='ink'?'ink':'cream')+' does not read on this art, '+(R.tone==='ink'?'cream':'ink')+' or Auto will':' · below the bar, calm the art under the print');
 }
 var paintQ=0;function repaint(){if(paintQ)return;paintQ=requestAnimationFrame(function(){paintQ=0;paint();});}
 
@@ -394,12 +392,15 @@ function layUI(){
 /* ---------- art picker ---------- */
 function thumbs(){
   var box=$('#arts');box.innerHTML='';
-  ARTS.forEach(function(a){var b=document.createElement('button');b.type='button';b.setAttribute('role','radio');b.setAttribute('aria-label',a.name);b.style.backgroundImage='url("'+a.src+'")';b.setAttribute('aria-pressed',S.art===a.id);b.addEventListener('click',function(){useArt(a.id);});box.appendChild(b);});
+  ARTS.forEach(function(a){var w=document.createElement('div');w.className='th';var b=document.createElement('button');b.type='button';b.className='pick';b.setAttribute('role','radio');b.setAttribute('aria-label',a.name);b.style.backgroundImage='url("'+a.src+'")';b.setAttribute('aria-pressed',S.art===a.id);b.addEventListener('click',function(){useArt(a.id);});w.appendChild(b);
+    if(a.up){var d=document.createElement('button');d.type='button';d.className='del';d.setAttribute('aria-label','Delete '+a.name);d.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="#FFF3E4" stroke-width="2" stroke-linecap="round"/></svg>';
+      d.addEventListener('click',function(){uploads=uploads.filter(function(u){return u.id!==a.id;});dbDel(a.id);ARTS=PRESETS.concat(uploads);if(S.art===a.id)useArt(PRESETS[0].id);else thumbs();});w.appendChild(d);}
+    box.appendChild(w);});
   var add=document.createElement('button');add.type='button';add.className='add';add.textContent='Add art';add.addEventListener('click',function(){$('#fileArt').click();});box.appendChild(add);
 }
 function useArt(id){
   var a=ARTS.filter(function(x){return x.id===id;})[0]||ARTS[0];S.art=a.id;thumbs();
-  $('#artName').textContent=a.name+(a.layers&&a.layers.length>1?' · '+a.layers.length+' layers':'');$('#artDel').hidden=!a.up;ART=null;vnUI();
+  $('#artName').textContent=a.name+(a.layers&&a.layers.length>1?' · '+a.layers.length+' layers':'');ART=null;vnUI();
   var img=new Image();img.onload=function(){if(S.art!==a.id)return;ART=readArt(img);ART.layers=a.layers;card.style.setProperty('--img','url("'+a.src+'")');paint();if(S.vn.on)remask();};img.src=a.src;
 }
 function fileToCanvas(file,w,h,cb){var r=new FileReader();r.onload=function(){var img=new Image();img.onload=function(){var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d',{willReadFrequently:true}),s=Math.max(w/img.naturalWidth,h/img.naturalHeight),dw=img.naturalWidth*s,dh=img.naturalHeight*s;x.drawImage(img,(w-dw)/2,(h-dh)/2,dw,dh);cb(c,x,img);};img.onerror=function(){note('That file could not be read as a picture');};img.src=r.result;};r.readAsDataURL(file);}
@@ -428,7 +429,6 @@ function addArt(files){
   }).catch(function(n){note('Could not read '+n+' as a picture');});
 }
 $('#fileArt').addEventListener('change',function(e){addArt(e.target.files);e.target.value='';});
-$('#artDel').addEventListener('click',function(){var id=S.art;uploads=uploads.filter(function(u){return u.id!==id;});dbDel(id);ARTS=PRESETS.concat(uploads);useArt(PRESETS[0].id);});
 document.addEventListener('dragover',function(e){e.preventDefault();});
 document.addEventListener('drop',function(e){e.preventDefault();var f=e.dataTransfer&&e.dataTransfer.files;if(f&&f.length)addArt(f);});
 $('#layBtn').addEventListener('click',function(){$('#fileLay').click();});
@@ -440,7 +440,6 @@ function seg(id,fn){$$('#'+id+' button').forEach(function(b){b.addEventListener(
 function setAmt(){$('#tAmt').textContent=S.amount?money(S.amount):'';$('#tAmt').setAttribute('visibility',S.amount?'visible':'hidden');repaint();}
 seg('segAmt',function(v){S.amount=+v;setAmt();});
 seg('segCur',function(v){S.cur=v;amtLabels();setAmt();});
-seg('segProt',function(v){S.prot=v;repaint();});
 seg('segOri',function(v){S.vert=v==='v';$('#hold').classList.toggle('up',S.vert);});
 seg('segBg',function(v){document.documentElement.classList.toggle('dark',v==='dark');document.querySelector('meta[name=theme-color]').content=v==='dark'?'#2B2A28':'#F7EEE0';});
 seg('segVn',function(v){S.vn.on=v==='on';vnUI();if(S.vn.on)remask();else vn.hidden=true;repaint();});
@@ -508,7 +507,7 @@ var needsPerm=typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientat
 function startGyro(){if(gyro.on)return;gyro.on=true;gyro.got=false;window.addEventListener('deviceorientation',onOrient);}
 function askGyro(){if(!needsPerm||permState!=='unknown')return;try{DeviceOrientationEvent.requestPermission().then(function(r){permState=r==='granted'?'granted':'denied';if(r==='granted')startGyro();hint();}).catch(function(){hint();});}catch(_){}}
 if(needsPerm){document.addEventListener('touchend',askGyro,{passive:true});document.addEventListener('click',askGyro);}else if('DeviceOrientationEvent' in window){startGyro();}
-function hint(){var n=$('#note');if(gyro.on&&gyro.got){n.textContent='';return;}if(needsPerm&&permState==='unknown'){n.innerHTML='Drag the card or <button type="button">turn on tilt</button>';return;}n.textContent=finePointer?'Move the cursor over the card':'Drag the card';}
+function hint(){$('#note').textContent='';}
 hint();
 amtLabels();vnUI();
 useArt(PRESETS[0].id);
