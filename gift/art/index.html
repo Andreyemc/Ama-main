@@ -98,9 +98,10 @@ input[type=range]{width:210px;accent-color:var(--rust)}
 .vn-lt{background:#fff;opacity:.12;transform:translate(var(--ltx,0),var(--lty,0))}
 .vn-body{isolation:isolate}
 .vn-art{filter:saturate(1.08) contrast(1.05)}
-.vn-body>.vn-env,.vn-body>.vn-spec{inset:auto;left:50%;top:50%;height:300cqw;width:var(--len);margin:-150cqw 0 0 calc(var(--len) / -2);transform:rotate(28deg) translateX(var(--off,0))}
-.vn-body>.vn-env{--len:210cqw;--off:var(--eo);mix-blend-mode:soft-light;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.34) 20%,rgba(255,255,255,0) 34%,rgba(0,0,0,.12) 42%,rgba(0,0,0,.26) 48%,rgba(0,0,0,.26) 52%,rgba(0,0,0,.12) 58%,rgba(0,0,0,0) 68%,rgba(255,255,255,.34) 80%,rgba(255,255,255,0) 100%)}
-.vn-body>.vn-spec{--len:175cqw;--off:var(--so);mix-blend-mode:screen;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 42%,rgba(255,255,255,.04) 45%,rgba(255,255,255,.1) 47.5%,rgba(255,255,255,.2) 49.3%,rgba(255,255,255,.24) 50%,rgba(255,255,255,.2) 50.7%,rgba(255,255,255,.1) 52.5%,rgba(255,255,255,.04) 55%,rgba(255,255,255,0) 58%,rgba(255,255,255,0) 100%)}
+/* the light on a polished layer is a round lamp, as a mirror shows it: a soft bright core with a wide faint halo,
+   running across the layer faster than the card turns; away from it the polish falls off a touch darker */
+.vn-body>.vn-room{mix-blend-mode:soft-light;background:radial-gradient(circle 70cqw at var(--lpx,20%) var(--lpy,10%),rgba(0,0,0,0) 25%,rgba(0,0,0,.22) 100%)}
+.vn-body>.vn-lamp{mix-blend-mode:screen;background:radial-gradient(circle 12cqw at var(--lpx,20%) var(--lpy,10%),rgba(255,255,255,.48) 0%,rgba(255,255,255,.38) 24%,rgba(255,255,255,.14) 55%,rgba(255,255,255,0) 100%),radial-gradient(circle 36cqw at var(--lpx,20%) var(--lpy,10%),rgba(255,255,255,.1) 0%,rgba(255,255,255,.04) 55%,rgba(255,255,255,0) 100%)}
 .laylist{display:flex;flex-direction:column;gap:10px}
 .layrow{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--body)}
 .layrow .lthumb{flex:0 0 auto;width:52px;aspect-ratio:85.6/53.98;border-radius:5px;background:var(--sand) center/cover no-repeat;box-shadow:inset 0 0 0 1px var(--line)}
@@ -131,7 +132,7 @@ input[type=range]{width:210px;accent-color:var(--rust)}
     <div class="card" id="card" role="img" aria-label="AMA gift card">
       <div class="tilt"><i class="edge" style="transform:translateZ(-0.45px)"></i><i class="edge" style="transform:translateZ(-0.9px)"></i><i class="edge" style="transform:translateZ(-1.35px)"></i><i class="edge" style="transform:translateZ(-1.8px)"></i><i class="edge" style="transform:translateZ(-2.25px)"></i><i class="edge" style="transform:translateZ(-2.7px)"></i><i class="edge" style="transform:translateZ(-3.15px)"></i><div class="face">
         <div class="fc-art"></div><div class="fc-scrim"></div><div class="fc-veil"></div><div class="fc-frost"></div><div class="fc-shade"></div><div class="fc-sheen"></div>
-        <div class="vn" id="vn" hidden><i class="vn-sh"></i><i class="vn-lt"></i><div class="vn-body"><i class="vn-art"></i><i class="vn-env"></i><i class="vn-spec"></i></div></div>
+        <div class="vn" id="vn" hidden><i class="vn-sh"></i><i class="vn-lt"></i><div class="vn-body"><i class="vn-art"></i><i class="vn-room"></i><i class="vn-lamp"></i></div></div>
         <svg class="fc-print" viewBox="0 0 856 540" preserveAspectRatio="none" aria-hidden="true">
           <defs>
             <g id="eL" class="pg"><use href="#ama-logo" x="48" y="44" width="154" height="58"/></g>
@@ -186,7 +187,7 @@ input[type=range]{width:210px;accent-color:var(--rust)}
   </div>
 
   <p class="fine">Art: any picture, cropped to the card (85.6 × 53.98, about 1712 × 1080 px). Keep the corners calm where the logo, “Gift card”, the amount and the name sit. The print tone is worked out from the picture under each of them, so each keeps at least 4.5:1 contrast (the amount 3:1). If the picture is too busy there, Print protection lays a soft shade behind the print, in the picture’s own darkest (or lightest) colour, only as strong as it takes and only while it stays quiet: on a dark picture it can go further, on a light one it stops before it turns into a grey halo. If that is not enough, the tile turns red: calm that part of the art, or on a limited edition switch the print between ink and cream. The tiles above show the contrast for each element.</p>
-  <p class="fine">Limited edition: upload the art as layers, several files at once, for example 1-background.png, 2-branches.png, 3-ball.png. They stack in the order of their names, the first at the bottom; every layer but the first is a PNG with a transparent background, all of one size. On a limited edition the polish belongs to the art, so the logo, “Gift card”, the amount and the name turn matte, in one flat tone: AMA ink or AMA cream (Auto takes the one that reads better on the art). Then set each layer: Matte takes the frost of the card, Polished is finished like the print of the regular card, with no frost, the reflection and the streak running across it as the card turns, and a hair of relief. A layer shows only where nothing lies on top of it.</p>
+  <p class="fine">Limited edition: upload the art as layers, several files at once, for example 1-background.png, 2-branches.png, 3-ball.png. They stack in the order of their names, the first at the bottom; every layer but the first is a PNG with a transparent background, all of one size. On a limited edition the polish belongs to the art, so the logo, “Gift card”, the amount and the name turn matte, in one flat tone: AMA ink or AMA cream (Auto takes the one that reads better on the art). Then set each layer: Matte takes the frost of the card, Polished has no frost, catches a round lamp that runs across it as the card turns, and stands a hair above the card. A layer shows only where nothing lies on top of it.</p>
 </div></main>
 <script>
 (function(){
@@ -482,9 +483,9 @@ function frame(now){
   var tS='translate('+(-ldx*1.4).toFixed(2)+' '+(-ldy*1.6).toFixed(2)+')',tL='translate('+(ldx*.8).toFixed(2)+' '+(ldy*.8).toFixed(2)+')';
   if(!shUse){shUse=layers.querySelectorAll('use.sh');ltUse=layers.querySelectorAll('use.lt');}
   shUse.forEach(function(n){n.setAttribute('transform',tS);});ltUse.forEach(function(n){n.setAttribute('transform',tL);});
-  /* polished layers: the same bands and speed as the print, in card widths */
+  /* polished layers: the lamp moves like a reflection, about twice the turn of the card; at rest it hangs top left */
   if(S.vn.on){
-    s.setProperty('--eo',((260+u*760-v*300)/8.56).toFixed(2)+'cqw');s.setProperty('--so',((60+u*1150-v*420)/8.56).toFixed(2)+'cqw');
+    s.setProperty('--lpx',(22+u*125).toFixed(1)+'%');s.setProperty('--lpy',(12-v*150).toFixed(1)+'%');
     s.setProperty('--shx',(-ldx*.14).toFixed(3)+'cqw');s.setProperty('--shy',(-ldy*.14).toFixed(3)+'cqw');
     s.setProperty('--ltx',(ldx*.08).toFixed(3)+'cqw');s.setProperty('--lty',(ldy*.08).toFixed(3)+'cqw');
   }
