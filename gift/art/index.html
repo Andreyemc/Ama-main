@@ -45,13 +45,6 @@ main{padding:20px max(16px,env(safe-area-inset-left,0px)) 60px}
 .artname{display:flex;justify-content:center;gap:14px;margin-top:10px;font-size:16px}
 .artname button{font-size:13px;color:var(--mute);text-decoration:underline;text-underline-offset:3px}
 
-/* contrast readout */
-.read{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:22px}
-.read div{background:var(--paper);border-radius:12px;padding:10px 10px 9px;box-shadow:inset 0 0 0 1px var(--line)}
-.read b{display:block;font-weight:500;font-size:17px;font-variant-numeric:tabular-nums}
-.read span{display:block;font-size:11px;color:var(--mute);line-height:1.3}
-.read .low b{color:var(--bad)}
-.readnote{font-size:13px;color:var(--mute);margin-top:10px;text-align:center}
 
 .ctl{margin-top:26px;display:flex;flex-direction:column;gap:14px}
 .row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;color:var(--body)}
@@ -163,8 +156,6 @@ input[type=range]{width:210px;accent-color:var(--rust)}
   <input type="file" id="fileArt" accept="image/*" multiple hidden>
   <p class="artname"><span id="artName"></span></p>
 
-  <div class="read" id="read" aria-live="polite"></div>
-  <p class="readnote" id="readNote"></p>
 
   <div class="ctl">
     <div class="field"><label for="nameIn">Recipient’s name</label><input id="nameIn" maxlength="24" value="Olivia Smith" autocomplete="off" placeholder="Their name"></div>
@@ -222,7 +213,9 @@ function fromDb(x){var u=function(b){return typeof b==='string'?b:URL.createObje
 function lay(a,names){return names.map(function(n,i){return {name:n,src:'../img/xmas/'+a+'-'+(i+1)+'-'+n.split(' ')[0].toLowerCase()+'.webp'};});}
 var PRESETS=[{id:'bauble',name:'Bauble',src:'../img/xmas-bauble.jpg',layers:lay('bauble',['Background','Branches','Ball','Stars'])},
              {id:'camel',name:'Camel',src:'../img/xmas-camel.jpg',layers:lay('camel',['Background','Branches','Ball','Stars and swirls'])}];
-var uploads=[],ARTS=PRESETS.slice();
+var HID='ama-card-art-hidden';function hidden(){try{return JSON.parse(localStorage.getItem(HID)||'[]');}catch(_){return [];}}
+function presets(){var h=hidden();return PRESETS.filter(function(p){return h.indexOf(p.id)<0;});}
+var uploads=[],ARTS=presets();
 var S={art:null,amount:150,cur:'GBP',frost:1.3,prot:'off',vert:false,
   vn:{on:false,sel:{}},mtone:'auto'}; // sel: the polished layers of each art
 var card=$('#card'),face=card.querySelector('.face'),scrimEl=card.querySelector('.fc-scrim'),spec=$('#spec'),vn=$('#vn');
@@ -341,10 +334,7 @@ function paint(){
   scrimEl.style.setProperty('--scrim',k?R.E.map(function(e){return 'radial-gradient(ellipse '+(e.rx/W*100).toFixed(2)+'% '+(e.ry/H*100).toFixed(2)+'% at '+(e.cx/W*100).toFixed(2)+'% '+(e.cy/H*100).toFixed(2)+'%,'+FO.map(function(f){return 'rgba('+col+','+(k*f[1]).toFixed(3)+') '+(f[0]*100)+'%';}).join(',')+')';}).join(','):'none');
   var s=card.style;s.setProperty('--s2',ART.c2);s.setProperty('--edge',mix(ART.c2,'#000000',.25));
   s.setProperty('--veil',(.05*S.frost).toFixed(3));s.setProperty('--grain',(.22*S.frost).toFixed(2));
-  /* readout */
-  $('#read').innerHTML=EL.map(function(e,i){var p=pr[i],main=p.flat||(p.mode==='deep'?p.deep:p.base),r=ratio(main,p.worst),need=e.big?3:4.5,on=(e.id!=='A'||S.amount)&&(e.id!=='N'||$('#nameIn').value.trim());
-    return '<div class="'+(on&&r<need?'low':'')+'"><b>'+(on?r.toFixed(1):'–')+'</b><span>'+NAMES[e.id]+'<br>needs '+need+'</span></div>';}).join('');
-  $('#readNote').textContent=(matte?(R.tone==='ink'?'Matte ink print':'Matte cream print'):dark?'Light print':'Dark print')+(R.ok?'':matte&&S.mtone!=='auto'?' · '+(R.tone==='ink'?'ink':'cream')+' does not read on this art, '+(R.tone==='ink'?'cream':'ink')+' or Auto will':' · below the bar, calm the art under the print');
+  window.__read=pr.map(function(p,i){var main=p.flat||(p.mode==='deep'?p.deep:p.base);return +ratio(main,p.worst).toFixed(1);}); // kept for checks, not shown
 }
 var paintQ=0;function repaint(){if(paintQ)return;paintQ=requestAnimationFrame(function(){paintQ=0;paint();});}
 
@@ -393,13 +383,16 @@ function layUI(){
 function thumbs(){
   var box=$('#arts');box.innerHTML='';
   ARTS.forEach(function(a){var w=document.createElement('div');w.className='th';var b=document.createElement('button');b.type='button';b.className='pick';b.setAttribute('role','radio');b.setAttribute('aria-label',a.name);b.style.backgroundImage='url("'+a.src+'")';b.setAttribute('aria-pressed',S.art===a.id);b.addEventListener('click',function(){useArt(a.id);});w.appendChild(b);
-    if(a.up){var d=document.createElement('button');d.type='button';d.className='del';d.setAttribute('aria-label','Delete '+a.name);d.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="#FFF3E4" stroke-width="2" stroke-linecap="round"/></svg>';
-      d.addEventListener('click',function(){uploads=uploads.filter(function(u){return u.id!==a.id;});dbDel(a.id);ARTS=PRESETS.concat(uploads);if(S.art===a.id)useArt(PRESETS[0].id);else thumbs();});w.appendChild(d);}
+    {var d=document.createElement('button');d.type='button';d.className='del';d.setAttribute('aria-label','Delete '+a.name);d.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="#FFF3E4" stroke-width="2" stroke-linecap="round"/></svg>';
+      d.addEventListener('click',function(){if(a.up){uploads=uploads.filter(function(u){return u.id!==a.id;});dbDel(a.id);}else{try{localStorage.setItem(HID,JSON.stringify(hidden().concat(a.id)));}catch(_){}}
+        ARTS=presets().concat(uploads);if(S.art===a.id)useArt(ARTS[0]&&ARTS[0].id);else thumbs();});w.appendChild(d);}
     box.appendChild(w);});
   var add=document.createElement('button');add.type='button';add.className='add';add.textContent='Add art';add.addEventListener('click',function(){$('#fileArt').click();});box.appendChild(add);
 }
 function useArt(id){
-  var a=ARTS.filter(function(x){return x.id===id;})[0]||ARTS[0];S.art=a.id;thumbs();
+  var a=ARTS.filter(function(x){return x.id===id;})[0]||ARTS[0];
+  if(!a){S.art=null;ART=null;thumbs();$('#artName').textContent='Add art to start';card.style.setProperty('--img','none');vn.hidden=true;vnUI();return;}
+  S.art=a.id;thumbs();
   $('#artName').textContent=a.name+(a.layers&&a.layers.length>1?' · '+a.layers.length+' layers':'');ART=null;vnUI();
   var img=new Image();img.onload=function(){if(S.art!==a.id)return;ART=readArt(img);ART.layers=a.layers;card.style.setProperty('--img','url("'+a.src+'")');paint();if(S.vn.on)remask();};img.src=a.src;
 }
@@ -422,7 +415,7 @@ function addArt(files){
       function nm(f){return f.name.replace(/\.[^.]+$/,'').slice(pre.length).replace(/^[\d\s._-]+/,'').replace(/[-_]+/g,' ').replace(/^./,function(ch){return ch.toUpperCase();})||'Layer';}
       var rec={id:'u'+Date.now(),name:(imgs.length>1?'Layered art':nm(files[0])).slice(0,28),composite:bl[0],layers:imgs.length>1?files.map(function(f,i){return {name:nm(f).slice(0,24),blob:bl[i+1]};}):[]};
       var r=imgs[0].naturalWidth/imgs[0].naturalHeight,odd=Math.abs(r-85.6/53.98)>.02;
-      return dbPut(rec).then(function(kept){var e=fromDb(rec);uploads.push(e);ARTS=PRESETS.concat(uploads);
+      return dbPut(rec).then(function(kept){var e=fromDb(rec);uploads.push(e);ARTS=presets().concat(uploads);
         note((odd?'Cropped to the card’s proportions. ':'')+(kept?'Saved in this browser.':'Could not be saved, it stays until a reload.'));
         useArt(rec.id);});
     });
@@ -510,12 +503,12 @@ if(needsPerm){document.addEventListener('touchend',askGyro,{passive:true});docum
 function hint(){$('#note').textContent='';}
 hint();
 amtLabels();vnUI();
-useArt(PRESETS[0].id);
+useArt(ARTS[0]&&ARTS[0].id);
 /* uploads from earlier visits; the first version kept them in localStorage, they move over once */
 dbAll().then(function(list){var old=[];try{old=JSON.parse(localStorage.getItem('ama-card-art-v1')||'[]');}catch(_){}
   var mv=old.map(function(o){return {id:o.id,name:o.name,composite:o.src,layers:[]};});
   return Promise.all(mv.map(dbPut)).then(function(){try{localStorage.removeItem('ama-card-art-v1');}catch(_){}return list.concat(mv);});
-}).then(function(list){uploads=list.map(fromDb);ARTS=PRESETS.concat(uploads);thumbs();});
+}).then(function(list){uploads=list.map(fromDb);ARTS=presets().concat(uploads);if(!S.art&&ARTS[0])useArt(ARTS[0].id);else thumbs();});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(repaint);
 window.__S=S;window.__vnPose=function(u,v){c.drag={x0:0,y0:0,bx:0,by:0};c.tx=v*20;c.ty=u*24;}; // for screenshots
 })();
