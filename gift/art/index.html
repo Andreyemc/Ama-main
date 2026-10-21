@@ -185,7 +185,7 @@ input[type=range]{width:210px;accent-color:var(--rust)}
     </div>
   </div>
 
-  <p class="fine">Art: any picture, cropped to the card (85.6 × 53.98, about 1712 × 1080 px). Keep the corners calm where the logo, “Gift card”, the amount and the name sit. The print tone is worked out from the picture under each of them, so each keeps at least 4.5:1 contrast (the amount 3:1). If the picture is too busy there, Print protection lays the weakest soft shade behind the print that brings it back to the bar. The tiles above show the contrast for each element.</p>
+  <p class="fine">Art: any picture, cropped to the card (85.6 × 53.98, about 1712 × 1080 px). Keep the corners calm where the logo, “Gift card”, the amount and the name sit. The print tone is worked out from the picture under each of them, so each keeps at least 4.5:1 contrast (the amount 3:1). If the picture is too busy there, Print protection lays a soft shade behind the print, in the picture’s own darkest (or lightest) colour, only as strong as it takes and only while it stays quiet: on a dark picture it can go further, on a light one it stops before it turns into a grey halo. If that is not enough, the tile turns red: calm that part of the art, or on a limited edition switch the print between ink and cream. The tiles above show the contrast for each element.</p>
   <p class="fine">Limited edition: upload the art as layers, several files at once, for example 1-background.png, 2-branches.png, 3-ball.png. They stack in the order of their names, the first at the bottom; every layer but the first is a PNG with a transparent background, all of one size. On a limited edition the polish belongs to the art, so the logo, “Gift card”, the amount and the name turn matte, in one flat tone: AMA ink or AMA cream (Auto takes the one that reads better on the art). Then set each layer: Matte takes the frost of the card, Polished is finished like the print of the regular card, with no frost, the reflection and the streak running across it as the card turns, and a hair of relief. A layer shows only where nothing lies on top of it.</p>
 </div></main>
 <script>
@@ -203,6 +203,7 @@ function lin(v){v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);}
 var LIN=new Float32Array(256);for(var li=0;li<256;li++)LIN[li]=lin(li);
 function lumA(r,g,b){return .2126*LIN[r|0]+.7152*LIN[g|0]+.0722*LIN[b|0];}
 function lum(c){var p=hex(c);return lumA(p[0],p[1],p[2]);}
+function Lstar(Y){return Y>.008856?116*Math.cbrt(Y)-16:903.3*Y;}
 function ratio(a,b){var x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function sstep(a,b,x){var t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);}
@@ -240,7 +241,7 @@ function readArt(img){
   for(var i=0;i<d.length;i+=4*37)L.push([lumA(d[i],d[i+1],d[i+2]),d[i],d[i+1],d[i+2]]);
   L.sort(function(a,b){return a[0]-b[0];});
   function avg(a,b){var r=0,g=0,bl=0,n=0;for(var i=Math.floor(a*L.length);i<Math.floor(b*L.length);i++){r+=L[i][1];g+=L[i][2];bl+=L[i][3];n++;}return toHex([r/n,g/n,bl/n]);}
-  var c1=avg(.88,1),g=Math.round(lum(c1)>0?Math.pow(lum(c1),1/2.2)*255:0);return {data:d,c2:avg(0,.12),c1:mix(c1,toHex([g,g,g]),.35),mid:avg(.45,.55)};
+  var c1=avg(.88,1),g=Math.round(lum(c1)>0?Math.pow(lum(c1),1/2.2)*255:0);var C1=mix(c1,toHex([g,g,g]),.35),C2=avg(0,.12);return {data:d,c2:C2,c1:C1,mid:avg(.45,.55),scD:hex(mix(C2,'#000000',.35)),scL:hex(mix(C1,'#FFFFFF',.55))};
 }
 
 /* ---------- print: the approved engine, now reading the picture under each element ---------- */
@@ -254,9 +255,9 @@ EL.forEach(function(e){
 var FALLBACK={L:{x:48,y:44,w:154,h:58},K:{x:690,y:52,w:118,h:28},A:{x:44,y:426,w:220,h:66},N:{x:600,y:464,w:208,h:30}};
 function boxes(){var o={};EL.forEach(function(e){var b=null;try{b=USE[e.id].getBBox();}catch(_){}o[e.id]=(b&&b.width>2)?{x:b.x,y:b.y,w:b.width,h:b.height,real:true}:FALLBACK[e.id];});return o;}
 /* the soft shade behind a print element: full under it, fading out a little beyond it */
-var FO=[[0,1],[.55,1],[.7,.75],[.85,.3],[1,0]];
+var FO=[[0,1],[.4,.92],[.6,.62],[.8,.25],[1,0]];
 function fall(d){if(d>=1)return 0;for(var i=1;i<FO.length;i++)if(d<=FO[i][0]){var a=FO[i-1],b=FO[i];return a[1]+(b[1]-a[1])*(d-a[0])/(b[0]-a[0]);}return 0;}
-function ells(B){return EL.map(function(e){var b=B[e.id];return {cx:b.x+b.w/2,cy:b.y+b.h/2,rx:b.w/2+70,ry:b.h/2+70};});}
+function ells(B){return EL.map(function(e){var b=B[e.id];return {cx:b.x+b.w/2,cy:b.y+b.h/2,rx:b.w/2+110,ry:b.h/2+95};});}
 function scrimAt(x,y,E,k){if(!k)return 0;var keep=1;for(var i=0;i<E.length;i++){var e=E[i],dx=(x-e.cx)/e.rx,dy=(y-e.cy)/e.ry;keep*=1-k*fall(Math.sqrt(dx*dx+dy*dy));}return 1-keep;}
 /* the picture under one element, as the eye gets it: shade (if any), then the frost veil. The worst case is the
    7% of pixels closest to the print (the lightest under a light print, the darkest under a dark one). */
@@ -264,12 +265,12 @@ function under(b,mode,k,E){
   var d=ART.data,veil=.05*S.frost,pad=6,a=[],x0=Math.max(0,b.x-pad),x1=Math.min(W-1,b.x+b.w+pad),y0=Math.max(0,b.y-pad),y1=Math.min(H-1,b.y+b.h+pad);
   for(var y=y0;y<=y1;y+=2)for(var x=x0;x<=x1;x+=2){
     var i=(Math.round(y*MS)*MW+Math.round(x*MS))*4,r=d[i],g=d[i+1],bl=d[i+2],s=scrimAt(x,y,E,k);
-    if(s){if(mode==='bright'){r*=1-s;g*=1-s;bl*=1-s;}else{r+=(255-r)*s;g+=(255-g)*s;bl+=(255-bl)*s;}}
+    if(s){var t=mode==='bright'?ART.scD:ART.scL;r+=(t[0]-r)*s;g+=(t[1]-g)*s;bl+=(t[2]-bl)*s;}
     r+=(255-r)*veil;g+=(255-g)*veil;bl+=(255-bl)*veil;a.push([lumA(r,g,bl),r,g,bl]);}
   a.sort(function(p,q){return p[0]-q[0];});
   var w=a[Math.floor((mode==='bright'?.93:.07)*(a.length-1))],m=a[Math.floor(.5*(a.length-1))];
   var wc=toHex([w[1],w[2],w[3]]),mc=toHex([m[1],m[2],m[3]]);
-  return {worst:wc,sp:[{c:wc,worst:true},{c:mc},{c:mix(wc,'#FFFFFF',.14+.05*S.frost),sheen:true}]};
+  return {worst:wc,medL:Lstar(lum(mc)),sp:[{c:wc,worst:true},{c:mc},{c:mix(wc,'#FFFFFF',.14+.05*S.frost),sheen:true}]};
 }
 /* the main tone clears the bar against the worst pixels under it; the dark of the reflection only has to read
    against the typical picture there (it passes in a moment), so the print keeps a real polish and never goes flat */
@@ -286,15 +287,20 @@ function solveEl(P,sp,big,mode){
     if(!best||sc.m>best.m)best=p;}
   return bestOk||best;
 }
+/* the shade may grow only while it stays quiet: how much it changes the art (in lightness, L*) is capped. On a dark
+   picture a dark shade barely shows, so it can go further; on a light one it would turn into grey halos, so it stops early */
+var SHADE_MAX_DL=14;
+function quiet(B,E,k,mode){if(!k)return true;var t=mode==='bright'?ART.scD:ART.scL,Ls=Lstar(lumA(t[0],t[1],t[2]));
+  return EL.every(function(e){var u=under(B[e.id],mode,0,E);return k*Math.abs(u.medL-Ls)<=SHADE_MAX_DL;});}
 /* one tone for the whole card; the shade behind the print grows in small steps only until every element clears the bar */
 function solve(){
   var B=boxes(),E=ells(B),P={c1:ART.c1,c2:ART.c2},steps=S.prot==='auto'?13:1,best=null;
   function all(a){return a.every(function(p){return p.ok;});}function low(a){return Math.min.apply(null,a.map(function(p){return p.m;}));}
   for(var n=0;n<steps;n++){var k=n*.05,res={};
-    ['deep','bright'].forEach(function(mode){res[mode]=EL.map(function(e){var u=under(B[e.id],mode,k,E),p=solveEl(P,u.sp,e.big,mode);p.worst=u.worst;p.real=B[e.id].real;return p;});});
+    ['deep','bright'].forEach(function(mode){if(!quiet(B,E,k,mode)){res[mode]=EL.map(function(){return {ok:false,m:0,mode:mode};});return;}res[mode]=EL.map(function(e){var u=under(B[e.id],mode,k,E),p=solveEl(P,u.sp,e.big,mode);p.worst=u.worst;p.real=B[e.id].real;return p;});});
     var pick=all(res.deep)&&all(res.bright)?(low(res.deep)>=low(res.bright)?res.deep:res.bright):all(res.deep)?res.deep:all(res.bright)?res.bright:null;
     if(pick)return {els:pick,k:k,E:E,ok:true};
-    var c=low(res.deep)>=low(res.bright)?res.deep:res.bright;if(!best||low(c)>low(best.els)+.05)best={els:c,k:k,E:E,ok:false};}
+    var c=low(res.deep)>=low(res.bright)?res.deep:res.bright;if(n===0)best={els:c,k:0,E:E,ok:false};} // a shade that cannot bring it to the bar is not drawn at all
   return best;
 }
 function envStops(p){
@@ -311,11 +317,11 @@ function solveMatte(){
   var B=boxes(),E=ells(B),steps=S.prot==='auto'?13:1,tones=S.mtone==='auto'?['ink','cream']:[S.mtone],best=null;
   function low(a){return Math.min.apply(null,a.map(function(p){return p.m;}));}
   for(var n=0;n<steps;n++){var k=n*.05,pass=null;
-    tones.forEach(function(t){var mode=t==='ink'?'deep':'bright',col=t==='ink'?INK:CREAM;
+    tones.forEach(function(t){var mode=t==='ink'?'deep':'bright',col=t==='ink'?INK:CREAM;if(!quiet(B,E,k,mode))return;
       var els=EL.map(function(e){var u=under(B[e.id],mode,k,E),r=ratio(col,u.worst);return {mode:mode,flat:col,worst:u.worst,m:r,ok:r>=(e.big?3:4.5)};});
       var ok=els.every(function(p){return p.ok;}),c={els:els,k:k,E:E,ok:ok,tone:t};
       if(ok&&(!pass||low(els)>low(pass.els)))pass=c;
-      if(!best||low(els)>low(best.els)+.05)best=c;});
+      if(n===0&&(!best||low(els)>low(best.els)+.05))best=c;});
     if(pass)return pass;}
   return best;
 }
@@ -329,14 +335,15 @@ function paint(){
   var dark=pr[0].mode==='bright',sc=dark?mix(ART.c2,'#000000',.25):'#FFFFFF';
   spec.querySelectorAll('stop').forEach(function(st){st.setAttribute('stop-color',sc);var o=+(st.dataset.o||(st.dataset.o=st.getAttribute('stop-opacity')));st.setAttribute('stop-opacity',(dark?o*.7:o).toFixed(3));});
   /* the shade behind the print, drawn exactly as it was solved */
-  var col=dark?'0,0,0':'255,255,255',k=R.k;
+  /* in the art's own darkest (or lightest) colour, never plain grey */
+  var col=(dark?ART.scD:ART.scL).join(','),k=R.k;
   scrimEl.style.setProperty('--scrim',k?R.E.map(function(e){return 'radial-gradient(ellipse '+(e.rx/W*100).toFixed(2)+'% '+(e.ry/H*100).toFixed(2)+'% at '+(e.cx/W*100).toFixed(2)+'% '+(e.cy/H*100).toFixed(2)+'%,'+FO.map(function(f){return 'rgba('+col+','+(k*f[1]).toFixed(3)+') '+(f[0]*100)+'%';}).join(',')+')';}).join(','):'none');
   var s=card.style;s.setProperty('--s2',ART.c2);s.setProperty('--edge',mix(ART.c2,'#000000',.25));
   s.setProperty('--veil',(.05*S.frost).toFixed(3));s.setProperty('--grain',(.22*S.frost).toFixed(2));
   /* readout */
   $('#read').innerHTML=EL.map(function(e,i){var p=pr[i],main=p.flat||(p.mode==='deep'?p.deep:p.base),r=ratio(main,p.worst),need=e.big?3:4.5,on=(e.id!=='A'||S.amount)&&(e.id!=='N'||$('#nameIn').value.trim());
     return '<div class="'+(on&&r<need?'low':'')+'"><b>'+(on?r.toFixed(1):'–')+'</b><span>'+NAMES[e.id]+'<br>needs '+need+'</span></div>';}).join('');
-  $('#readNote').textContent=(matte?(R.tone==='ink'?'Matte ink print':'Matte cream print'):dark?'Light print':'Dark print')+(k?' · protection shade '+Math.round(k*100)+'%':' · no shade needed')+(R.ok?'':' · below the bar, calm the art under the print');
+  $('#readNote').textContent=(matte?(R.tone==='ink'?'Matte ink print':'Matte cream print'):dark?'Light print':'Dark print')+(k?' · protection shade '+Math.round(k*100)+'%':R.ok?' · no shade needed':'')+(R.ok?'':matte&&S.mtone!=='auto'?' · '+(R.tone==='ink'?'ink':'cream')+' does not read on this art, '+(R.tone==='ink'?'cream':'ink')+' or Auto will':' · below the bar, calm the art under the print');
 }
 var paintQ=0;function repaint(){if(paintQ)return;paintQ=requestAnimationFrame(function(){paintQ=0;paint();});}
 
