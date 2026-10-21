@@ -65,6 +65,10 @@ input[type=range]{width:210px;accent-color:var(--rust)}
 .val{font-weight:400;color:var(--ink)}
 .btn2{height:38px;padding:0 16px;border-radius:30px;font-size:14px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink)}
 .chip{display:inline-block;width:18px;height:18px;border-radius:50%;vertical-align:-4px;margin-right:6px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.lays{display:flex;flex-wrap:wrap;gap:8px}
+.lays button{height:34px;padding:0 14px;border-radius:30px;font-size:14px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink)}
+.lays button[aria-pressed="true"]{background:var(--ink);color:var(--cream);box-shadow:none}
+.laynote{font-size:14px;color:var(--body);margin-bottom:10px}
 .fine{margin-top:30px;font-size:13px;color:var(--mute);line-height:1.5}
 .fine+.fine{margin-top:10px}
 
@@ -100,8 +104,10 @@ input[type=range]{width:210px;accent-color:var(--rust)}
 .vn-art{filter:saturate(1.22) brightness(var(--vdeep,.9)) contrast(1.06)}
 .vn-holo{opacity:var(--ho,0);mix-blend-mode:color;background-size:150% 150%;background-position:var(--px,50%) var(--py,50%);
   background-image:linear-gradient(118deg,#ff4fa3 0%,#ffb340 8%,#f4ff5a 15%,#3dffa0 23%,#38d5ff 31%,#6b6bff 39%,#d24dff 47%,#ff4fa3 55%,#ffb340 63%,#f4ff5a 70%,#3dffa0 78%,#38d5ff 86%,#6b6bff 93%,#d24dff 100%)}
-.vn-glint{opacity:calc(var(--ho,0) * .9);mix-blend-mode:soft-light;background-size:60% 60%;background-position:var(--px,50%) var(--py,50%);
+.vn-glint{opacity:calc(var(--ho,0) * .5);mix-blend-mode:soft-light;background-size:60% 60%;background-position:var(--px,50%) var(--py,50%);
   background-image:repeating-linear-gradient(62deg,rgba(255,255,255,0) 0 6px,rgba(255,255,255,.75) 7px,rgba(255,255,255,0) 9px 15px)}
+/* the colour shift lives where the light falls and travels with it; away from the light the art keeps its own colours */
+.vn-holo,.vn-glint{-webkit-mask-image:radial-gradient(ellipse 62% 90% at var(--cx,30%) var(--cy,40%),#000 0%,rgba(0,0,0,.6) 40%,rgba(0,0,0,.14) 78%);mask-image:radial-gradient(ellipse 62% 90% at var(--cx,30%) var(--cy,40%),#000 0%,rgba(0,0,0,.6) 40%,rgba(0,0,0,.14) 78%)}
 .vn-hi{opacity:var(--hio,1);mix-blend-mode:screen;background:radial-gradient(ellipse 24% 38% at var(--hx,-20%) var(--hy,40%),rgba(255,255,255,.95),rgba(255,255,255,.42) 34%,rgba(255,255,255,.08) 62%,rgba(255,255,255,0) 76%)}
 .vn-band{opacity:var(--bo,.8);mix-blend-mode:screen;background-size:300% 100%;background-position:var(--bx,90%) 50%;
   background-image:linear-gradient(112deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 45%,rgba(255,255,255,.45) 48.5%,rgba(255,255,255,.85) 50%,rgba(255,255,255,.45) 51.5%,rgba(255,255,255,0) 55%,rgba(255,255,255,0) 100%)}
@@ -154,7 +160,7 @@ input[type=range]{width:210px;accent-color:var(--rust)}
   <p class="note" id="note"></p>
 
   <div class="arts" id="arts" role="radiogroup" aria-label="Art"></div>
-  <input type="file" id="fileArt" accept="image/*" hidden>
+  <input type="file" id="fileArt" accept="image/*" multiple hidden>
   <p class="artname"><span id="artName"></span><button type="button" id="artDel" hidden>Remove</button></p>
 
   <div class="read" id="read" aria-live="polite"></div>
@@ -175,19 +181,21 @@ input[type=range]{width:210px;accent-color:var(--rust)}
   <div class="ctl">
     <div class="row"><span>Varnish</span><div class="seg" id="segVn"><button type="button" aria-pressed="true" data-v="off">Off</button><button type="button" aria-pressed="false" data-v="on">On</button></div></div>
     <div id="vnCtl" class="ctl" style="margin-top:0" hidden>
-      <div class="row"><span>Layer</span><div class="seg" id="segSrc"><button type="button" aria-pressed="false" data-v="colour">Colour</button><button type="button" aria-pressed="false" data-v="sweep">Sweep</button><button type="button" aria-pressed="false" data-v="speckle">Speckle</button><button type="button" aria-pressed="false" data-v="upload">File</button></div></div>
+      <div class="row"><span>Layer</span><div class="seg" id="segSrc"><button type="button" aria-pressed="true" data-v="layers">Art layers</button><button type="button" aria-pressed="false" data-v="colour">Colour</button><button type="button" aria-pressed="false" data-v="upload">File</button></div></div>
+      <div id="rowLay"><p class="laynote" id="layNote"></p><div class="lays" id="lays" role="group" aria-label="Varnish on these layers"></div></div>
       <div class="row" id="rowPick"><span><i class="chip" id="pickChip"></i>Colour on the art</span><button type="button" class="btn2" id="pickBtn">Pick on the card</button></div>
       <div class="row" id="rowTol"><span>Spread <b class="val" id="tolVal"></b></span><input type="range" id="tol" min="0.04" max="0.4" step="0.01" value="0.16" aria-label="Colour spread"></div>
       <div class="row" id="rowUp"><span id="upName">No file yet</span><button type="button" class="btn2" id="upBtn">Upload layer</button></div>
       <input type="file" id="fileMask" accept="image/*" hidden>
       <div class="row"><span>Finish</span><div class="seg" id="segFin"><button type="button" aria-pressed="true" data-v="gloss">Gloss</button><button type="button" aria-pressed="false" data-v="holo">Holo</button><button type="button" aria-pressed="false" data-v="pearl">Pearl</button></div></div>
-      <div class="row"><span>Distress <b class="val" id="disVal"></b></span><input type="range" id="dis" min="0" max="1" step="0.05" value="0.35" aria-label="Distress"></div>
+      <div class="row"><span>Distress <b class="val" id="disVal"></b></span><input type="range" id="dis" min="0" max="1" step="0.05" value="0.2" aria-label="Distress"></div>
       <div class="row"><span>Relief</span><div class="seg" id="segRel"><button type="button" aria-pressed="true" data-v="on">On</button><button type="button" aria-pressed="false" data-v="off">Off</button></div></div>
     </div>
   </div>
 
   <p class="fine">Art: any picture, cropped to the card (85.6 × 53.98, about 1712 × 1080 px). Keep the corners calm where the logo, “Gift card”, the amount and the name sit. The print tone is worked out from the picture under each of them, so each keeps at least 4.5:1 contrast (the amount 3:1). If the picture is too busy there, Print protection lays the weakest soft shade behind the print that brings it back to the bar. The tiles above show the contrast for each element.</p>
-  <p class="fine">Varnish layer: Colour takes one colour of the art (pick it on the card). Sweep and Speckle are test patterns. File takes your own layer: a PNG of the same proportions, white or opaque where the varnish goes. Distress breaks the edges into screen-print grain, Relief raises the varnish a hair above the card.</p>
+  <p class="fine">Art in layers: choose several files at once in Add art, for example 1-background.png, 2-branches.png, 3-ball.png. They stack in the order of their names, the first at the bottom; every layer but the first is a PNG with a transparent background, all of the same size. Then pick the layers that get the varnish: only the branches, only the ball, or both. A layer hidden under another one gets no varnish there.</p>
+  <p class="fine">Other ways to set the varnish: Colour takes one colour of the art (pick it on the card), File takes one separate layer (a PNG of the same proportions, white or opaque where the varnish goes). Distress breaks the edges into screen-print grain, Relief raises the varnish a hair above the card.</p>
 </div></main>
 <script>
 (function(){
@@ -208,16 +216,22 @@ function ratio(a,b){var x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function sstep(a,b,x){var t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);}
 
-/* ---------- storage: uploads stay in this browser only ---------- */
-var KEY='ama-card-art-v1';
-function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(_){return [];}}
-function save(list){try{localStorage.setItem(KEY,JSON.stringify(list));return true;}catch(_){return false;}}
+/* ---------- storage: uploads stay in this browser only (IndexedDB: layers are too big for localStorage) ---------- */
+var DBP=null;
+function db(){if(!DBP)DBP=new Promise(function(res,rej){try{var r=indexedDB.open('ama-card-art',1);r.onupgradeneeded=function(){r.result.createObjectStore('arts',{keyPath:'id'});};r.onsuccess=function(){res(r.result);};r.onerror=function(){rej(r.error);};}catch(e){rej(e);}});return DBP;}
+function idb(mode,fn){return db().then(function(d){return new Promise(function(res,rej){var tx=d.transaction('arts',mode),st=tx.objectStore('arts'),q=fn(st);tx.oncomplete=function(){res(q&&q.result);};tx.onerror=function(){rej(tx.error);};});});}
+function dbAll(){return idb('readonly',function(st){return st.getAll();}).catch(function(){return [];});}
+function dbPut(x){return idb('readwrite',function(st){return st.put(x);}).then(function(){return true;},function(){return false;});}
+function dbDel(id){return idb('readwrite',function(st){return st.delete(id);}).catch(function(){});}
+function fromDb(x){var u=function(b){return typeof b==='string'?b:URL.createObjectURL(b);};return {id:x.id,name:x.name,up:true,src:u(x.composite),layers:(x.layers||[]).map(function(l){return {name:l.name,src:u(l.blob)};})};}
 
 /* ---------- state ---------- */
-var PRESETS=[{id:'bauble',name:'Bauble',src:'../img/xmas-bauble.jpg'},{id:'camel',name:'Camel',src:'../img/xmas-camel.jpg'}];
-var uploads=load(),ARTS=PRESETS.concat(uploads);
+function lay(a,names){return names.map(function(n,i){return {name:n,src:'../img/xmas/'+a+'-'+(i+1)+'-'+n.split(' ')[0].toLowerCase()+'.webp'};});}
+var PRESETS=[{id:'bauble',name:'Bauble',src:'../img/xmas-bauble.jpg',layers:lay('bauble',['Background','Branches','Ball','Stars'])},
+             {id:'camel',name:'Camel',src:'../img/xmas-camel.jpg',layers:lay('camel',['Background','Branches','Ball','Stars and swirls'])}];
+var uploads=[],ARTS=PRESETS.slice();
 var S={art:null,amount:150,cur:'GBP',frost:1.3,prot:'auto',vert:false,
-  vn:{on:false,src:'colour',fin:'holo',dis:.35,rel:true,tol:.16,pick:[132,148,246],mask:null,maskName:''}};
+  vn:{on:false,src:'layers',fin:'holo',dis:.2,rel:true,tol:.16,pick:[132,148,246],mask:null,maskName:'',sel:{}}};
 var card=$('#card'),face=card.querySelector('.face'),scrimEl=card.querySelector('.fc-scrim'),spec=$('#spec'),vn=$('#vn');
 var ART=null; // {data,c1,c2,src}
 
@@ -235,7 +249,7 @@ function readArt(img){
   for(var i=0;i<d.length;i+=4*37)L.push([lumA(d[i],d[i+1],d[i+2]),d[i],d[i+1],d[i+2]]);
   L.sort(function(a,b){return a[0]-b[0];});
   function avg(a,b){var r=0,g=0,bl=0,n=0;for(var i=Math.floor(a*L.length);i<Math.floor(b*L.length);i++){r+=L[i][1];g+=L[i][2];bl+=L[i][3];n++;}return toHex([r/n,g/n,bl/n]);}
-  return {data:d,c2:avg(0,.12),c1:avg(.88,1),mid:avg(.45,.55)};
+  var c1=avg(.88,1),g=Math.round(lum(c1)>0?Math.pow(lum(c1),1/2.2)*255:0);return {data:d,c2:avg(0,.12),c1:mix(c1,toHex([g,g,g]),.35),mid:avg(.45,.55)};
 }
 
 /* ---------- print: the approved engine, now reading the picture under each element ---------- */
@@ -264,14 +278,18 @@ function under(b,mode,k,E){
   a.sort(function(p,q){return p[0]-q[0];});
   var w=a[Math.floor((mode==='bright'?.93:.07)*(a.length-1))],m=a[Math.floor(.5*(a.length-1))];
   var wc=toHex([w[1],w[2],w[3]]),mc=toHex([m[1],m[2],m[3]]);
-  return {worst:wc,sp:[{c:wc},{c:mc},{c:mix(wc,'#FFFFFF',.14+.05*S.frost),sheen:true}]};
+  return {worst:wc,sp:[{c:wc,worst:true},{c:mc},{c:mix(wc,'#FFFFFF',.14+.05*S.frost),sheen:true}]};
 }
-function score(main,edge,sp,big){var need=big?3:4.5,m=1e9,ok=true;sp.forEach(function(x){var r=ratio(main,x.c);m=Math.min(m,x.sheen?r*1.5:r);if(r<(x.sheen?need*2/3:need))ok=false;if(!x.sheen&&ratio(edge,x.c)<(big?2.2:3))ok=false;});return {ok:ok,m:m};}
+/* the main tone clears the bar against the worst pixels under it; the dark of the reflection only has to read
+   against the typical picture there (it passes in a moment), so the print keeps a real polish and never goes flat */
+function score(main,edge,sp,big){var need=big?3:4.5,m=1e9,ok=true;sp.forEach(function(x){var r=ratio(main,x.c);m=Math.min(m,x.sheen?r*1.5:r);if(r<(x.sheen?need*2/3:need))ok=false;if(!x.sheen&&!x.worst&&ratio(edge,x.c)<(big?2.2:3))ok=false;});return {ok:ok,m:m};}
 function solveEl(P,sp,big,mode){
   var mid=mix(P.c1,P.c2,.5),best=null,bestOk=null;
-  for(var i=0;i<=30;i++)for(var gi=0;gi<5;gi++){var p,sc,gk=(mode==='deep'?[.32,.26,.2,.14,.07]:[.55,.45,.35,.25,.15])[gi];
+  /* a light print stops at 88% white, so it keeps the tint of the art and room for a highlight above it;
+     the reflection stays deep (at least 45% towards the dark of the art) */
+  for(var i=0;i<=30;i++)for(var gi=0;gi<3;gi++){var p,sc,gk=(mode==='deep'?[.36,.3,.24]:[.62,.53,.45])[gi];
     if(mode==='deep'){var deep=mix(mix(P.c2,mid,.3),'#000000',.4+i*.019);p={mode:'deep',deep:deep,glow:mix(deep,P.c1,gk)};sc=score(deep,p.glow,sp,big);}
-    else{var base=mix(P.c1,'#FFFFFF',Math.min(1,.55+i*.015));p={mode:'bright',base:base,low:mix(base,P.c2,gk)};sc=score(base,p.low,sp,big);}
+    else{var base=mix(P.c1,'#FFFFFF',Math.min(.88,.55+i*.015));p={mode:'bright',base:base,low:mix(base,P.c2,gk)};sc=score(base,p.low,sp,big);}
     p.ok=sc.ok;p.m=sc.m;
     if(sc.ok){if(sc.m>=7)return p;if(!bestOk||sc.m>bestOk.m+.05)bestOk=p;}
     if(!best||sc.m>best.m)best=p;}
@@ -333,36 +351,61 @@ function blur(a,r){var w=MW,h=MH,t=new Float32Array(a.length),o=new Float32Array
   return o;}
 var MC=document.createElement('canvas');MC.width=MW;MC.height=MH;var mctx=MC.getContext('2d',{willReadFrequently:true});
 var maskData=null; // the uploaded layer as alpha
-function baseMap(){
-  var V=S.vn,a=new Float32Array(MW*MH),i,x,y;
-  if(V.src==='colour'&&ART){var d=ART.data,p=V.pick,t=V.tol;
+/* art layers: each layer's own shape, minus whatever lies on top of it */
+function layerVis(cb){
+  var A=ART;if(!A||!A.layers||!A.layers.length)return cb(null);if(A.vis)return cb(A.vis);
+  var n=A.layers.length,alphas=new Array(n),left=n;
+  A.layers.forEach(function(l,i){var img=new Image();img.crossOrigin='anonymous';img.onload=function(){
+      var c=document.createElement('canvas');c.width=MW;c.height=MH;var x=c.getContext('2d',{willReadFrequently:true}),k=Math.max(MW/img.naturalWidth,MH/img.naturalHeight),dw=img.naturalWidth*k,dh=img.naturalHeight*k;
+      x.drawImage(img,(MW-dw)/2,(MH-dh)/2,dw,dh);var d=x.getImageData(0,0,MW,MH).data,a=new Float32Array(MW*MH);for(var j=0;j<a.length;j++)a[j]=d[j*4+3]/255;alphas[i]=a;done();};
+    img.onerror=function(){alphas[i]=new Float32Array(MW*MH);done();};img.src=l.src;});
+  function done(){if(--left)return;var cover=new Float32Array(MW*MH),vis=new Array(n);
+    for(var i=n-1;i>=0;i--){var a=alphas[i],v=new Float32Array(a.length);for(var j=0;j<a.length;j++){v[j]=a[j]*(1-cover[j]);cover[j]+=v[j];}vis[i]=v;}
+    if(ART===A){A.vis=vis;cb(vis);}}
+}
+function selOf(){var A=ARTS.filter(function(x){return x.id===S.art;})[0];if(!A||!A.layers||A.layers.length<2)return [];if(!S.vn.sel[S.art])S.vn.sel[S.art]=[1];return S.vn.sel[S.art];}
+function baseMap(vis){
+  var V=S.vn,a=new Float32Array(MW*MH),i;
+  var sc=src();
+  if(sc==='colour'&&ART){var d=ART.data,p=V.pick,t=V.tol;
     for(i=0;i<a.length;i++){var j=i*4,dr=d[j]-p[0],dg=d[j+1]-p[1],db=d[j+2]-p[2],dist=Math.sqrt(dr*dr+dg*dg+db*db)/441.7;a[i]=1-sstep(t*.6,t,dist);}}
-  else if(V.src==='sweep'){var an=-62*Math.PI/180,ca=Math.cos(an),sa=Math.sin(an),N=noise(),c0=Math.min(0,MW*ca)+Math.min(0,MH*sa),c1=Math.max(0,MW*ca)+Math.max(0,MH*sa),span=c1-c0;
-    var BANDS=[[.2,.07],[.38,.035],[.55,.1],[.8,.05]];
-    for(y=0;y<MH;y++)for(x=0;x<MW;x++){i=y*MW+x;var tt=(x*ca+y*sa-c0)/span+(N[(y>>1)*MW+(x>>1)]-.5)*.05,v=0;
-      for(var b=0;b<BANDS.length;b++){var dd=Math.abs(tt-BANDS[b][0])-BANDS[b][1];v=Math.max(v,1-sstep(-.012,.012,dd));}a[i]=v;}}
-  else if(V.src==='speckle'){for(i=0;i<a.length;i++)a[i]=.4;}
-  else if(V.src==='upload'&&maskData){for(i=0;i<a.length;i++)a[i]=maskData[i];}
+  else if(sc==='layers'&&vis){selOf().forEach(function(k){var v=vis[k];if(v)for(i=0;i<a.length;i++)a[i]=Math.min(1,a[i]+v[i]);});}
+  else if(sc==='upload'&&maskData){for(i=0;i<a.length;i++)a[i]=maskData[i];}
   return a;
 }
 var vmURL=null,vmQ=0;
 function buildMask(){
   var V=S.vn;if(!V.on){vn.hidden=true;return;}
-  var base=blur(baseMap(),Math.round(5*MS)),N=noise(),D=V.dis,id=mctx.createImageData(MW,MH),d=id.data;
-  for(var i=0;i<base.length;i++){var v=base[i]+(N[i]-.5)*D*1.7;v=clamp((v-.5)*7+.5,0,1);var j=i*4;d[j]=d[j+1]=d[j+2]=255;d[j+3]=v*255;}
-  mctx.putImageData(id,0,0);
-  MC.toBlob(function(bl){if(!bl)return;var u=URL.createObjectURL(bl);card.style.setProperty('--vmask','url("'+u+'")');if(vmURL)setTimeout(URL.revokeObjectURL.bind(URL,vmURL),500);vmURL=u;vn.hidden=false;},'image/png');
+  if(src()==='layers')layerVis(make);else make(null);
+  function make(vis){
+    /* the shape keeps its own edges (thin needles survive); distress eats grain out of it, mostly along the edges */
+    var base=baseMap(vis),near=blur(base,Math.round(4*MS)),N=noise(),D=V.dis,id=mctx.createImageData(MW,MH),d=id.data;
+    for(var i=0;i<base.length;i++){var e=1-Math.abs(2*near[i]-1),thr=D*(.3+.6*e),v=base[i]*sstep(thr-.03,thr+.03,N[i]),j=i*4;d[j]=d[j+1]=d[j+2]=255;d[j+3]=v*255;}
+    mctx.putImageData(id,0,0);
+    MC.toBlob(function(bl){if(!bl)return;var u=URL.createObjectURL(bl);card.style.setProperty('--vmask','url("'+u+'")');if(vmURL)setTimeout(URL.revokeObjectURL.bind(URL,vmURL),500);vmURL=u;vn.hidden=false;},'image/png');
+  }
 }
 function remask(){if(vmQ)return;vmQ=requestAnimationFrame(function(){vmQ=0;buildMask();});}
 var FIN={gloss:{ho:0,hio:1,bo:.85,vdeep:.88},holo:{ho:.8,hio:.9,bo:.6,vdeep:1},pearl:{ho:.32,hio:.75,bo:.45,vdeep:1.04}};
 function finish(){var f=FIN[S.vn.fin],s=card.style;s.setProperty('--ho',f.ho);s.setProperty('--hio',f.hio);s.setProperty('--bo',f.bo);s.setProperty('--vdeep',f.vdeep);
   s.setProperty('--rsh',S.vn.rel?.32:0);s.setProperty('--rlt',S.vn.rel?.2:0);
   $('#vn').querySelector('.vn-holo').style.backgroundImage=S.vn.fin==='pearl'?'linear-gradient(118deg,#f2b8d6 0%,#b8d0f2 25%,#c4f0d8 50%,#f2b8d6 75%,#b8d0f2 100%)':'';}
-function vnUI(){var V=S.vn;$('#vnCtl').hidden=!V.on;$('#rowPick').hidden=V.src!=='colour';$('#rowTol').hidden=V.src!=='colour';$('#rowUp').hidden=V.src!=='upload';
+function vnUI(){var V=S.vn;$('#vnCtl').hidden=!V.on;layUI();$('#rowPick').hidden=src()!=='colour';$('#rowTol').hidden=src()!=='colour';$('#rowUp').hidden=src()!=='upload';
   $('#pickChip').style.background=toHex(V.pick);$('#tolVal').textContent=Math.round(V.tol*100)+'%';$('#disVal').textContent=Math.round(V.dis*100)+'%';
   $('#upName').textContent=V.maskName||'No file yet';
-  $$('#segSrc button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===V.src);});}
+  $$('#segSrc button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===src());});}
 
+/* the chosen source; a flat picture has no layers, so it falls back to a colour of the art */
+function src(){var A=curArt(),has=!!(A&&A.layers&&A.layers.length>1);return S.vn.src==='layers'&&!has?'colour':S.vn.src;}
+function curArt(){return ARTS.filter(function(x){return x.id===S.art;})[0];}
+function layUI(){
+  var A=curArt(),has=!!(A&&A.layers&&A.layers.length>1),box=$('#lays');
+  $('#segSrc [data-v=layers]').disabled=!has;$('#segSrc [data-v=layers]').style.opacity=has?'':'.45';
+  $('#rowLay').hidden=src()!=='layers';box.innerHTML='';if(!has)return;
+  var sel=selOf();$('#layNote').textContent='Varnish on';
+  A.layers.forEach(function(l,i){var b=document.createElement('button');b.type='button';b.textContent=l.name;b.setAttribute('aria-pressed',sel.indexOf(i)>=0);
+    b.addEventListener('click',function(){var k=sel.indexOf(i);if(k>=0)sel.splice(k,1);else sel.push(i);b.setAttribute('aria-pressed',k<0);remask();});box.appendChild(b);});
+}
 /* ---------- art picker ---------- */
 function thumbs(){
   var box=$('#arts');box.innerHTML='';
@@ -371,25 +414,39 @@ function thumbs(){
 }
 function useArt(id){
   var a=ARTS.filter(function(x){return x.id===id;})[0]||ARTS[0];S.art=a.id;thumbs();
-  $('#artName').textContent=a.name;$('#artDel').hidden=!a.up;
-  var img=new Image();img.onload=function(){if(S.art!==a.id)return;ART=readArt(img);card.style.setProperty('--img','url("'+a.src+'")');paint();if(S.vn.on)remask();};img.src=a.src;
+  $('#artName').textContent=a.name+(a.layers&&a.layers.length>1?' · '+a.layers.length+' layers':'');$('#artDel').hidden=!a.up;ART=null;vnUI();
+  var img=new Image();img.onload=function(){if(S.art!==a.id)return;ART=readArt(img);ART.layers=a.layers;card.style.setProperty('--img','url("'+a.src+'")');paint();if(S.vn.on)remask();};img.src=a.src;
 }
 function fileToCanvas(file,w,h,cb){var r=new FileReader();r.onload=function(){var img=new Image();img.onload=function(){var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d',{willReadFrequently:true}),s=Math.max(w/img.naturalWidth,h/img.naturalHeight),dw=img.naturalWidth*s,dh=img.naturalHeight*s;x.drawImage(img,(w-dw)/2,(h-dh)/2,dw,dh);cb(c,x,img);};img.onerror=function(){note('That file could not be read as a picture');};img.src=r.result;};r.readAsDataURL(file);}
-function addArt(file){
-  if(!file||!/^image\//.test(file.type))return;
-  fileToCanvas(file,1712,1080,function(c,x,img){
-    var src=c.toDataURL('image/jpeg',.88),id='u'+Date.now(),name=(file.name||'Art').replace(/\.[^.]+$/,'').slice(0,28),entry={id:id,name:name,src:src,up:true};
-    uploads.push(entry);ARTS=PRESETS.concat(uploads);
-    var kept=save(uploads);
-    var r=img.naturalWidth/img.naturalHeight;
-    note((Math.abs(r-85.6/53.98)>.02?'Cropped to the card’s proportions. ':'')+(kept?'Saved in this browser.':'Too large to keep after a reload, it stays until then.'));
-    useArt(id);
-  });
+function loadImg(file){return new Promise(function(res,rej){var u=URL.createObjectURL(file),img=new Image();img.onload=function(){res(img);};img.onerror=function(){rej(file.name);};img.src=u;});}
+function cover(img,w,h,x){var k=Math.max(w/img.naturalWidth,h/img.naturalHeight),dw=img.naturalWidth*k,dh=img.naturalHeight*k;x.drawImage(img,(w-dw)/2,(h-dh)/2,dw,dh);}
+function blobOf(c,type,q){return new Promise(function(res){c.toBlob(res,type,q);});}
+/* one file is a flat picture; several files are the layers of one picture, stacked by their names, the first at the bottom */
+function addArt(files){
+  files=Array.prototype.slice.call(files||[]).filter(function(f){return /^image\//.test(f.type);});if(!files.length)return;
+  files.sort(function(a,b){return a.name.localeCompare(b.name,undefined,{numeric:true});});
+  note(files.length>1?'Stacking '+files.length+' layers…':'Reading the picture…');
+  Promise.all(files.map(loadImg)).then(function(imgs){
+    var w=1712,h=1080,c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');x.fillStyle='#000';x.fillRect(0,0,w,h);
+    imgs.forEach(function(im){cover(im,w,h,x);});
+    var jobs=[blobOf(c,'image/jpeg',.9)];
+    if(imgs.length>1)imgs.forEach(function(im){var l=document.createElement('canvas');l.width=w;l.height=h;cover(im,w,h,l.getContext('2d'));jobs.push(blobOf(l,'image/png'));});
+    return Promise.all(jobs).then(function(bl){
+      var base=files.map(function(f){return f.name.replace(/\.[^.]+$/,'');}),pre=base.length>1?base.reduce(function(a,b){var i=0;while(i<a.length&&a[i]===b[i])i++;return a.slice(0,i);}):'';pre=pre.replace(/\d+$/,'');
+      function nm(f){return f.name.replace(/\.[^.]+$/,'').slice(pre.length).replace(/^[\d\s._-]+/,'').replace(/[-_]+/g,' ').replace(/^./,function(ch){return ch.toUpperCase();})||'Layer';}
+      var rec={id:'u'+Date.now(),name:(imgs.length>1?'Layered art':nm(files[0])).slice(0,28),composite:bl[0],layers:imgs.length>1?files.map(function(f,i){return {name:nm(f).slice(0,24),blob:bl[i+1]};}):[]};
+      var r=imgs[0].naturalWidth/imgs[0].naturalHeight,odd=Math.abs(r-85.6/53.98)>.02;
+      return dbPut(rec).then(function(kept){var e=fromDb(rec);uploads.push(e);ARTS=PRESETS.concat(uploads);
+        note((odd?'Cropped to the card’s proportions. ':'')+(kept?'Saved in this browser.':'Could not be saved, it stays until a reload.'));
+        if(rec.layers.length){S.vn.src='layers';S.vn.sel[rec.id]=[1];}
+        useArt(rec.id);});
+    });
+  }).catch(function(n){note('Could not read '+n+' as a picture');});
 }
-$('#fileArt').addEventListener('change',function(e){addArt(e.target.files[0]);e.target.value='';});
-$('#artDel').addEventListener('click',function(){uploads=uploads.filter(function(u){return u.id!==S.art;});save(uploads);ARTS=PRESETS.concat(uploads);useArt(PRESETS[0].id);});
+$('#fileArt').addEventListener('change',function(e){addArt(e.target.files);e.target.value='';});
+$('#artDel').addEventListener('click',function(){var id=S.art;uploads=uploads.filter(function(u){return u.id!==id;});dbDel(id);ARTS=PRESETS.concat(uploads);useArt(PRESETS[0].id);});
 document.addEventListener('dragover',function(e){e.preventDefault();});
-document.addEventListener('drop',function(e){e.preventDefault();var f=e.dataTransfer&&e.dataTransfer.files[0];if(f)addArt(f);});
+document.addEventListener('drop',function(e){e.preventDefault();var f=e.dataTransfer&&e.dataTransfer.files;if(f&&f.length)addArt(f);});
 $('#upBtn').addEventListener('click',function(){$('#fileMask').click();});
 $('#fileMask').addEventListener('change',function(e){var f=e.target.files[0];e.target.value='';if(!f)return;
   fileToCanvas(f,MW,MH,function(c,x){var d=x.getImageData(0,0,MW,MH).data,opaque=true,i;for(i=3;i<d.length;i+=4)if(d[i]<250){opaque=false;break;}
@@ -467,6 +524,7 @@ function frame(now){
   if(S.vn.on){
     s.setProperty('--hx',(-18+u*150).toFixed(1)+'%');s.setProperty('--hy',(38-v*130).toFixed(1)+'%');
     var f=-.3+u*1.6-v*.5;s.setProperty('--bx',((1.5-f)/2*100).toFixed(1)+'%');
+    s.setProperty('--cx',(25+u*120).toFixed(1)+'%');s.setProperty('--cy',(40-v*110).toFixed(1)+'%');
     s.setProperty('--px',clamp(50+u*90,0,100).toFixed(1)+'%');s.setProperty('--py',clamp(50-v*90,0,100).toFixed(1)+'%');
     s.setProperty('--shx',(-ldx*.2).toFixed(3)+'cqw');s.setProperty('--shy',(-ldy*.2).toFixed(3)+'cqw');
     s.setProperty('--ltx',(ldx*.11).toFixed(3)+'cqw');s.setProperty('--lty',(ldy*.11).toFixed(3)+'cqw');
@@ -492,6 +550,11 @@ function hint(){var n=$('#note');if(picking){n.textContent='Tap a colour on the 
 hint();
 amtLabels();vnUI();finish();
 useArt(PRESETS[0].id);
+/* uploads from earlier visits; the first version kept them in localStorage, they move over once */
+dbAll().then(function(list){var old=[];try{old=JSON.parse(localStorage.getItem('ama-card-art-v1')||'[]');}catch(_){}
+  var mv=old.map(function(o){return {id:o.id,name:o.name,composite:o.src,layers:[]};});
+  return Promise.all(mv.map(dbPut)).then(function(){try{localStorage.removeItem('ama-card-art-v1');}catch(_){}return list.concat(mv);});
+}).then(function(list){uploads=list.map(fromDb);ARTS=PRESETS.concat(uploads);thumbs();});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(repaint);
 window.__S=S;window.__vnPose=function(u,v){c.drag={x0:0,y0:0,bx:0,by:0};c.tx=v*20;c.ty=u*24;}; // for screenshots
 })();
