@@ -163,6 +163,7 @@ input[type=range]{width:210px;margin:0;accent-color:var(--rust)}
   <input type="file" id="fileArt" accept="image/*" multiple hidden>
 
   <div class="ctl" id="settings">
+    <div class="row"><span>Color</span><div class="seg" id="segPage"><button type="button" aria-pressed="true" data-v="ama">Off</button><button type="button" aria-pressed="false" data-v="card">On</button></div></div>
     <div class="le" id="leBox">
       <div class="row"><span>Limited edition</span><div class="seg" id="segVn"><button type="button" aria-pressed="true" data-v="off">Off</button><button type="button" aria-pressed="false" data-v="on">On</button></div></div>
       <div id="vnCtl" class="lebody" hidden>
@@ -174,7 +175,6 @@ input[type=range]{width:210px;margin:0;accent-color:var(--rust)}
       </div>
     </div>
     <div class="row"><span>Rotate</span><div class="seg" id="segOri"><button type="button" aria-pressed="true" data-v="h">Horizontal</button><button type="button" aria-pressed="false" data-v="v">Vertical</button></div></div>
-    <div class="row"><span>Color</span><div class="seg" id="segPage"><button type="button" aria-pressed="true" data-v="ama">Off</button><button type="button" aria-pressed="false" data-v="card">On</button></div></div>
     <div class="row"><span>Frost <b class="val" id="frostVal">65%</b></span><input type="range" id="frost" min="0" max="2" step="0.1" value="1.3" aria-label="Frost strength"></div>
   </div>
 
@@ -213,6 +213,7 @@ function fromDb(x){var u=function(b){return typeof b==='string'?b:URL.createObje
 var X='../img/xmas/';
 var PRESETS=[
   {id:'snow-trail',name:'Snow trail',src:X+'snow-trail.jpg'},
+  {id:'ski-lesson',name:'Ski lesson',src:X+'ski-lesson.jpg'},
   {id:'snow-letters',name:'Snow letters',src:X+'snow-letters.jpg'},
   {id:'santa',name:'Santa',src:X+'santa.jpg'},
   {id:'morning',name:'Christmas morning',src:X+'morning.jpg'},
