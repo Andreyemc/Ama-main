@@ -18,7 +18,7 @@ html.dark{--cream:#2B2A28;--paper:#3A3836;--sand:#3A3836;--ink:#FFFFFF;--body:#D
 button,input{font:inherit;color:inherit}
 button{cursor:pointer;background:none;border:0;padding:0;-webkit-tap-highlight-color:transparent}
 h1{font-weight:400;margin:0;font-size:30px;line-height:1.15;letter-spacing:-.01em}
-h2{font-weight:400;margin:44px 0 0;font-size:24px;line-height:1.2;letter-spacing:-.01em}
+h2{font-weight:400;margin:36px 0 0;font-size:24px;line-height:1.2;letter-spacing:-.01em}
 p{margin:0}
 .site-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;height:var(--hdr);background:var(--cream);color:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:0 max(16px,env(safe-area-inset-left,0px));transition:background .3s}
 .site-header .left{display:flex;align-items:center;gap:14px}.icon-btn{width:40px;height:40px;display:grid;place-items:center;margin:-8px;border-radius:20px}.icon-btn svg{display:block}
@@ -156,16 +156,6 @@ input[type=range]{width:210px;accent-color:var(--rust)}
   <input type="file" id="fileArt" accept="image/*" multiple hidden>
   <p class="artname"><span id="artName"></span></p>
 
-
-  <div class="ctl">
-    <div class="field"><label for="nameIn">Recipient’s name</label><input id="nameIn" maxlength="24" value="Olivia Smith" autocomplete="off" placeholder="Their name"></div>
-    <div class="row"><span>Amount</span><div class="seg" id="segAmt"><button type="button" aria-pressed="true" data-v="150"></button><button type="button" aria-pressed="false" data-v="1890"></button><button type="button" aria-pressed="false" data-v="0">None</button></div></div>
-    <div class="row"><span>Currency</span><div class="seg" id="segCur"><button type="button" aria-pressed="true" data-v="GBP">£</button><button type="button" aria-pressed="false" data-v="USD">$</button><button type="button" aria-pressed="false" data-v="EUR">€</button></div></div>
-    <div class="row"><span>Frost <b class="val" id="frostVal">65%</b></span><input type="range" id="frost" min="0" max="2" step="0.1" value="1.3" aria-label="Frost strength"></div>
-    <div class="row"><span>Card</span><div class="seg" id="segOri"><button type="button" aria-pressed="true" data-v="h">Horizontal</button><button type="button" aria-pressed="false" data-v="v">Vertical</button></div></div>
-    <div class="row"><span>Background</span><div class="seg" id="segBg"><button type="button" aria-pressed="true" data-v="cream">Cream</button><button type="button" aria-pressed="false" data-v="dark">Dark</button></div></div>
-  </div>
-
   <h2>Limited edition</h2>
   <p class="lead">The art in layers: each layer is matte, like the card, or polished. The print turns matte, in AMA ink or cream.</p>
   <div class="ctl">
@@ -177,6 +167,15 @@ input[type=range]{width:210px;accent-color:var(--rust)}
       <div class="row"><span>Several PNG files, one size</span><button type="button" class="btn2" id="layBtn">Upload layers</button></div>
       <input type="file" id="fileLay" accept="image/*" multiple hidden>
     </div>
+  </div>
+
+  <div class="ctl" style="margin-top:40px">
+    <div class="field"><label for="nameIn">Recipient’s name</label><input id="nameIn" maxlength="24" value="Olivia Smith" autocomplete="off" placeholder="Their name"></div>
+    <div class="row"><span>Amount</span><div class="seg" id="segAmt"><button type="button" aria-pressed="true" data-v="150"></button><button type="button" aria-pressed="false" data-v="1890"></button><button type="button" aria-pressed="false" data-v="0">None</button></div></div>
+    <div class="row"><span>Currency</span><div class="seg" id="segCur"><button type="button" aria-pressed="true" data-v="GBP">£</button><button type="button" aria-pressed="false" data-v="USD">$</button><button type="button" aria-pressed="false" data-v="EUR">€</button></div></div>
+    <div class="row"><span>Frost <b class="val" id="frostVal">65%</b></span><input type="range" id="frost" min="0" max="2" step="0.1" value="1.3" aria-label="Frost strength"></div>
+    <div class="row"><span>Card</span><div class="seg" id="segOri"><button type="button" aria-pressed="true" data-v="h">Horizontal</button><button type="button" aria-pressed="false" data-v="v">Vertical</button></div></div>
+    <div class="row"><span>Background</span><div class="seg" id="segBg"><button type="button" aria-pressed="true" data-v="cream">Cream</button><button type="button" aria-pressed="false" data-v="dark">Dark</button></div></div>
   </div>
 
 </div></main>
