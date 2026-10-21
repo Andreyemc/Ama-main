@@ -100,8 +100,10 @@ input[type=range]{width:210px;accent-color:var(--rust)}
 .vn-art{filter:saturate(1.08) contrast(1.05)}
 /* the light on a polished layer is a round lamp, as a mirror shows it: a soft bright core with a wide faint halo,
    running across the layer faster than the card turns; away from it the polish falls off a touch darker */
-.vn-body>.vn-room{mix-blend-mode:soft-light;background:radial-gradient(circle 70cqw at var(--lpx,20%) var(--lpy,10%),rgba(0,0,0,0) 25%,rgba(0,0,0,.22) 100%)}
-.vn-body>.vn-lamp{mix-blend-mode:screen;background:radial-gradient(circle 12cqw at var(--lpx,20%) var(--lpy,10%),rgba(255,255,255,.48) 0%,rgba(255,255,255,.38) 24%,rgba(255,255,255,.14) 55%,rgba(255,255,255,0) 100%),radial-gradient(circle 36cqw at var(--lpx,20%) var(--lpy,10%),rgba(255,255,255,.1) 0%,rgba(255,255,255,.04) 55%,rgba(255,255,255,0) 100%)}
+/* the light on a polished layer is a spotlight far behind, reflected: a round glow about twice the card,
+   with no edge you can find, drifting across faster than the card turns; away from it the polish falls off a touch darker */
+.vn-body>.vn-room{mix-blend-mode:soft-light;background:radial-gradient(circle 190cqw at var(--lpx,20%) var(--lpy,10%),rgba(0,0,0,0.000) 0%,rgba(0,0,0,0.007) 10%,rgba(0,0,0,0.026) 20%,rgba(0,0,0,0.055) 30%,rgba(0,0,0,0.088) 40%,rgba(0,0,0,0.122) 50%,rgba(0,0,0,0.153) 60%,rgba(0,0,0,0.178) 70%,rgba(0,0,0,0.198) 80%,rgba(0,0,0,0.211) 90%,rgba(0,0,0,0.220) 100%)}
+.vn-body>.vn-lamp{mix-blend-mode:screen;background:radial-gradient(circle 100cqw at var(--lpx,20%) var(--lpy,10%),rgba(255,255,255,0.340) 0%,rgba(255,255,255,0.330) 8%,rgba(255,255,255,0.303) 17%,rgba(255,255,255,0.261) 25%,rgba(255,255,255,0.213) 33%,rgba(255,255,255,0.163) 42%,rgba(255,255,255,0.117) 50%,rgba(255,255,255,0.078) 58%,rgba(255,255,255,0.048) 67%,rgba(255,255,255,0.026) 75%,rgba(255,255,255,0.012) 83%,rgba(255,255,255,0.004) 92%,rgba(255,255,255,0.000) 100%)}
 .laylist{display:flex;flex-direction:column;gap:10px}
 .layrow{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--body)}
 .layrow .lthumb{flex:0 0 auto;width:52px;aspect-ratio:85.6/53.98;border-radius:5px;background:var(--sand) center/cover no-repeat;box-shadow:inset 0 0 0 1px var(--line)}
@@ -187,7 +189,7 @@ input[type=range]{width:210px;accent-color:var(--rust)}
   </div>
 
   <p class="fine">Art: any picture, cropped to the card (85.6 × 53.98, about 1712 × 1080 px). Keep the corners calm where the logo, “Gift card”, the amount and the name sit. The print tone is worked out from the picture under each of them, so each keeps at least 4.5:1 contrast (the amount 3:1). If the picture is too busy there, Print protection lays a soft shade behind the print, in the picture’s own darkest (or lightest) colour, only as strong as it takes and only while it stays quiet: on a dark picture it can go further, on a light one it stops before it turns into a grey halo. If that is not enough, the tile turns red: calm that part of the art, or on a limited edition switch the print between ink and cream. The tiles above show the contrast for each element.</p>
-  <p class="fine">Limited edition: upload the art as layers, several files at once, for example 1-background.png, 2-branches.png, 3-ball.png. They stack in the order of their names, the first at the bottom; every layer but the first is a PNG with a transparent background, all of one size. On a limited edition the polish belongs to the art, so the logo, “Gift card”, the amount and the name turn matte, in one flat tone: AMA ink or AMA cream (Auto takes the one that reads better on the art). Then set each layer: Matte takes the frost of the card, Polished has no frost, catches a round lamp that runs across it as the card turns, and stands a hair above the card. A layer shows only where nothing lies on top of it.</p>
+  <p class="fine">Limited edition: upload the art as layers, several files at once, for example 1-background.png, 2-branches.png, 3-ball.png. They stack in the order of their names, the first at the bottom; every layer but the first is a PNG with a transparent background, all of one size. On a limited edition the polish belongs to the art, so the logo, “Gift card”, the amount and the name turn matte, in one flat tone: AMA ink or AMA cream (Auto takes the one that reads better on the art). Then set each layer: Matte takes the frost of the card, Polished has no frost, catches the soft glow of a spotlight behind you, which drifts across it as the card turns, and stands a hair above the card. A layer shows only where nothing lies on top of it.</p>
 </div></main>
 <script>
 (function(){
@@ -483,9 +485,9 @@ function frame(now){
   var tS='translate('+(-ldx*1.4).toFixed(2)+' '+(-ldy*1.6).toFixed(2)+')',tL='translate('+(ldx*.8).toFixed(2)+' '+(ldy*.8).toFixed(2)+')';
   if(!shUse){shUse=layers.querySelectorAll('use.sh');ltUse=layers.querySelectorAll('use.lt');}
   shUse.forEach(function(n){n.setAttribute('transform',tS);});ltUse.forEach(function(n){n.setAttribute('transform',tL);});
-  /* polished layers: the lamp moves like a reflection, about twice the turn of the card; at rest it hangs top left */
+  /* polished layers: the spotlight moves like a reflection, faster than the card turns; at rest it sits above the top left corner */
   if(S.vn.on){
-    s.setProperty('--lpx',(22+u*125).toFixed(1)+'%');s.setProperty('--lpy',(12-v*150).toFixed(1)+'%');
+    s.setProperty('--lpx',(10+u*170).toFixed(1)+'%');s.setProperty('--lpy',(-15-v*190).toFixed(1)+'%');
     s.setProperty('--shx',(-ldx*.14).toFixed(3)+'cqw');s.setProperty('--shy',(-ldy*.14).toFixed(3)+'cqw');
     s.setProperty('--ltx',(ldx*.08).toFixed(3)+'cqw');s.setProperty('--lty',(ldy*.08).toFixed(3)+'cqw');
   }
