@@ -1,0 +1,499 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AMA Gift Card · card art test</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F7EEE0">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300;400;500&display=swap">
+<style>
+/* Test bench for illustrated cards (Christmas first). The art is the designer's picture; everything else is the card
+   approved on 20 Oct: frost, the polished print with solved contrast, the light, the name. On top of it, a test of a
+   limited-edition finish: a clear varnish screen-printed over the matte card, which catches the light as it turns.
+   Nothing here touches versions A or B. */
+:root{--cream:#F7EEE0;--paper:#FFFAF3;--sand:#EFE3D1;--ink:#1E1C1A;--body:#4F473F;--mute:#6E6358;--line:rgba(30,28,26,.14);--rust:#B04F13;--bad:#B3261E;
+  --sans:"Google Sans Flex","Google Sans","Helvetica Neue",Helvetica,Arial,sans-serif;--hdr:58px;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{background:var(--cream);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s,color .3s}
+html.dark{--cream:#2B2A28;--paper:#3A3836;--sand:#3A3836;--ink:#FFFFFF;--body:#D9D3CC;--mute:#B5AEA6;--line:rgba(255,255,255,.2);--bad:#FF8A80}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0;-webkit-tap-highlight-color:transparent}
+h1{font-weight:400;margin:0;font-size:30px;line-height:1.15;letter-spacing:-.01em}
+h2{font-weight:400;margin:44px 0 0;font-size:24px;line-height:1.2;letter-spacing:-.01em}
+p{margin:0}
+.site-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;height:var(--hdr);background:var(--cream);color:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:0 max(16px,env(safe-area-inset-left,0px));transition:background .3s}
+.site-header .left{display:flex;align-items:center;gap:14px}.icon-btn{width:40px;height:40px;display:grid;place-items:center;margin:-8px;border-radius:20px}.icon-btn svg{display:block}
+.logo{display:block;width:69px;height:26px}.logo svg{display:block;width:100%;height:100%;fill:var(--ink)}
+main{padding:20px max(16px,env(safe-area-inset-left,0px)) 60px}
+.col{max-width:520px;margin:0 auto}
+.lead{color:var(--mute);font-size:15px;margin-top:8px;max-width:40ch}
+.stage{padding:34px 0 22px;display:flex;justify-content:center}
+.hold{position:relative;width:100%}
+.hold.up{width:min(62%,300px);aspect-ratio:53.98/85.6}
+.hold.up>.card{position:absolute;top:0;left:100%;width:calc(100% * 85.6 / 53.98);transform-origin:0 0;transform:rotate(90deg)}
+.note{font-size:13px;color:var(--mute);text-align:center;min-height:1.4em}
+.note button{text-decoration:underline;text-underline-offset:3px;font-size:13px;color:var(--ink)}
+.stage.picking .card{cursor:crosshair}
+
+/* art picker */
+.arts{display:flex;gap:10px;margin-top:22px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:none}
+.arts::-webkit-scrollbar{display:none}
+.arts button{flex:0 0 auto;width:84px;aspect-ratio:85.6/53.98;border-radius:8px;background:var(--sand) center/cover no-repeat;box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}
+.arts button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--cream),0 0 0 3.5px var(--ink)}
+.arts .add{display:grid;place-items:center;font-size:13px;color:var(--ink);background:var(--paper);box-shadow:inset 0 0 0 1px var(--line)}
+.artname{display:flex;justify-content:center;gap:14px;margin-top:10px;font-size:16px}
+.artname button{font-size:13px;color:var(--mute);text-decoration:underline;text-underline-offset:3px}
+
+/* contrast readout */
+.read{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:22px}
+.read div{background:var(--paper);border-radius:12px;padding:10px 10px 9px;box-shadow:inset 0 0 0 1px var(--line)}
+.read b{display:block;font-weight:500;font-size:17px;font-variant-numeric:tabular-nums}
+.read span{display:block;font-size:11px;color:var(--mute);line-height:1.3}
+.read .low b{color:var(--bad)}
+.readnote{font-size:13px;color:var(--mute);margin-top:10px;text-align:center}
+
+.ctl{margin-top:26px;display:flex;flex-direction:column;gap:14px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;color:var(--body)}
+.row>span{flex:0 0 auto}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--sand);border-radius:30px;padding:3px;gap:3px;min-width:210px}
+.seg button{height:34px;border-radius:26px;font-size:14px;color:var(--mute);padding:0 10px;transition:background .2s,color .2s;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 2px rgba(30,28,26,.12)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;color:var(--mute)}
+.field input{height:48px;border-radius:12px;border:0;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);padding:0 14px;font-size:16px;outline:none}
+.field input:focus{box-shadow:inset 0 0 0 1px var(--ink)}
+input[type=range]{width:210px;accent-color:var(--rust)}
+.val{font-weight:400;color:var(--ink)}
+.btn2{height:38px;padding:0 16px;border-radius:30px;font-size:14px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink)}
+.chip{display:inline-block;width:18px;height:18px;border-radius:50%;vertical-align:-4px;margin-right:6px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.fine{margin-top:30px;font-size:13px;color:var(--mute);line-height:1.5}
+.fine+.fine{margin-top:10px}
+
+/* ---------- the card ---------- */
+.card{--rx:0deg;--ry:0deg;position:relative;width:100%;aspect-ratio:85.6/53.98;container-type:inline-size;perspective:1100px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.tilt{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(var(--rx)) rotateY(var(--ry));will-change:transform}
+.edge{position:absolute;inset:-2px;border:2px solid transparent;background-clip:padding-box;border-radius:calc(3.8cqw + 2px);background-color:var(--edge)}
+.face{position:absolute;inset:-2px;border:2px solid transparent;background-clip:padding-box;border-radius:calc(3.8cqw + 2px);overflow:hidden;transform:translateZ(.5px);isolation:isolate;background-color:var(--s2)}
+.face>*,.vn>*,.vn-body>*{position:absolute;inset:0;pointer-events:none}
+/* the art: the designer's picture, cropped to the card */
+.fc-art,.vn-art{background:var(--s2) var(--img) center/cover no-repeat}
+/* print protection: only when a picture is too busy under the print, a soft shade sits behind it, as weak as it can be */
+.fc-scrim{background:var(--scrim,none)}
+/* frost, sheen and shade: the approved finish, frost 65% */
+.fc-frost{opacity:var(--grain);mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.fc-veil{background:rgba(255,255,255,var(--veil))}
+.face>.fc-sheen{inset:-40%;mix-blend-mode:soft-light;background:radial-gradient(ellipse 46% 52% at var(--lx) var(--ly),rgba(255,255,255,.55),rgba(255,255,255,.18) 45%,rgba(255,255,255,0) 75%)}
+.face>.fc-shade{inset:-40%;mix-blend-mode:multiply;opacity:.16;background:radial-gradient(ellipse 50% 60% at calc(100% - var(--lx)) calc(100% - var(--ly)),rgba(0,0,0,.9),rgba(0,0,0,0) 70%)}
+.fc-print{width:100%;height:100%;overflow:visible}
+.fc-print .pg{font-family:var(--sans);font-weight:400}
+.fc-print .amt{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.fc-rim{border-radius:3.8cqw;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1px 0 rgba(0,0,0,.12)}
+
+/* ---------- limited edition: screen-printed clear varnish ----------
+   The varnish has no frost on it, so the art under it reads deeper and wetter than the matte card around it.
+   It stands a hair above the card: a thin dark rim away from the light, a thin lit rim towards it.
+   As the card turns, a hotspot and a streak of light run across the varnish only. Holo and Pearl add a colour shift. */
+.vn-sh,.vn-lt,.vn-body{-webkit-mask:var(--vmask) 0 0/100% 100% no-repeat;mask:var(--vmask) 0 0/100% 100% no-repeat}
+.vn-sh{background:#000;opacity:var(--rsh,.45);transform:translate(var(--shx,0),var(--shy,0))}
+.vn-lt{background:#fff;opacity:var(--rlt,.35);transform:translate(var(--ltx,0),var(--lty,0))}
+.vn-body{isolation:isolate}
+.vn-art{filter:saturate(1.22) brightness(var(--vdeep,.9)) contrast(1.06)}
+.vn-holo{opacity:var(--ho,0);mix-blend-mode:color;background-size:150% 150%;background-position:var(--px,50%) var(--py,50%);
+  background-image:linear-gradient(118deg,#ff4fa3 0%,#ffb340 8%,#f4ff5a 15%,#3dffa0 23%,#38d5ff 31%,#6b6bff 39%,#d24dff 47%,#ff4fa3 55%,#ffb340 63%,#f4ff5a 70%,#3dffa0 78%,#38d5ff 86%,#6b6bff 93%,#d24dff 100%)}
+.vn-glint{opacity:calc(var(--ho,0) * .9);mix-blend-mode:soft-light;background-size:60% 60%;background-position:var(--px,50%) var(--py,50%);
+  background-image:repeating-linear-gradient(62deg,rgba(255,255,255,0) 0 6px,rgba(255,255,255,.75) 7px,rgba(255,255,255,0) 9px 15px)}
+.vn-hi{opacity:var(--hio,1);mix-blend-mode:screen;background:radial-gradient(ellipse 24% 38% at var(--hx,-20%) var(--hy,40%),rgba(255,255,255,.95),rgba(255,255,255,.42) 34%,rgba(255,255,255,.08) 62%,rgba(255,255,255,0) 76%)}
+.vn-band{opacity:var(--bo,.8);mix-blend-mode:screen;background-size:300% 100%;background-position:var(--bx,90%) 50%;
+  background-image:linear-gradient(112deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 45%,rgba(255,255,255,.45) 48.5%,rgba(255,255,255,.85) 50%,rgba(255,255,255,.45) 51.5%,rgba(255,255,255,0) 55%,rgba(255,255,255,0) 100%)}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="ama-logo" viewBox="0 0 69 26">
+      <path d="M68.6223 7.19211C68.6223 7.76903 68.4692 8.26903 68.2395 8.88441C66.7085 13.1152 63.5698 21.1921 63.1488 22.7305C63.187 22.8074 63.3019 22.8844 63.3784 22.8844C64.1057 22.8844 65.8281 21.1921 67.5506 19.1921L68.163 19.9998C66.1726 22.9228 63.0722 25.9997 61.5794 25.9997C60.6225 25.9997 59.7039 25.4613 59.7039 24.4228C59.7039 24.1151 59.9718 23.3459 60.3546 22.3074L61.656 18.9613L61.4646 18.8844C59.0149 22.3459 55.1107 25.9997 53.3882 25.9997C51.6275 25.769 50.7089 24.1921 50.7089 22.1921C50.7089 16.1921 56.8331 6.84596 62.7277 6.84596C63.6463 6.84596 64.7946 7.11519 65.5602 7.57673C65.7898 6.92288 65.9812 6.38442 66.1343 5.88442C66.4023 5.84596 66.5171 5.84596 66.7085 5.84596C67.8568 5.84596 68.6223 6.42288 68.6223 7.19211ZM54.9958 22.8459C56.4886 22.8459 60.3163 19.8075 63.1488 14.1152L64.6798 10.1152C63.6846 9.34595 62.4215 8.76903 60.6225 8.76903C57.3307 8.76903 54.0389 16.8844 54.0389 20.7305C54.0389 21.9613 54.4982 22.8459 54.9958 22.8459Z"/>
+      <path d="M51.3376 19.1925L51.9501 20.0002C49.9597 22.731 47.242 25.9233 44.9072 25.9233C43.7206 25.9233 43.4527 25.231 43.4527 24.5387C43.4527 23.4233 48.2755 11.1541 48.3903 10.308C48.2372 9.65411 47.8927 9.23104 47.3186 9.23104C46.0937 9.23104 42.3809 12.5772 37.7877 22.3079L36.4863 25.6156C36.2567 25.6541 36.1418 25.6541 36.1036 25.6541C34.7639 25.6541 34.228 25.1541 34.228 24.2695C34.228 23.8079 34.3811 23.3079 34.7639 22.2695C35.7208 19.6156 39.204 10.808 39.204 10.308C39.0126 9.57719 38.6681 9.23104 38.1322 9.23104C36.4863 9.2695 32.3907 14.0003 28.3334 22.8848C27.9506 23.8848 27.5679 24.8464 27.2999 25.6156C27.1851 25.6541 26.9937 25.6541 26.9172 25.6541C25.5392 25.6541 25.0416 25.1156 25.0416 24.231C25.0416 23.8079 25.1565 23.3848 25.3478 22.7695C26.7258 18.7695 29.6731 11.0387 29.941 9.88488C29.7114 9.57719 29.52 9.46181 29.1755 9.46181C28.5248 9.46181 27.6062 10.6926 26.8789 11.9233L26.0751 11.3849C27.4913 8.19258 28.9076 7.0772 30.3238 7.0772C31.4338 7.0772 32.3142 7.65412 33.118 9.15411L30.0941 16.6926L30.3621 16.8079C33.9983 10.0772 37.0987 6.80797 39.4336 6.80797C41.2326 6.80797 42.1513 8.19258 42.1513 9.38488C42.1513 10.0772 39.8929 15.3079 39.2805 16.6926L39.5485 16.8079C43.7206 9.07719 46.7444 6.80797 48.5817 6.80797C50.3042 6.80797 51.3759 8.07719 51.3759 9.46181C51.3759 10.7695 47.931 19.6156 46.9358 22.6925C46.9741 22.7695 47.0889 22.8464 47.2038 22.8464C47.8927 22.8464 49.8449 21.0002 51.3376 19.1925Z"/>
+      <path d="M27.7888 1.46153L26.3343 5.49998L20.8225 23.1922C21.2052 23.5768 21.4349 23.7307 22.277 23.9615L23.3487 24.2692L23.0042 25.3845H13.3585L13.703 24.2692L14.8131 23.9999C16.4207 23.6153 16.9565 23.3461 17.6455 21.1153L19.368 15.5384C17.7221 15.6538 15.8465 15.7307 14.392 15.7307C13.8179 15.7307 12.8227 15.7307 12.0571 15.6923C11.904 15.923 11.7509 16.1153 11.5978 16.3076C9.9902 18.3846 7.65533 21.6922 6.69842 23.4615C7.04291 23.7307 7.34912 23.8845 7.92327 23.9999L9.10984 24.2692L8.76535 25.3461L1.52588e-05 25.923L0.344504 24.8076C2.56455 23.9999 4.17216 22.6922 6.2391 20.2692C8.8419 17.1538 14.1241 10.5384 17.2628 6.96152C22.1239 1.42307 24.1908 0 25.3774 0C26.4874 0 27.2912 0.230767 27.7888 1.46153ZM19.8273 14.1923L23.4636 2.49999C21.1287 4.57691 17.4159 8.88459 13.1289 14.3846C14.8513 14.2692 16.9565 14.1923 19.8273 14.1923Z"/>
+    </symbol></svg>
+<header class="site-header">
+  <div class="left">
+    <button class="icon-btn" aria-label="Open menu">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none"><path d="M.75 8.3h24M.75 15.7h24" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+    </button>
+    <a class="logo" href="../" aria-label="AMA gift card"><svg viewBox="0 0 69 26" aria-hidden="true"><use href="#ama-logo"/></svg></a>
+  </div>
+  <button class="icon-btn" aria-label="Search">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM15 15l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+  </button>
+</header>
+<main><div class="col">
+  <h1>Card art</h1>
+  <p class="lead">Put any picture on the card. The finish stays the same: frost, polished print, the light. Tilt the phone, or drag the card.</p>
+  <div class="stage" id="stage"><div class="hold" id="hold">
+    <div class="card" id="card" role="img" aria-label="AMA gift card">
+      <div class="tilt"><i class="edge" style="transform:translateZ(-0.45px)"></i><i class="edge" style="transform:translateZ(-0.9px)"></i><i class="edge" style="transform:translateZ(-1.35px)"></i><i class="edge" style="transform:translateZ(-1.8px)"></i><i class="edge" style="transform:translateZ(-2.25px)"></i><i class="edge" style="transform:translateZ(-2.7px)"></i><i class="edge" style="transform:translateZ(-3.15px)"></i><div class="face">
+        <div class="fc-art"></div><div class="fc-scrim"></div><div class="fc-veil"></div><div class="fc-frost"></div><div class="fc-shade"></div><div class="fc-sheen"></div>
+        <div class="vn" id="vn" hidden><i class="vn-sh"></i><i class="vn-lt"></i><div class="vn-body"><i class="vn-art"></i><i class="vn-holo"></i><i class="vn-glint"></i><i class="vn-hi"></i><i class="vn-band"></i></div></div>
+        <svg class="fc-print" viewBox="0 0 856 540" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <g id="eL" class="pg"><use href="#ama-logo" x="48" y="44" width="154" height="58"/></g>
+            <g id="eK" class="pg"><text x="808" y="74" text-anchor="end" font-size="27" font-weight="500">Gift card</text></g>
+            <g id="eA" class="pg"><text class="amt" id="tAmt" x="44" y="490" font-size="88">£150</text></g>
+            <g id="eN" class="pg"><text id="tName" x="808" y="488" text-anchor="end" font-size="32" font-weight="500">Olivia Smith</text></g>
+            <mask id="pm" maskUnits="userSpaceOnUse" x="0" y="0" width="856" height="540"><use href="#eL" fill="#fff"/><use href="#eK" fill="#fff"/><use href="#eA" fill="#fff"/><use href="#eN" fill="#fff"/></mask>
+            <linearGradient id="spec" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".46" stop-color="#fff" stop-opacity="0"/>
+              <stop offset=".49" stop-color="#fff" stop-opacity=".45"/><stop offset=".5" stop-color="#fff" stop-opacity=".8"/><stop offset=".51" stop-color="#fff" stop-opacity=".45"/>
+              <stop offset=".54" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+            </linearGradient>
+            <filter id="soft" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="1"/></filter>
+          </defs>
+          <g id="pLayers"></g>
+          <rect width="856" height="540" fill="url(#spec)" mask="url(#pm)" id="pSpec"/>
+        </svg>
+        <div class="fc-rim"></div>
+      </div></div>
+    </div>
+  </div></div>
+  <p class="note" id="note"></p>
+
+  <div class="arts" id="arts" role="radiogroup" aria-label="Art"></div>
+  <input type="file" id="fileArt" accept="image/*" hidden>
+  <p class="artname"><span id="artName"></span><button type="button" id="artDel" hidden>Remove</button></p>
+
+  <div class="read" id="read" aria-live="polite"></div>
+  <p class="readnote" id="readNote"></p>
+
+  <div class="ctl">
+    <div class="field"><label for="nameIn">Recipient’s name</label><input id="nameIn" maxlength="24" value="Olivia Smith" autocomplete="off" placeholder="Their name"></div>
+    <div class="row"><span>Amount</span><div class="seg" id="segAmt"><button type="button" aria-pressed="true" data-v="150"></button><button type="button" aria-pressed="false" data-v="1890"></button><button type="button" aria-pressed="false" data-v="0">None</button></div></div>
+    <div class="row"><span>Currency</span><div class="seg" id="segCur"><button type="button" aria-pressed="true" data-v="GBP">£</button><button type="button" aria-pressed="false" data-v="USD">$</button><button type="button" aria-pressed="false" data-v="EUR">€</button></div></div>
+    <div class="row"><span>Frost <b class="val" id="frostVal">65%</b></span><input type="range" id="frost" min="0" max="2" step="0.1" value="1.3" aria-label="Frost strength"></div>
+    <div class="row"><span>Print protection</span><div class="seg" id="segProt"><button type="button" aria-pressed="true" data-v="auto">Auto</button><button type="button" aria-pressed="false" data-v="off">Off</button></div></div>
+    <div class="row"><span>Card</span><div class="seg" id="segOri"><button type="button" aria-pressed="true" data-v="h">Horizontal</button><button type="button" aria-pressed="false" data-v="v">Vertical</button></div></div>
+    <div class="row"><span>Background</span><div class="seg" id="segBg"><button type="button" aria-pressed="true" data-v="cream">Cream</button><button type="button" aria-pressed="false" data-v="dark">Dark</button></div></div>
+  </div>
+
+  <h2>Limited edition</h2>
+  <p class="lead">A varnish screen-printed over the matte card. It stays quiet at rest and catches the light as the card turns.</p>
+  <div class="ctl">
+    <div class="row"><span>Varnish</span><div class="seg" id="segVn"><button type="button" aria-pressed="true" data-v="off">Off</button><button type="button" aria-pressed="false" data-v="on">On</button></div></div>
+    <div id="vnCtl" class="ctl" style="margin-top:0" hidden>
+      <div class="row"><span>Layer</span><div class="seg" id="segSrc"><button type="button" aria-pressed="false" data-v="colour">Colour</button><button type="button" aria-pressed="false" data-v="sweep">Sweep</button><button type="button" aria-pressed="false" data-v="speckle">Speckle</button><button type="button" aria-pressed="false" data-v="upload">File</button></div></div>
+      <div class="row" id="rowPick"><span><i class="chip" id="pickChip"></i>Colour on the art</span><button type="button" class="btn2" id="pickBtn">Pick on the card</button></div>
+      <div class="row" id="rowTol"><span>Spread <b class="val" id="tolVal"></b></span><input type="range" id="tol" min="0.04" max="0.4" step="0.01" value="0.16" aria-label="Colour spread"></div>
+      <div class="row" id="rowUp"><span id="upName">No file yet</span><button type="button" class="btn2" id="upBtn">Upload layer</button></div>
+      <input type="file" id="fileMask" accept="image/*" hidden>
+      <div class="row"><span>Finish</span><div class="seg" id="segFin"><button type="button" aria-pressed="true" data-v="gloss">Gloss</button><button type="button" aria-pressed="false" data-v="holo">Holo</button><button type="button" aria-pressed="false" data-v="pearl">Pearl</button></div></div>
+      <div class="row"><span>Distress <b class="val" id="disVal"></b></span><input type="range" id="dis" min="0" max="1" step="0.05" value="0.35" aria-label="Distress"></div>
+      <div class="row"><span>Relief</span><div class="seg" id="segRel"><button type="button" aria-pressed="true" data-v="on">On</button><button type="button" aria-pressed="false" data-v="off">Off</button></div></div>
+    </div>
+  </div>
+
+  <p class="fine">Art: any picture, cropped to the card (85.6 × 53.98, about 1712 × 1080 px). Keep the corners calm where the logo, “Gift card”, the amount and the name sit. The print tone is worked out from the picture under each of them, so each keeps at least 4.5:1 contrast (the amount 3:1). If the picture is too busy there, Print protection lays the weakest soft shade behind the print that brings it back to the bar. The tiles above show the contrast for each element.</p>
+  <p class="fine">Varnish layer: Colour takes one colour of the art (pick it on the card). Sweep and Speckle are test patterns. File takes your own layer: a PNG of the same proportions, white or opaque where the varnish goes. Distress breaks the edges into screen-print grain, Relief raises the varnish a hair above the card.</p>
+</div></main>
+<script>
+(function(){
+'use strict';
+function $(s){return document.querySelector(s);}function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches;
+var W=856,H=540,MS=1.5,MW=Math.round(W*MS),MH=Math.round(H*MS); // print space and the pixel grid the art is read on
+
+/* ---------- colour helpers ---------- */
+function hex(c){return [parseInt(c.substr(1,2),16),parseInt(c.substr(3,2),16),parseInt(c.substr(5,2),16)];}
+function toHex(a){return '#'+a.map(function(v){v=Math.max(0,Math.min(255,Math.round(v)));return (v<16?'0':'')+v.toString(16);}).join('');}
+function mix(a,b,t){var p=hex(a),q=hex(b);return toHex(p.map(function(v,i){return v+(q[i]-v)*t;}));}
+function lin(v){v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);}
+var LIN=new Float32Array(256);for(var li=0;li<256;li++)LIN[li]=lin(li);
+function lumA(r,g,b){return .2126*LIN[r|0]+.7152*LIN[g|0]+.0722*LIN[b|0];}
+function lum(c){var p=hex(c);return lumA(p[0],p[1],p[2]);}
+function ratio(a,b){var x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function sstep(a,b,x){var t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);}
+
+/* ---------- storage: uploads stay in this browser only ---------- */
+var KEY='ama-card-art-v1';
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(_){return [];}}
+function save(list){try{localStorage.setItem(KEY,JSON.stringify(list));return true;}catch(_){return false;}}
+
+/* ---------- state ---------- */
+var PRESETS=[{id:'bauble',name:'Bauble',src:'../img/xmas-bauble.jpg'},{id:'camel',name:'Camel',src:'../img/xmas-camel.jpg'}];
+var uploads=load(),ARTS=PRESETS.concat(uploads);
+var S={art:null,amount:150,cur:'GBP',frost:1.3,prot:'auto',vert:false,
+  vn:{on:false,src:'colour',fin:'holo',dis:.35,rel:true,tol:.16,pick:[132,148,246],mask:null,maskName:''}};
+var card=$('#card'),face=card.querySelector('.face'),scrimEl=card.querySelector('.fc-scrim'),spec=$('#spec'),vn=$('#vn');
+var ART=null; // {data,c1,c2,src}
+
+/* ---------- amounts in any currency: the formatter places the sign (£150, $150, 150 €) ---------- */
+var LOC={GBP:'en-GB',USD:'en-US',EUR:'de-DE'};
+function money(a){try{return new Intl.NumberFormat(LOC[S.cur],{style:'currency',currency:S.cur,maximumFractionDigits:0,minimumFractionDigits:0}).format(a);}catch(_){return '£'+a;}}
+function amtLabels(){$$('#segAmt button').forEach(function(b){if(+b.dataset.v)b.textContent=money(+b.dataset.v);});}
+
+/* ---------- reading the art ---------- */
+var AC=document.createElement('canvas');AC.width=MW;AC.height=MH;var actx=AC.getContext('2d',{willReadFrequently:true});
+function readArt(img){
+  var s=Math.max(MW/img.naturalWidth,MH/img.naturalHeight),dw=img.naturalWidth*s,dh=img.naturalHeight*s;
+  actx.clearRect(0,0,MW,MH);actx.drawImage(img,(MW-dw)/2,(MH-dh)/2,dw,dh);
+  var d=actx.getImageData(0,0,MW,MH).data,L=[];
+  for(var i=0;i<d.length;i+=4*37)L.push([lumA(d[i],d[i+1],d[i+2]),d[i],d[i+1],d[i+2]]);
+  L.sort(function(a,b){return a[0]-b[0];});
+  function avg(a,b){var r=0,g=0,bl=0,n=0;for(var i=Math.floor(a*L.length);i<Math.floor(b*L.length);i++){r+=L[i][1];g+=L[i][2];bl+=L[i][3];n++;}return toHex([r/n,g/n,bl/n]);}
+  return {data:d,c2:avg(0,.12),c1:avg(.88,1),mid:avg(.45,.55)};
+}
+
+/* ---------- print: the approved engine, now reading the picture under each element ---------- */
+var EL=[{id:'L'},{id:'K'},{id:'A',big:true},{id:'N'}];
+var NS='http://www.w3.org/2000/svg',layers=$('#pLayers'),ENV={},USE={};
+EL.forEach(function(e){
+  layers.insertAdjacentHTML('beforeend','<linearGradient id="env'+e.id+'" gradientUnits="userSpaceOnUse"></linearGradient><mask id="m'+e.id+'" maskUnits="userSpaceOnUse" x="0" y="0" width="856" height="540"><use href="#e'+e.id+'" fill="#fff"/></mask>'+
+    '<use href="#e'+e.id+'" class="sh" fill="#000" filter="url(#soft)"/><use href="#e'+e.id+'" class="lt" id="lt'+e.id+'" fill="#fff"/><rect width="856" height="540" fill="url(#env'+e.id+')" mask="url(#m'+e.id+')"/>');
+  ENV[e.id]=document.getElementById('env'+e.id);USE[e.id]=document.getElementById('lt'+e.id);
+});
+var FALLBACK={L:{x:48,y:44,w:154,h:58},K:{x:690,y:52,w:118,h:28},A:{x:44,y:426,w:220,h:66},N:{x:600,y:464,w:208,h:30}};
+function boxes(){var o={};EL.forEach(function(e){var b=null;try{b=USE[e.id].getBBox();}catch(_){}o[e.id]=(b&&b.width>2)?{x:b.x,y:b.y,w:b.width,h:b.height,real:true}:FALLBACK[e.id];});return o;}
+/* the soft shade behind a print element: full under it, fading out a little beyond it */
+var FO=[[0,1],[.55,1],[.7,.75],[.85,.3],[1,0]];
+function fall(d){if(d>=1)return 0;for(var i=1;i<FO.length;i++)if(d<=FO[i][0]){var a=FO[i-1],b=FO[i];return a[1]+(b[1]-a[1])*(d-a[0])/(b[0]-a[0]);}return 0;}
+function ells(B){return EL.map(function(e){var b=B[e.id];return {cx:b.x+b.w/2,cy:b.y+b.h/2,rx:b.w/2+70,ry:b.h/2+70};});}
+function scrimAt(x,y,E,k){if(!k)return 0;var keep=1;for(var i=0;i<E.length;i++){var e=E[i],dx=(x-e.cx)/e.rx,dy=(y-e.cy)/e.ry;keep*=1-k*fall(Math.sqrt(dx*dx+dy*dy));}return 1-keep;}
+/* the picture under one element, as the eye gets it: shade (if any), then the frost veil. The worst case is the
+   7% of pixels closest to the print (the lightest under a light print, the darkest under a dark one). */
+function under(b,mode,k,E){
+  var d=ART.data,veil=.05*S.frost,pad=6,a=[],x0=Math.max(0,b.x-pad),x1=Math.min(W-1,b.x+b.w+pad),y0=Math.max(0,b.y-pad),y1=Math.min(H-1,b.y+b.h+pad);
+  for(var y=y0;y<=y1;y+=2)for(var x=x0;x<=x1;x+=2){
+    var i=(Math.round(y*MS)*MW+Math.round(x*MS))*4,r=d[i],g=d[i+1],bl=d[i+2],s=scrimAt(x,y,E,k);
+    if(s){if(mode==='bright'){r*=1-s;g*=1-s;bl*=1-s;}else{r+=(255-r)*s;g+=(255-g)*s;bl+=(255-bl)*s;}}
+    r+=(255-r)*veil;g+=(255-g)*veil;bl+=(255-bl)*veil;a.push([lumA(r,g,bl),r,g,bl]);}
+  a.sort(function(p,q){return p[0]-q[0];});
+  var w=a[Math.floor((mode==='bright'?.93:.07)*(a.length-1))],m=a[Math.floor(.5*(a.length-1))];
+  var wc=toHex([w[1],w[2],w[3]]),mc=toHex([m[1],m[2],m[3]]);
+  return {worst:wc,sp:[{c:wc},{c:mc},{c:mix(wc,'#FFFFFF',.14+.05*S.frost),sheen:true}]};
+}
+function score(main,edge,sp,big){var need=big?3:4.5,m=1e9,ok=true;sp.forEach(function(x){var r=ratio(main,x.c);m=Math.min(m,x.sheen?r*1.5:r);if(r<(x.sheen?need*2/3:need))ok=false;if(!x.sheen&&ratio(edge,x.c)<(big?2.2:3))ok=false;});return {ok:ok,m:m};}
+function solveEl(P,sp,big,mode){
+  var mid=mix(P.c1,P.c2,.5),best=null,bestOk=null;
+  for(var i=0;i<=30;i++)for(var gi=0;gi<5;gi++){var p,sc,gk=(mode==='deep'?[.32,.26,.2,.14,.07]:[.55,.45,.35,.25,.15])[gi];
+    if(mode==='deep'){var deep=mix(mix(P.c2,mid,.3),'#000000',.4+i*.019);p={mode:'deep',deep:deep,glow:mix(deep,P.c1,gk)};sc=score(deep,p.glow,sp,big);}
+    else{var base=mix(P.c1,'#FFFFFF',Math.min(1,.55+i*.015));p={mode:'bright',base:base,low:mix(base,P.c2,gk)};sc=score(base,p.low,sp,big);}
+    p.ok=sc.ok;p.m=sc.m;
+    if(sc.ok){if(sc.m>=7)return p;if(!bestOk||sc.m>bestOk.m+.05)bestOk=p;}
+    if(!best||sc.m>best.m)best=p;}
+  return bestOk||best;
+}
+/* one tone for the whole card; the shade behind the print grows in small steps only until every element clears the bar */
+function solve(){
+  var B=boxes(),E=ells(B),P={c1:ART.c1,c2:ART.c2},steps=S.prot==='auto'?13:1,best=null;
+  function all(a){return a.every(function(p){return p.ok;});}function low(a){return Math.min.apply(null,a.map(function(p){return p.m;}));}
+  for(var n=0;n<steps;n++){var k=n*.05,res={};
+    ['deep','bright'].forEach(function(mode){res[mode]=EL.map(function(e){var u=under(B[e.id],mode,k,E),p=solveEl(P,u.sp,e.big,mode);p.worst=u.worst;p.real=B[e.id].real;return p;});});
+    var pick=all(res.deep)&&all(res.bright)?(low(res.deep)>=low(res.bright)?res.deep:res.bright):all(res.deep)?res.deep:all(res.bright)?res.bright:null;
+    if(pick)return {els:pick,k:k,E:E,ok:true};
+    var c=low(res.deep)>=low(res.bright)?res.deep:res.bright;if(!best||low(c)>low(best.els)+.05)best={els:c,k:k,E:E,ok:false};}
+  return best;
+}
+function envStops(p){
+  if(p.mode==='deep'){var deep=p.deep,deeper=mix(deep,'#000000',.3),half=mix(deep,p.glow,.5),glow=p.glow;
+    return [[0,deep],[.2,deeper],[.34,deep],[.42,half],[.48,glow],[.52,glow],[.58,half],[.68,deep],[.8,deeper],[1,deep]];}
+  var base=p.base,hi=mix(base,'#FFFFFF',.7),dim=mix(base,p.low,.5),low=p.low;
+  return [[0,base],[.2,hi],[.34,base],[.42,dim],[.48,low],[.52,low],[.58,dim],[.68,base],[.8,hi],[1,base]];
+}
+var NAMES={L:'Logo',K:'Gift card',A:'Amount',N:'Name'};
+function paint(){
+  if(!ART)return;
+  var R=solve(),pr=R.els;window.__print=R;
+  EL.forEach(function(e,i){var p=pr[i];ENV[e.id].innerHTML=envStops(p).map(function(st){return '<stop offset="'+st[0]+'" stop-color="'+st[1]+'"/>';}).join('');
+    var g=layers.querySelectorAll('use.sh')[i],l=layers.querySelectorAll('use.lt')[i];
+    g.setAttribute('fill-opacity',p.mode==='deep'?'.12':'.3');l.setAttribute('fill-opacity',p.mode==='deep'?'.16':'.12');});
+  var dark=pr[0].mode==='bright',sc=dark?mix(ART.c2,'#000000',.25):'#FFFFFF';
+  spec.querySelectorAll('stop').forEach(function(st){st.setAttribute('stop-color',sc);var o=+(st.dataset.o||(st.dataset.o=st.getAttribute('stop-opacity')));st.setAttribute('stop-opacity',(dark?o*.7:o).toFixed(3));});
+  /* the shade behind the print, drawn exactly as it was solved */
+  var col=dark?'0,0,0':'255,255,255',k=R.k;
+  scrimEl.style.setProperty('--scrim',k?R.E.map(function(e){return 'radial-gradient(ellipse '+(e.rx/W*100).toFixed(2)+'% '+(e.ry/H*100).toFixed(2)+'% at '+(e.cx/W*100).toFixed(2)+'% '+(e.cy/H*100).toFixed(2)+'%,'+FO.map(function(f){return 'rgba('+col+','+(k*f[1]).toFixed(3)+') '+(f[0]*100)+'%';}).join(',')+')';}).join(','):'none');
+  var s=card.style;s.setProperty('--s2',ART.c2);s.setProperty('--edge',mix(ART.c2,'#000000',.25));
+  s.setProperty('--veil',(.05*S.frost).toFixed(3));s.setProperty('--grain',(.22*S.frost).toFixed(2));
+  /* readout */
+  $('#read').innerHTML=EL.map(function(e,i){var p=pr[i],main=p.mode==='deep'?p.deep:p.base,r=ratio(main,p.worst),need=e.big?3:4.5,on=(e.id!=='A'||S.amount)&&(e.id!=='N'||$('#nameIn').value.trim());
+    return '<div class="'+(on&&r<need?'low':'')+'"><b>'+(on?r.toFixed(1):'–')+'</b><span>'+NAMES[e.id]+'<br>needs '+need+'</span></div>';}).join('');
+  $('#readNote').textContent=(dark?'Light print':'Dark print')+(k?' · protection shade '+Math.round(k*100)+'%':' · no shade needed')+(R.ok?'':' · below the bar, calm the art under the print');
+}
+var paintQ=0;function repaint(){if(paintQ)return;paintQ=requestAnimationFrame(function(){paintQ=0;paint();});}
+
+/* ---------- the varnish layer ---------- */
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+var NOISE=null;
+function noise(){
+  if(NOISE)return NOISE;var R=rng(7),out=new Float32Array(MW*MH),c=document.createElement('canvas');c.width=MW;c.height=MH;var x=c.getContext('2d',{willReadFrequently:true});
+  [[Math.round(MW/5),.55],[Math.round(MW/22),.45]].forEach(function(o){var sw=o[0],sh=Math.round(sw*MH/MW),s=document.createElement('canvas');s.width=sw;s.height=sh;var sx=s.getContext('2d'),id=sx.createImageData(sw,sh);
+    for(var i=0;i<id.data.length;i+=4){var v=R()*255;id.data[i]=id.data[i+1]=id.data[i+2]=v;id.data[i+3]=255;}sx.putImageData(id,0,0);
+    x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(s,0,0,MW,MH);var d=x.getImageData(0,0,MW,MH).data;for(var j=0,k=0;j<d.length;j+=4,k++)out[k]+=d[j]/255*o[1];});
+  /* stretch to 0..1 */
+  var lo=1,hi=0;for(var i=0;i<out.length;i++){if(out[i]<lo)lo=out[i];if(out[i]>hi)hi=out[i];}for(i=0;i<out.length;i++)out[i]=(out[i]-lo)/(hi-lo);
+  return NOISE=out;
+}
+function blur(a,r){var w=MW,h=MH,t=new Float32Array(a.length),o=new Float32Array(a.length),x,y,s,n=2*r+1;
+  for(y=0;y<h;y++){s=0;var row=y*w;for(x=-r;x<=r;x++)s+=a[row+clamp(x,0,w-1)];for(x=0;x<w;x++){t[row+x]=s/n;s+=a[row+Math.min(w-1,x+r+1)]-a[row+Math.max(0,x-r)];}}
+  for(x=0;x<w;x++){s=0;for(y=-r;y<=r;y++)s+=t[clamp(y,0,h-1)*w+x];for(y=0;y<h;y++){o[y*w+x]=s/n;s+=t[Math.min(h-1,y+r+1)*w+x]-t[Math.max(0,y-r)*w+x];}}
+  return o;}
+var MC=document.createElement('canvas');MC.width=MW;MC.height=MH;var mctx=MC.getContext('2d',{willReadFrequently:true});
+var maskData=null; // the uploaded layer as alpha
+function baseMap(){
+  var V=S.vn,a=new Float32Array(MW*MH),i,x,y;
+  if(V.src==='colour'&&ART){var d=ART.data,p=V.pick,t=V.tol;
+    for(i=0;i<a.length;i++){var j=i*4,dr=d[j]-p[0],dg=d[j+1]-p[1],db=d[j+2]-p[2],dist=Math.sqrt(dr*dr+dg*dg+db*db)/441.7;a[i]=1-sstep(t*.6,t,dist);}}
+  else if(V.src==='sweep'){var an=-62*Math.PI/180,ca=Math.cos(an),sa=Math.sin(an),N=noise(),c0=Math.min(0,MW*ca)+Math.min(0,MH*sa),c1=Math.max(0,MW*ca)+Math.max(0,MH*sa),span=c1-c0;
+    var BANDS=[[.2,.07],[.38,.035],[.55,.1],[.8,.05]];
+    for(y=0;y<MH;y++)for(x=0;x<MW;x++){i=y*MW+x;var tt=(x*ca+y*sa-c0)/span+(N[(y>>1)*MW+(x>>1)]-.5)*.05,v=0;
+      for(var b=0;b<BANDS.length;b++){var dd=Math.abs(tt-BANDS[b][0])-BANDS[b][1];v=Math.max(v,1-sstep(-.012,.012,dd));}a[i]=v;}}
+  else if(V.src==='speckle'){for(i=0;i<a.length;i++)a[i]=.4;}
+  else if(V.src==='upload'&&maskData){for(i=0;i<a.length;i++)a[i]=maskData[i];}
+  return a;
+}
+var vmURL=null,vmQ=0;
+function buildMask(){
+  var V=S.vn;if(!V.on){vn.hidden=true;return;}
+  var base=blur(baseMap(),Math.round(5*MS)),N=noise(),D=V.dis,id=mctx.createImageData(MW,MH),d=id.data;
+  for(var i=0;i<base.length;i++){var v=base[i]+(N[i]-.5)*D*1.7;v=clamp((v-.5)*7+.5,0,1);var j=i*4;d[j]=d[j+1]=d[j+2]=255;d[j+3]=v*255;}
+  mctx.putImageData(id,0,0);
+  MC.toBlob(function(bl){if(!bl)return;var u=URL.createObjectURL(bl);card.style.setProperty('--vmask','url("'+u+'")');if(vmURL)setTimeout(URL.revokeObjectURL.bind(URL,vmURL),500);vmURL=u;vn.hidden=false;},'image/png');
+}
+function remask(){if(vmQ)return;vmQ=requestAnimationFrame(function(){vmQ=0;buildMask();});}
+var FIN={gloss:{ho:0,hio:1,bo:.85,vdeep:.88},holo:{ho:.8,hio:.9,bo:.6,vdeep:1},pearl:{ho:.32,hio:.75,bo:.45,vdeep:1.04}};
+function finish(){var f=FIN[S.vn.fin],s=card.style;s.setProperty('--ho',f.ho);s.setProperty('--hio',f.hio);s.setProperty('--bo',f.bo);s.setProperty('--vdeep',f.vdeep);
+  s.setProperty('--rsh',S.vn.rel?.32:0);s.setProperty('--rlt',S.vn.rel?.2:0);
+  $('#vn').querySelector('.vn-holo').style.backgroundImage=S.vn.fin==='pearl'?'linear-gradient(118deg,#f2b8d6 0%,#b8d0f2 25%,#c4f0d8 50%,#f2b8d6 75%,#b8d0f2 100%)':'';}
+function vnUI(){var V=S.vn;$('#vnCtl').hidden=!V.on;$('#rowPick').hidden=V.src!=='colour';$('#rowTol').hidden=V.src!=='colour';$('#rowUp').hidden=V.src!=='upload';
+  $('#pickChip').style.background=toHex(V.pick);$('#tolVal').textContent=Math.round(V.tol*100)+'%';$('#disVal').textContent=Math.round(V.dis*100)+'%';
+  $('#upName').textContent=V.maskName||'No file yet';
+  $$('#segSrc button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===V.src);});}
+
+/* ---------- art picker ---------- */
+function thumbs(){
+  var box=$('#arts');box.innerHTML='';
+  ARTS.forEach(function(a){var b=document.createElement('button');b.type='button';b.setAttribute('role','radio');b.setAttribute('aria-label',a.name);b.style.backgroundImage='url("'+a.src+'")';b.setAttribute('aria-pressed',S.art===a.id);b.addEventListener('click',function(){useArt(a.id);});box.appendChild(b);});
+  var add=document.createElement('button');add.type='button';add.className='add';add.textContent='Add art';add.addEventListener('click',function(){$('#fileArt').click();});box.appendChild(add);
+}
+function useArt(id){
+  var a=ARTS.filter(function(x){return x.id===id;})[0]||ARTS[0];S.art=a.id;thumbs();
+  $('#artName').textContent=a.name;$('#artDel').hidden=!a.up;
+  var img=new Image();img.onload=function(){if(S.art!==a.id)return;ART=readArt(img);card.style.setProperty('--img','url("'+a.src+'")');paint();if(S.vn.on)remask();};img.src=a.src;
+}
+function fileToCanvas(file,w,h,cb){var r=new FileReader();r.onload=function(){var img=new Image();img.onload=function(){var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d',{willReadFrequently:true}),s=Math.max(w/img.naturalWidth,h/img.naturalHeight),dw=img.naturalWidth*s,dh=img.naturalHeight*s;x.drawImage(img,(w-dw)/2,(h-dh)/2,dw,dh);cb(c,x,img);};img.onerror=function(){note('That file could not be read as a picture');};img.src=r.result;};r.readAsDataURL(file);}
+function addArt(file){
+  if(!file||!/^image\//.test(file.type))return;
+  fileToCanvas(file,1712,1080,function(c,x,img){
+    var src=c.toDataURL('image/jpeg',.88),id='u'+Date.now(),name=(file.name||'Art').replace(/\.[^.]+$/,'').slice(0,28),entry={id:id,name:name,src:src,up:true};
+    uploads.push(entry);ARTS=PRESETS.concat(uploads);
+    var kept=save(uploads);
+    var r=img.naturalWidth/img.naturalHeight;
+    note((Math.abs(r-85.6/53.98)>.02?'Cropped to the card’s proportions. ':'')+(kept?'Saved in this browser.':'Too large to keep after a reload, it stays until then.'));
+    useArt(id);
+  });
+}
+$('#fileArt').addEventListener('change',function(e){addArt(e.target.files[0]);e.target.value='';});
+$('#artDel').addEventListener('click',function(){uploads=uploads.filter(function(u){return u.id!==S.art;});save(uploads);ARTS=PRESETS.concat(uploads);useArt(PRESETS[0].id);});
+document.addEventListener('dragover',function(e){e.preventDefault();});
+document.addEventListener('drop',function(e){e.preventDefault();var f=e.dataTransfer&&e.dataTransfer.files[0];if(f)addArt(f);});
+$('#upBtn').addEventListener('click',function(){$('#fileMask').click();});
+$('#fileMask').addEventListener('change',function(e){var f=e.target.files[0];e.target.value='';if(!f)return;
+  fileToCanvas(f,MW,MH,function(c,x){var d=x.getImageData(0,0,MW,MH).data,opaque=true,i;for(i=3;i<d.length;i+=4)if(d[i]<250){opaque=false;break;}
+    maskData=new Float32Array(MW*MH);for(i=0;i<maskData.length;i++){var j=i*4;maskData[i]=opaque?lumA(d[j],d[j+1],d[j+2])/1:d[j+3]/255;}
+    if(opaque)for(i=0;i<maskData.length;i++)maskData[i]=Math.pow(maskData[i],1/2.2); // back to the brightness the file shows
+    S.vn.maskName=f.name;vnUI();remask();});});
+
+/* ---------- controls ---------- */
+var noteT=0;function note(t){var n=$('#note');n.textContent=t;clearTimeout(noteT);noteT=setTimeout(hint,4200);}
+function seg(id,fn){$$('#'+id+' button').forEach(function(b){b.addEventListener('click',function(){$$('#'+id+' button').forEach(function(x){x.setAttribute('aria-pressed',x===b);});fn(b.dataset.v);});});}
+function setAmt(){$('#tAmt').textContent=S.amount?money(S.amount):'';$('#tAmt').setAttribute('visibility',S.amount?'visible':'hidden');repaint();}
+seg('segAmt',function(v){S.amount=+v;setAmt();});
+seg('segCur',function(v){S.cur=v;amtLabels();setAmt();});
+seg('segProt',function(v){S.prot=v;repaint();});
+seg('segOri',function(v){S.vert=v==='v';$('#hold').classList.toggle('up',S.vert);});
+seg('segBg',function(v){document.documentElement.classList.toggle('dark',v==='dark');document.querySelector('meta[name=theme-color]').content=v==='dark'?'#2B2A28':'#F7EEE0';});
+seg('segVn',function(v){S.vn.on=v==='on';vnUI();if(S.vn.on)remask();else vn.hidden=true;});
+seg('segSrc',function(v){S.vn.src=v;vnUI();if(v==='upload'&&!maskData){$('#fileMask').click();return;}remask();});
+seg('segFin',function(v){S.vn.fin=v;finish();});
+seg('segRel',function(v){S.vn.rel=v==='on';finish();});
+$('#frost').addEventListener('input',function(e){S.frost=+e.target.value;$('#frostVal').textContent=Math.round(S.frost*50)+'%';repaint();});
+$('#nameIn').addEventListener('input',function(e){$('#tName').textContent=e.target.value.trim();repaint();});
+$('#tol').addEventListener('input',function(e){S.vn.tol=+e.target.value;vnUI();remask();});
+$('#dis').addEventListener('input',function(e){S.vn.dis=+e.target.value;vnUI();remask();});
+var picking=false;
+$('#pickBtn').addEventListener('click',function(){picking=!picking;$('#stage').classList.toggle('picking',picking);$('#pickBtn').textContent=picking?'Tap the card':'Pick on the card';if(picking){note('Tap a colour on the card');var r=card.getBoundingClientRect();if(r.top<70||r.bottom>innerHeight)scrollTo({top:scrollY+r.top-90,behavior:reduce?'auto':'smooth'});}else hint();});
+function pickAt(e){
+  var r=card.getBoundingClientRect(),u,v;
+  if(S.vert){u=(e.clientY-r.top)/r.height;v=(r.right-e.clientX)/r.width;}else{u=(e.clientX-r.left)/r.width;v=(e.clientY-r.top)/r.height;}
+  if(!ART||u<0||u>1||v<0||v>1)return;
+  var cx=Math.round(u*(MW-1)),cy=Math.round(v*(MH-1)),R=0,G=0,B=0,n=0;
+  for(var y=-3;y<=3;y++)for(var x=-3;x<=3;x++){var i=(clamp(cy+y,0,MH-1)*MW+clamp(cx+x,0,MW-1))*4;R+=ART.data[i];G+=ART.data[i+1];B+=ART.data[i+2];n++;}
+  S.vn.pick=[R/n,G/n,B/n];picking=false;$('#stage').classList.remove('picking');$('#pickBtn').textContent='Pick on the card';vnUI();remask();hint();
+}
+
+/* ---------- tilt: the spring of the prototype ---------- */
+var MAXX=20,MAXY=24,K=reduce?220:110,DAMP=reduce?30:15;
+function soft(v,m){return m*Math.tanh(v/m);}
+var c={rx:0,ry:0,vx:0,vy:0,tx:0,ty:0,lx:null,ly:null,drag:null,hover:false,idle:1,phase:Math.random()*6.28};
+var gyro={on:false,got:false,b0:null,g0:null,x:0,y:0,rx:null,ry:null};
+card.addEventListener('pointerdown',function(e){if(picking){pickAt(e);return;}c.drag={x0:e.clientX,y0:e.clientY,bx:c.rx,by:c.ry};try{card.setPointerCapture(e.pointerId);}catch(_){}});
+card.addEventListener('pointermove',function(e){
+  if(c.drag){var dx=e.clientX-c.drag.x0,dy=e.clientY-c.drag.y0;c.tx=soft(c.drag.bx-dy*0.16,MAXX);c.ty=soft(c.drag.by+dx*0.2,MAXY);}
+  else if(e.pointerType==='mouse'&&!picking){var r=card.getBoundingClientRect();var px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;c.hover=true;c.tx=(0.5-py)*18;c.ty=(px-0.5)*22;}
+});
+function end(){if(!c.drag)return;c.drag=null;c.idle=0;}
+card.addEventListener('pointerup',end);card.addEventListener('pointercancel',end);card.addEventListener('pointerleave',function(){c.hover=false;c.idle=0;});
+var TH=28*Math.PI/180,DX=Math.cos(TH),DY=Math.sin(TH);
+function band(el,len,off){var cx=W/2+DX*off,cy=H/2+DY*off;el.setAttribute('x1',(cx-DX*len/2).toFixed(1));el.setAttribute('y1',(cy-DY*len/2).toFixed(1));el.setAttribute('x2',(cx+DX*len/2).toFixed(1));el.setAttribute('y2',(cy+DY*len/2).toFixed(1));}
+var last=performance.now(),shUse=null,ltUse=null;
+function frame(now){
+  var dt=Math.min((now-last)/1000,1/30);last=now;var t=now/1000;
+  if(gyro.rx!=null){var lp=Math.min(1,dt*6.5);gyro.x+=(gyro.rx-gyro.x)*lp;gyro.y+=(gyro.ry-gyro.y)*lp;}
+  var tx,ty;
+  if(c.drag||c.hover){tx=c.tx;ty=c.ty;}
+  else{c.idle=Math.min(1,c.idle+dt*0.6);var sx=reduce?0:Math.sin(t*0.6+c.phase)*4*c.idle,sy=reduce?0:Math.sin(t*0.45+c.phase*1.3)*6*c.idle;
+    if(gyro.on&&gyro.got){tx=gyro.x+sx*0.3;ty=gyro.y+sy*0.3;}else{tx=sx;ty=sy;}}
+  var dmp=(!c.drag&&!c.hover&&gyro.on&&gyro.got)?2*Math.sqrt(K):DAMP;
+  var ax=K*(tx-c.rx)-dmp*c.vx,ay=K*(ty-c.ry)-dmp*c.vy;c.vx+=ax*dt;c.vy+=ay*dt;c.rx+=c.vx*dt;c.ry+=c.vy*dt;
+  /* the spring works in screen terms; a vertical card is the horizontal one turned 90°, so its own axes swap */
+  var Lx=S.vert?c.ry*20/24:c.rx,Ly=S.vert?-c.rx*24/20:c.ry;
+  var lg=(gyro.on&&gyro.got&&!c.drag&&!c.hover)?1.3:1;
+  c.ly=(c.ly==null?Ly:c.ly)+(Ly*lg-(c.ly==null?Ly:c.ly))*Math.min(1,dt*8);
+  c.lx=(c.lx==null?Lx:c.lx)+(Lx*lg-(c.lx==null?Lx:c.lx))*Math.min(1,dt*8);
+  var u=c.ly/24,v=c.lx/20,s=card.style;
+  s.setProperty('--rx',(S.vert?c.ry:c.rx).toFixed(2)+'deg');s.setProperty('--ry',(S.vert?-c.rx:c.ry).toFixed(2)+'deg');
+  s.setProperty('--lx',clamp(38+u*34,0,100).toFixed(1)+'%');s.setProperty('--ly',clamp(30-v*36,0,100).toFixed(1)+'%');
+  EL.forEach(function(e){band(ENV[e.id],1800,260+u*760-v*300);});
+  band(spec,1500,60+u*1150-v*420);
+  var ldx=-.55+u*.9,ldy=-.85-v*.7,ll=Math.max(.001,Math.hypot(ldx,ldy));ldx/=ll;ldy/=ll;
+  var tS='translate('+(-ldx*1.4).toFixed(2)+' '+(-ldy*1.6).toFixed(2)+')',tL='translate('+(ldx*.8).toFixed(2)+' '+(ldy*.8).toFixed(2)+')';
+  if(!shUse){shUse=layers.querySelectorAll('use.sh');ltUse=layers.querySelectorAll('use.lt');}
+  shUse.forEach(function(n){n.setAttribute('transform',tS);});ltUse.forEach(function(n){n.setAttribute('transform',tL);});
+  /* varnish: a mirror, so its light runs fast; at rest the hotspot waits just off the left edge */
+  if(S.vn.on){
+    s.setProperty('--hx',(-18+u*150).toFixed(1)+'%');s.setProperty('--hy',(38-v*130).toFixed(1)+'%');
+    var f=-.3+u*1.6-v*.5;s.setProperty('--bx',((1.5-f)/2*100).toFixed(1)+'%');
+    s.setProperty('--px',clamp(50+u*90,0,100).toFixed(1)+'%');s.setProperty('--py',clamp(50-v*90,0,100).toFixed(1)+'%');
+    s.setProperty('--shx',(-ldx*.2).toFixed(3)+'cqw');s.setProperty('--shy',(-ldy*.2).toFixed(3)+'cqw');
+    s.setProperty('--ltx',(ldx*.11).toFixed(3)+'cqw');s.setProperty('--lty',(ldy*.11).toFixed(3)+'cqw');
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+/* gyroscope: the baseline is how the phone is held; iOS asks on the first tap */
+function screenAngle(){var a=(screen.orientation&&typeof screen.orientation.angle==='number')?screen.orientation.angle:(window.orientation||0);return ((a%360)+360)%360;}
+function onOrient(e){
+  if(e.beta==null||e.gamma==null)return;var b=e.beta,g=e.gamma,a=screenAngle(),fb=b,fg=g;
+  if(a===90){fb=-g;fg=b;}else if(a===270){fb=g;fg=-b;}else if(a===180){fb=-b;fg=-g;}
+  if(!gyro.got){gyro.got=true;gyro.b0=fb;gyro.g0=fg;hint();}
+  if(Math.abs(fb-gyro.b0)>60||Math.abs(fg-gyro.g0)>60){gyro.b0=fb;gyro.g0=fg;}
+  gyro.b0+=(fb-gyro.b0)*0.0016;gyro.g0+=(fg-gyro.g0)*0.0016;
+  gyro.rx=soft(-(fb-gyro.b0)*0.5,8);gyro.ry=soft((fg-gyro.g0)*0.5,10);
+}
+var needsPerm=typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function',permState='unknown';
+function startGyro(){if(gyro.on)return;gyro.on=true;gyro.got=false;window.addEventListener('deviceorientation',onOrient);}
+function askGyro(){if(!needsPerm||permState!=='unknown')return;try{DeviceOrientationEvent.requestPermission().then(function(r){permState=r==='granted'?'granted':'denied';if(r==='granted')startGyro();hint();}).catch(function(){hint();});}catch(_){}}
+if(needsPerm){document.addEventListener('touchend',askGyro,{passive:true});document.addEventListener('click',askGyro);}else if('DeviceOrientationEvent' in window){startGyro();}
+function hint(){var n=$('#note');if(picking){n.textContent='Tap a colour on the card';return;}if(gyro.on&&gyro.got){n.textContent='';return;}if(needsPerm&&permState==='unknown'){n.innerHTML='Drag the card or <button type="button">turn on tilt</button>';return;}n.textContent=finePointer?'Move the cursor over the card':'Drag the card';}
+hint();
+amtLabels();vnUI();finish();
+useArt(PRESETS[0].id);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(repaint);
+window.__S=S;window.__vnPose=function(u,v){c.drag={x0:0,y0:0,bx:0,by:0};c.tx=v*20;c.ty=u*24;}; // for screenshots
+})();
+</script>
+</body></html>
