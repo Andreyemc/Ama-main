@@ -212,9 +212,20 @@ function dbDel(id){return idb('readwrite',function(st){return st.delete(id);}).c
 function fromDb(x){var u=function(b){return typeof b==='string'?b:URL.createObjectURL(b);};return {id:x.id,name:x.name,up:true,src:u(x.composite),layers:(x.layers||[]).map(function(l){return {name:l.name,src:u(l.blob),blob:l.blob,pol:l.pol};})};}
 
 /* ---------- state ---------- */
-function lay(a,names){return names.map(function(n,i){return {name:n,src:'../img/xmas/'+a+'-'+(i+1)+'-'+n.split(' ')[0].toLowerCase()+'.webp'};});}
-var PRESETS=[{id:'bauble',name:'Bauble',src:'../img/xmas-bauble.jpg',layers:lay('bauble',['Background','Branches','Ball','Stars'])},
-             {id:'camel',name:'Camel',src:'../img/xmas-camel.jpg',layers:lay('camel',['Background','Branches','Ball','Stars and swirls'])}];
+/* the cards the client sees, in this order; limited editions open with their layers set, the polished ones marked */
+var X='../img/xmas/';
+var PRESETS=[
+  {id:'snow-trail',name:'Snow trail',src:X+'snow-trail.jpg'},
+  {id:'snow-letters',name:'Snow letters',src:X+'snow-letters.jpg'},
+  {id:'santa',name:'Santa',src:X+'santa.jpg'},
+  {id:'morning',name:'Christmas morning',src:X+'morning.jpg'},
+  {id:'candle',name:'Candle',src:X+'candle.jpg'},
+  {id:'camel-le',name:'Camel · limited',src:'../img/xmas-camel.jpg',limited:true,layers:[
+    {name:'Background',src:X+'camel-1-background.webp'},{name:'Branches',src:X+'camel-2-branches.webp'},
+    {name:'Ball',src:X+'camel-3-ball.webp',pol:true},{name:'Stars and swirls',src:X+'camel-4-stars.webp'}]},
+  {id:'snow-le',name:'Snow trail · limited',src:X+'snowle.jpg',limited:true,layers:[
+    {name:'Snow',src:X+'snowle-1-background.jpg'},{name:'Ama logo',src:X+'snowle-2-logo.webp',pol:true},{name:'People',src:X+'snowle-3-people.webp'}]}
+];
 var HID='ama-card-art-hidden';function hidden(){try{return JSON.parse(localStorage.getItem(HID)||'[]');}catch(_){return [];}}
 var ORD='ama-card-art-order';function orders(){try{return JSON.parse(localStorage.getItem(ORD)||'{}');}catch(_){return {};}}
 (function(){var o=orders();PRESETS.forEach(function(p){var n=o[p.id];if(!n||n.length!==p.layers.length)return;var by={};p.layers.forEach(function(l){by[l.name]=l;});
@@ -420,6 +431,7 @@ function thumbs(){
 function useArt(id){
   var a=ARTS.filter(function(x){return x.id===id;})[0]||ARTS[0];
   if(!a){S.art=null;ART=null;thumbs();$('#artName').textContent='Add art to start';card.style.setProperty('--img','none');vn.hidden=true;vnUI();return;}
+  if(S.art!==a.id)setVn(!!a.limited,true);
   S.art=a.id;
   if(a.needCompose){a.needCompose=false;$('#artName').textContent=a.name;compose(a).then(function(){useArt(a.id);});return;}
   thumbs();
@@ -465,7 +477,8 @@ seg('segAmt',function(v){S.amount=+v;setAmt();});
 seg('segCur',function(v){S.cur=v;amtLabels();setAmt();});
 seg('segOri',function(v){S.vert=v==='v';$('#hold').classList.toggle('up',S.vert);});
 seg('segBg',function(v){document.documentElement.classList.toggle('dark',v==='dark');document.querySelector('meta[name=theme-color]').content=v==='dark'?'#2B2A28':'#F7EEE0';});
-seg('segVn',function(v){S.vn.on=v==='on';vnUI();if(S.vn.on)remask();else vn.hidden=true;repaint();});
+function setVn(on,quiet){S.vn.on=on;$$('#segVn button').forEach(function(b){b.setAttribute('aria-pressed',(b.dataset.v==='on')===on);});if(!on)vn.hidden=true;if(quiet)return;vnUI();if(on)remask();repaint();}
+seg('segVn',function(v){setVn(v==='on');});
 seg('segTone',function(v){S.mtone=v;repaint();});
 $('#frost').addEventListener('input',function(e){S.frost=+e.target.value;$('#frostVal').textContent=Math.round(S.frost*50)+'%';repaint();});
 $('#nameIn').addEventListener('input',function(e){$('#tName').textContent=e.target.value.trim();repaint();});
